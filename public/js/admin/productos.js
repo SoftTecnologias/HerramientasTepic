@@ -75,6 +75,7 @@ $(function(){
                 return str;
             }},
             {data: function (row) {
+            console.log(row);
                 str = "<div align='center'>";
                 str +=" <button id='btnEditar' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("
                      + row['id'] + ","
@@ -356,7 +357,7 @@ function showProduct(productid, categoryid, code, currency, longdescription, bra
                 text: 'Seleccione una subcategoria'
             }).attr('value', 0).appendTo("#subcategoryid");
             $.each($.parseJSON(json.msg), function (i, row) {
-                $('<option>', {text: row.name}).attr('value', row.subcategoryid).appendTo('#subcategoryid');
+                $('<option>', {text: row.name}).attr('value', row.id).appendTo('#subcategoryid');
             });
             $('#subcategoryid').val(subcategoryid);
         }
