@@ -155,7 +155,6 @@ function deleteCategory(id){
     });
 }
 function showCategory(id, name){
-    reset();
     $("#categoryid").val(id);
     $("#name").val (name);
     $("#titulo-modal").text("Editar Categoria");

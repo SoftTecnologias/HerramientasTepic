@@ -337,7 +337,6 @@ function deleteProduct(id){
 function showProduct(productid, categoryid, code, currency, longdescription, brandid, name, photo,
                      photo2, photo3, price1, price2, price3, price4, price5, reorderpoint,
                      shortdescription, stock, subcategoryid){
-    reset();
     $('#titulo-modal').text("Editar Producto");
     $('#productid').val(productid);
     $('#code').val(code);

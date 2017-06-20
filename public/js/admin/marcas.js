@@ -191,7 +191,6 @@ function deleteBrand(id){
     });
 }
 function showBrand(id, name, logo){
-            reset();
             $("#brandid").val(id);
             $("#name").val(name);
             $("#im1").attr("src","../img/marcas/"+logo);
