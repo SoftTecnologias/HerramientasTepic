@@ -15,7 +15,7 @@ $(function(){
         var categoria = $(this).val();
         if(categoria != '00'){
             $.ajax({
-                url:document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+'/api/getsubcategoria/'+categoria,
+                url:document.location.protocol+'//'+document.location.host+'/api/getsubcategoria/'+categoria,
                 type:'GET'
             }).done(function(response){
                 if(response.code == 200){
@@ -39,7 +39,7 @@ $(function(){
         'scrollY':'600px',
         "processing": true,
         "serverSide": true,
-        "ajax": document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+'/area/resource/productos',
+        "ajax": document.location.protocol+'//'+document.location.host+'/area/resource/productos',
         'createdRow':function(row,data,index){
             if(data.stock <= data.reorderpoint ){
               $('td', row).addClass("danger");
@@ -255,7 +255,7 @@ function productAction(){
 function newProduct(){
     var data = new FormData(document.getElementById("productForm"));
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+"/area/resource/productos",
+        url:document.location.protocol+'//'+document.location.host+"/area/resource/productos",
         type:"POST",
         data: data,
         contentType:false,
@@ -281,7 +281,7 @@ function updateProduct(id){
     $("#productid").val(id);
     var datos = new FormData(document.getElementById("productForm"));
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+"/area/resource/productos/"+id,
+        url:document.location.protocol+'//'+document.location.host+"/area/resource/productos/"+id,
         type:"POST",
         data: datos,
         contentType:false,
@@ -315,7 +315,7 @@ function deleteProduct(id){
         confirmButtonText: 'Si, deseo eliminarlo!',
         cancelButtonText: "Lo pensaré"
     }).then(function () {
-        ruta =document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+'/area/resource/productos/'+id;
+        ruta =document.location.protocol+'//'+document.location.host+'/area/resource/productos/'+id;
         $.ajax({
             url:ruta,
             type:'delete',
@@ -348,7 +348,7 @@ function showProduct(productid, categoryid, code, currency, longdescription, bra
     $('#brandid').val(brandid);
     $('#categoryid').val(categoryid);
     $.ajax({
-        url: document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+'/api/getsubcategoria/'+categoryid,
+        url: document.location.protocol+'//'+document.location.host+'/api/getsubcategoria/'+categoryid,
         type: 'GET'
     }).done(function (json) {
         if (json.code === 200) {

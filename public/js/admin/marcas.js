@@ -13,7 +13,7 @@ $(function(){
     var table = $('#brandTable').DataTable({
         "processing": true,
         "serverSide": true,
-        "ajax": document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+'/area/resource/marcas',
+        "ajax": document.location.protocol+'//'+document.location.host+'/area/resource/marcas',
         'columns':[
             {
               data:function(row){
@@ -116,7 +116,7 @@ function brandAction() {
 function newBrand(){
     var data = new FormData(document.getElementById("brandForm"));
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+"/area/resource/marcas",
+        url:document.location.protocol+'//'+document.location.host+"/area/resource/marcas",
         type:'POST',
         data: data,
         contentType:false,
@@ -141,7 +141,7 @@ function updateBrand(id){
     $("#brandid").val(id);
     var data = new FormData(document.getElementById("brandForm"));
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+"/area/resource/marcas/"+id,
+        url:document.location.protocol+'//'+document.location.host+"/area/resource/marcas/"+id,
         type:"post",
         data: data,
         contentType:false,
@@ -171,7 +171,7 @@ function deleteBrand(id){
         confirmButtonText: 'Si, deseo eliminarlo!',
         cancelButtonText: "Lo pensaré"
     }).then(function () {
-        ruta =document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+'/area/resource/marcas/'+id;
+        ruta =document.location.protocol+'//'+document.location.host+'/area/resource/marcas/'+id;
         $.ajax({
             url:ruta,
             type:'delete',
