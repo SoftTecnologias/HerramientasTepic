@@ -80,11 +80,11 @@ $(function(){
                 str +=" <button id='btnEditar' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("
                      + row['id'] + ","
                      + row['categoryid'] + ","
-                     + "\""+row['code'] + "\","
+                     + "\""+encodeURI(row['code']) + "\","
                      + "\""+row['currency'] + "\","
-                     +"\""+row['longdescription'] + "\","
+                     +"\""+encodeURI(row['longdescription']) + "\","
                      + row['brandid']+", \""
-                     +row['name']+"\", \""
+                     +encodeURI(row['name'])+"\", \""
                      +row['photo'] +"\", \""
                      +row['photo2'] +"\", \""
                      +row['photo3'] +"\","
@@ -94,7 +94,7 @@ $(function(){
                      +row['price4'] +","
                      +row['price5'] +","
                      +row['reorderpoint'] +",\""
-                     +row['shortdescription'] +"\","
+                     +escape(row['shortdescription']) +"\","
                      +row['stock'] +","
                      +row['subcategoryid']+")'><i class='glyphicon glyphicon-edit'></i></button>";
                 str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteProduct(" + row['id'] + ")'><i class='fa fa-trash-o'></i></button>";
@@ -340,11 +340,11 @@ function showProduct(productid, categoryid, code, currency, longdescription, bra
                      shortdescription, stock, subcategoryid){
     $('#titulo-modal').text("Editar Producto");
     $('#productid').val(productid);
-    $('#code').val(code);
-    $('#name').val(name);
+    $('#code').val(decodeURI(code));
+    $('#name').val(decodeURI(name));
     $('#currency').val(currency);
-    $('#shortdescription').val(shortdescription);
-    $('#longdescription').val(longdescription);
+    $('#shortdescription').val(decodeURI(shortdescription));
+    $('#longdescription').val(decodeURI(longdescription));
     $('#brandid').val(brandid);
     $('#categoryid').val(categoryid);
     $.ajax({
