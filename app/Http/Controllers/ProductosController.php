@@ -28,8 +28,8 @@ class ProductosController extends Controller
                                 [photo], [photo2], [photo3], p.[subcategoryid], s.name as subcategoria, p.[categoryid],
                                 c.name as categoria, [priceid], [shortdescription], [longdescription], [reorderpoint],
                                 pr.price1, pr.price2, pr.price3, pr.price4, pr.price5
-                                FROM [online_store].[dbo].[product] p , [online_store].[dbo].[price] pr, [online_store].[dbo].[category] c ,
-                                     [online_store].[dbo].[subcategory] s,[online_store].[dbo].[brand] b 
+                                FROM [product] p , [price] pr, [category] c ,
+                                     [subcategory] s, [brand] b 
                                 WHERE p.brandid = b.id AND p.categoryid = c.id AND p.subcategoryid = s.id AND p.priceid = pr.id
                                 order by name")))->make(true);
     }
