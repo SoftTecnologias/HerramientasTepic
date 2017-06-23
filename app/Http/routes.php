@@ -90,6 +90,11 @@ Route::group(['prefix' => 'area'],function(){
         'as' => 'area.resource.subcategorias.update'
     ]);
 
+    Route::resource('/resource/usuarios','UsuariosController');
+    Route::post('/resource/usuarios/{id}',[
+        'uses' => 'UsuariosController@update',
+        'as' => 'area.resource.usuarios.update'
+    ]);
 });
 
 /* Rutas para Ajax*/

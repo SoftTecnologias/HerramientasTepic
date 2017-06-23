@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Categoria;
 use App\Marca;
+use App\Roles;
 use App\Subcategoria;
 use Illuminate\Http\Request;
 
@@ -51,7 +52,8 @@ class UsersController extends Controller
     }
 
     public function getUsuariosForm(){
-        return view('forms.usuarios');
+        $roles = Roles::all();
+        return view('forms.usuarios',['roles'=>$roles]);
     }
 
     public function getPedidosForm(){
@@ -67,40 +69,6 @@ class UsersController extends Controller
 
         return Response::json($respuesta);
     }
-
-    public function getProductos(Request $request){
-        $productos = DB::table('product')
-            ->select('product.productid',
-                'product.code',
-                'product.name',
-                'product.shortdescription',
-                'product.longdescription',
-                'product.brandid',
-                'brand.name as marca',
-                'product.categoryid',
-                'category.name as categoria',
-                'product.subcategoryid',
-                'subcategory.name as subcategoria',
-                'product.stock',
-                'product.currency',
-                'product.reorderpoint',
-                'product.photo',
-                'product.photo2',
-                'product.photo3',
-                'price.price1',
-                'price.price2',
-                'price.price3',
-                'price.price4',
-                'price.price5'
-            )
-            ->join('brand',"product.brandid",'=','brand.id')
-            ->join('category',"product.categoryid",'=','category.id')
-            ->join('subcategory',"subcategory.subcategoryid",'=','category.categoryid')
-            ->join('price',"price.price_id",'=','product.priceid')
-            ->get();
-        return Response::json($productos);
-    }
-
 
 
 
