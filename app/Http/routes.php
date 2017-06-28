@@ -11,10 +11,10 @@
 |
 */
 /* Se carga y redirecciona a la pagina que sea (si existe el apikey guardada!)*/
-Route::get('/', function () {
-    /*Se muestra pero se hará con js*/
-    return view('welcome');
-});
+Route::get('/', [
+    'uses' => 'UsersController@getAreaIndex',
+    'as' => 'tienda.index'
+]);
 
 /* Obtener formulario y hacer login */
 Route::get('/login',[
@@ -22,7 +22,7 @@ Route::get('/login',[
     'as' => 'panel.login'
 ]);
 
-Route::post('/post',[
+Route::post('/login',[
     'uses' => 'UsersController@doLogin',
     'as' => 'panel.dologin'
 ]);
@@ -31,7 +31,7 @@ Route::post('/post',[
 Route::group(['prefix' => 'area'],function(){
     /*Obtenemos los formularios ... */
     Route::get('/',[
-        'uses' => 'UsersController@getIndex',
+        'uses' => 'UsersController@getAreaIndex',
         'as' => 'area.index'
     ]);
 
@@ -95,6 +95,11 @@ Route::group(['prefix' => 'area'],function(){
         'uses' => 'UsuariosController@update',
         'as' => 'area.resource.usuarios.update'
     ]);
+
+    Route::get('/logout',[
+        'uses' => 'UsersController@doLogout',
+        'as' => 'area.logout'
+    ]);
 });
 
 /* Rutas para Ajax*/
@@ -107,6 +112,7 @@ Route::group(['prefix'=>'/api'],function(){
         'uses' => 'UsersController@getProductos',
         'as' => 'api.productos'
     ]);
+
 });
 
 
