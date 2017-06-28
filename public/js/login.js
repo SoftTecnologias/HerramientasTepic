@@ -4,7 +4,7 @@
 $(function () {
   $('#btnLogin').on('click',function(){
       $.ajax({
-          url:document.location.protocol+'//'+document.location.host + '/HerramientasTepic/public' +"/login",
+          url:document.location.protocol+'//'+document.location.host  +"/login",
           type:"POST",
           data:{
               email: $("#email").val(),
@@ -22,7 +22,7 @@ $(function () {
                    location.reload();
                 }else{
                     //parte de los clientes redirigimos al index (primero generando la cookie)
-                    window.href=document.location.protocol + '//' + document.location.host  + '/HerramientasTepic/public' + "/";
+                    window.href=document.location.protocol + '//' + document.location.host   + "/";
                 }
             }else{
                 console.log('No se hizo');

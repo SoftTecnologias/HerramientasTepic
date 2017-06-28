@@ -11,7 +11,7 @@ $(function(){
     $('#categoryTable').DataTable({
         "processing": true,
         "serverSide": true,
-        'ajax': document.location.protocol+'//'+document.location.host + '/HerramientasTepic/public' +'/area/resource/categorias',
+        'ajax': document.location.protocol+'//'+document.location.host  +'/area/resource/categorias',
         'columns':[
             {
                 data:'name'
@@ -78,7 +78,7 @@ function categoryAction(){
 function newCategory(){
  var nombre = $('#name').val();
     $.ajax({
-     url:document.location.protocol+'//'+document.location.host + '/HerramientasTepic/public' +'/area/resource/categorias',
+     url:document.location.protocol+'//'+document.location.host  +'/area/resource/categorias',
      type:'POST',
      data:{name:nombre},
      headers: {
@@ -101,7 +101,7 @@ function newCategory(){
 function updateCategory(id){
     $('#categoryid').val(id)
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host + '/HerramientasTepic/public' +"/area/resource/categorias/"+id,
+        url:document.location.protocol+'//'+document.location.host  +"/area/resource/categorias/"+id,
         type:"PUT",
         data:{
             name: $("#name").val()
@@ -135,7 +135,7 @@ function deleteCategory(id){
         confirmButtonText: 'Si, deseo eliminarlo!',
         cancelButtonText: "Lo pensaré"
     }).then(function () {
-        ruta =document.location.protocol+'//'+document.location.host + '/HerramientasTepic/public' +'/area/resource/categorias/'+id;
+        ruta =document.location.protocol+'//'+document.location.host  +'/area/resource/categorias/'+id;
         $.ajax({
             url:ruta,
             type:'delete',

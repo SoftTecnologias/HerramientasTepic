@@ -48,6 +48,9 @@ $(function(){
                     $('td', row).addClass("success");
                 }
             }
+
+
+
         },
         columns: [
             {data: function (row) {
@@ -62,17 +65,33 @@ $(function(){
             {data: 'marca'},
             {data: 'categoria'},
             {data: 'subcategoria'},
-            {data: function (row) {
-                str = "";
-                srt = "<div align='left'>";
-                str += "<p class='price'>$" + formato(row['price1']) + row['currency'] + "</p> </div>";
-                return str;
-            }},
-            {data: function (row) {
-                str = "";
-                srt = "<div align='left'>";
-                str += "<p class='price'>$" + formato(row['price2']) + row['currency'] + "</p> </div>";
-                return str;
+            {
+                data: function (row) {
+                    if (row['quotation'] == 1) {
+                        str = "";
+                        srt = "<div align='left'>";
+                        str += "<p class='price'>Precio por Cotización</p> </div>";
+                        return str;
+                    } else {
+                        str = "";
+                        srt = "<div align='left'>";
+                        str += "<p class='price'>$" + formato(row['price1']) + row['currency'] + "</p> </div>";
+                        return str;
+                    }
+                }
+            },
+            {data: function (row){
+                if (row['quotation'] == 1) {
+                    str = "";
+                    srt = "<div align='left'>";
+                    str += "<p class='price'>Precio por Cotización</p> </div>";
+                    return str;
+                } else {
+                    str = "";
+                    srt = "<div align='left'>";
+                    str += "<p class='price'>$" + formato(row['price2']) + row['currency'] + "</p> </div>";
+                    return str;
+                }
             }},
             {data: function (row) {
             console.log(row);
@@ -180,7 +199,6 @@ $(function(){
         }
 
     });
-
     /*files de las imagenes*/
     $("#img1").fileinput({
         allowedFileTypes: ["image"],
