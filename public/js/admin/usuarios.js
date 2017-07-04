@@ -37,7 +37,7 @@ $(function () {
     $('#userTable').DataTable({
         "processing": true,
         "serverSide": true,
-        'ajax': document.location.protocol + '//' + document.location.host  + '/HerramientasTepic/public'+ '/area/resource/usuarios',
+        'ajax': document.location.protocol + '//' + document.location.host  + '/area/resource/usuarios',
         'createdRow': function (row, data, index) {
             if (data.status == 'I') {
                 $('td', row).addClass("danger");
@@ -185,7 +185,7 @@ function newUser() {
     console.log("nuevo usuario");
     data = new FormData(document.getElementById("userForm"));
     $.ajax({
-        url: document.location.protocol + '//' + document.location.host  + '/HerramientasTepic/public' + "/area/resource/usuarios",
+        url: document.location.protocol + '//' + document.location.host   + "/area/resource/usuarios",
         type: "POST",
         data: data,
         contentType: false,
@@ -211,7 +211,7 @@ function updateUser(id) {
     $("#userid").val(id);
     datos = new FormData(document.getElementById("userForm"));
     $.ajax({
-        url: document.location.protocol + '//' + document.location.host  + '/HerramientasTepic/public' +"/area/resource/usuarios/" + id,
+        url: document.location.protocol + '//' + document.location.host   +"/area/resource/usuarios/" + id,
         type: "post",
         data: datos,
         headers: {
@@ -244,7 +244,7 @@ function deleteUser(id) {
         confirmButtonText: 'Si, deseo eliminarlo!',
         cancelButtonText: "Lo pensaré"
     }).then(function () {
-        ruta =  document.location.protocol + '//' + document.location.host + '/HerramientasTepic/public' + '/area/resource/usuarios/'+ id;
+        ruta =  document.location.protocol + '//' + document.location.host  + '/area/resource/usuarios/'+ id;
         $.ajax({
             url: ruta,
             type: 'delete',
