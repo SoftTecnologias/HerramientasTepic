@@ -12,7 +12,7 @@
 */
 /* Se carga y redirecciona a la pagina que sea (si existe el apikey guardada!)*/
 Route::get('/', [
-    'uses' => 'UsersController@getAreaIndex',
+    'uses' => 'UsersController@getIndex',
     'as' => 'tienda.index'
 ]);
 

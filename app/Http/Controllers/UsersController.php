@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Categoria;
 use App\Marca;
+use App\Producto;
 use App\Roles;
 use App\Subcategoria;
 use App\Usuarios;
@@ -77,7 +78,28 @@ class UsersController extends Controller
             //Se tomará en cuenta si hay una session de cliente para el carrito
         }else{
             //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
-            return view('index');
+            $banner = DB::table('banner_principal')->get();
+            $productos = DB::table('product')
+                         ->select('product.code',
+                                  'product.name',
+                                  'product.stock',
+                                  'product.currency',
+                                  'product.photo',
+                                  'product.photo2',
+                                  'product.photo3',
+                                  'product.shortdescription',
+                                  'product.longdescription',
+                                  'product.quotation'
+                         //         ,'price.price1'
+                         )
+                         ->join('price','price.id', '=', 'product.priceid')
+                         ->where('photo', 'not like','minilogo.png')
+                         ->take(12)->get();
+            $bMarcas = DB::table('brand')
+                           ->select('logo')
+                           ->where('logo', 'not like','minilogo.png')
+                           ->take(12)->get();
+            return view('tienda.index',['banner'=>$banner,'productos'=> $productos,'bMarcas' => $bMarcas]);
         }
     }
     public function getAreaIndex(Request $request){
