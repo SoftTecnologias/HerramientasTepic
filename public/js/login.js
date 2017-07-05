@@ -14,7 +14,6 @@ $(function () {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           }
       }).done(function(response){
-          console.log(response);
             if(response.code == 200){
                 console.log(response.msg);
                 if(response.msg['rol']!= 1 ){
@@ -35,7 +34,7 @@ $(function () {
     $(document).keypress(function(e) {
         if(e.which == 13) {
             // enter pressed
-            console.log('enter capturado')
+            console.log('enter capturado');
         }
     });
 });

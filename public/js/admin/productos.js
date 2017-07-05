@@ -48,9 +48,6 @@ $(function(){
                     $('td', row).addClass("success");
                 }
             }
-
-
-
         },
         columns: [
             {data: function (row) {
