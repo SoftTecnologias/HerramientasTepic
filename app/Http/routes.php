@@ -30,6 +30,12 @@ Route::post('/login',[
 /* Area de administracion */
 Route::group(['prefix' => 'area'],function(){
     /*Obtenemos los formularios ... */
+
+    Route::get('/perfil',[
+        'uses' => 'UsersController@getProfile',
+        'as' => 'area.perfil'
+    ]);
+
     Route::get('/',[
         'uses' => 'UsersController@getAreaIndex',
         'as' => 'area.index'
@@ -94,6 +100,12 @@ Route::group(['prefix' => 'area'],function(){
     Route::post('/resource/usuarios/{id}',[
         'uses' => 'UsuariosController@update',
         'as' => 'area.resource.usuarios.update'
+    ]);
+
+
+    Route::post('/perfil',[
+        'uses' => 'UsuariosController@areaProfileEdit',
+        'as' => 'area.perfil.update'
     ]);
 
     Route::get('/logout',[

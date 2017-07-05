@@ -87,7 +87,7 @@ class UsersController extends Controller
             if($cookie['rol'] == 2) { //es un administrador
                 $user = Usuarios::where('apikey',$cookie['apikey'])->first();
                 $fecha = explode("-",substr($user->signindate,0,10));
-                return view('admin.area',['datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                return view('admin.area',['usuario' => $user,'datos'=>['name'=>$user->name. ' '. $user->lastname ,
                     'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
@@ -96,7 +96,7 @@ class UsersController extends Controller
             }elseif ($cookie['rol'] == 3){
                 $user = Usuarios::where('apikey',$cookie['apikey'])->first();
                 $fecha = explode("-",substr($user->signindate,0,10));
-                return view('sale.area',['datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                return view('sale.area',['usuario' => $user,'datos'=>['name'=>$user->name. ' '. $user->lastname ,
                     'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
@@ -120,7 +120,7 @@ class UsersController extends Controller
                 return view('forms.productos',[
                     'marcas' => $marcas,
                     'categorias' => $categorias,
-                    'datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                    'usuario' => $user,'datos'=>['name'=>$user->name. ' '. $user->lastname ,
                         'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
                         'photo' => $user->photo,
                         'username' => $user->username,
@@ -148,7 +148,7 @@ class UsersController extends Controller
             if($cookie['rol'] == 2) { //es un administrador
                 $user = Usuarios::where('apikey',$cookie['apikey'])->first();
                 $fecha = explode("-",substr($user->signindate,0,10));
-                return view('forms.marcas',['datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                return view('forms.marcas',['usuario' => $user,'datos'=>['name'=>$user->name. ' '. $user->lastname ,
                     'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
@@ -170,7 +170,7 @@ class UsersController extends Controller
             if($cookie['rol'] == 2) { //es un administrador
                 $user = Usuarios::where('apikey',$cookie['apikey'])->first();
                 $fecha = explode("-",substr($user->signindate,0,10));
-                return view('forms.categorias',['datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                return view('forms.categorias',['usuario' => $user,'datos'=>['name'=>$user->name. ' '. $user->lastname ,
                     'ingreso' => Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
@@ -193,7 +193,7 @@ class UsersController extends Controller
                 $user = Usuarios::where('apikey',$cookie['apikey'])->first();
                 $categorias = Categoria::all();
                 $fecha = explode("-",substr($user->signindate,0,10));
-                return view('forms.subcategorias',['categorias' => $categorias ,'datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                return view('forms.subcategorias',['categorias' => $categorias ,'usuario' => $user,'datos'=>['name'=>$user->name. ' '. $user->lastname ,
                     'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
@@ -216,7 +216,7 @@ class UsersController extends Controller
                 $user = Usuarios::where('apikey',$cookie['apikey'])->first();
                 $roles = Roles::all();
                 $fecha = explode("-",substr($user->signindate,0,10));
-                return view('forms.usuarios',['roles' => $roles ,'datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                return view('forms.usuarios',['roles' => $roles ,'usuario' => $user,'datos'=>['name'=>$user->name. ' '. $user->lastname ,
                     'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
@@ -238,7 +238,7 @@ class UsersController extends Controller
             if($cookie['rol'] == 2) { //es un administrador
                 $user = Usuarios::where('apikey',$cookie['apikey'])->first();
                 $fecha = explode("-",substr($user->signindate,0,10));
-                return view('forms.pedidos',['datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                return view('forms.pedidos',['usuario' => $user,'datos'=>['name'=>$user->name. ' '. $user->lastname ,
                     'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
@@ -266,6 +266,29 @@ class UsersController extends Controller
         if($request->cookie('admin') != null){
             Cookie::forget('admin');
             return redirect()->route('area.index')->withCookie(Cookie::forget('admin'));
+        }
+    }
+
+    public function getProfile(Request $request){
+        if($request->cookie('admin') != null){
+            //Existe la cookie, solo falta averiguar que rol es
+            $cookie = Cookie::get('admin');
+            if($cookie['rol'] == 2) { //es un administrador
+                $user = Usuarios::where('apikey',$cookie['apikey'])->first();
+                $fecha = explode("-",substr($user->signindate,0,10));
+                return view('forms.perfil',['usuario' => $user, 'datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                    'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
+                    'photo' => $user->photo,
+                    'username' => $user->username,
+                    'permiso' => 'Administrador']
+                ]);
+            }elseif ($cookie['rol'] == 3){
+                //vendedor solo que tenga el id 3
+                return view('sale.area',['nombre'=> 'Vendedor puñetas']);
+            }
+        }else{
+            //no existe una session de administrador y lo manda al login
+            return view('login');
         }
     }
 

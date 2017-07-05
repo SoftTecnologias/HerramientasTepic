@@ -6,6 +6,7 @@ use App\Usuarios;
 use Exception;
 use File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
@@ -144,6 +145,46 @@ class UsuariosController extends Controller
             $respuesta = ["code" => 200, "msg" => "Usuario actualizado", "detail" => "success"];
         } catch (Exception $e) {
             $respuesta = ["code" => 500, "msg" => $e->getMessage(), "detail" => "error"];
+        }
+        return Response::json($respuesta);
+    }
+
+    public function areaProfileEdit(Request $request){
+        try{
+            if($request->cookie('admin') != null){
+                $cookie = Cookie::get('admin');
+                $user = Usuarios::where('apikey',$cookie['apikey'])->first();
+                //recuperamos informacion del usuario
+                //$user = Usuarios::findOrFail($id);
+                $user -> phone = $request->tel;
+                $user -> email = $request->mail;
+                //revisamos si hay contraseña
+                if($request -> input("conactual") != null){
+                    //si se encontro contraseña se puede actualizar
+                    if(Hash::check($request->input("conactual"),$user -> password)) {
+                        $user -> password = bcrypt($request -> input("nuevacon"));
+                    }else{
+                        throw  new Exception("La contraseña no Coincide");
+                    }
+                }
+
+                /*Revisamos si hay imagen cargada*/
+                if($request -> file("photo") != null){
+                    $user -> photo = 'U'.$user->id . "." . $request->file("photo")->getClientOriginalExtension();
+                    if($user->photo != "user.png"){
+                        Storage::delete("/usuarios/" . $user->photo);
+                    }
+                    $file = $request->file("photo");
+                    $nombre= "/usuarios/U" . $user->id . "." . $file -> getClientOriginalExtension();
+                    Storage::disk('local')->put($nombre, File::get($file));
+                }
+                $user->save();
+                $respuesta = ["code" => 200, "msg" => "Usuario actualizado", "detail" => "success"];
+
+            }
+
+        }catch (Exception $e){
+            $respuesta = ["code" => 500, "msg" => $e -> getMessage(), "detail" => "error"];
         }
         return Response::json($respuesta);
     }
