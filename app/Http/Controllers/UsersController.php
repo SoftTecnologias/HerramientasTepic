@@ -99,7 +99,11 @@ class UsersController extends Controller
                            ->select('logo')
                            ->where('logo', 'not like','minilogo.png')
                            ->take(12)->get();
-            return view('tienda.index',['banner'=>$banner,'productos'=> $productos,'bMarcas' => $bMarcas]);
+            $marcas = DB::table('brand')->select('id','name')->where('logo', 'not like','minilogo.png')
+                ->take(40)->orderBy('name','asc')->get();
+            $categorias = DB::table('category')->select('id','name')->take(40)->where('name','not like', 'Nota de credito')->orderBy('name','asc')->get();
+            $servicios = DB::table('services')->select('id','title')->take(10)->orderBy('title','asc')->get();
+            return view('tienda.index',['banner'=>$banner,'productos'=> $productos,'bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
         }
     }
     public function getAreaIndex(Request $request){

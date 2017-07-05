@@ -1,4 +1,4 @@
-@extends('layouts.tienda')
+@extends('layouts.tienda',['marcas'=> $marcas,'categorias'=>$categorias,'servicios'=> $servicios])
 
 <!-- Index -->
 @section('content')

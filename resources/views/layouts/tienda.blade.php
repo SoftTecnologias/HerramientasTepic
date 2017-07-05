@@ -57,8 +57,7 @@
 
         <!-- *** NAVBAR ***
 _________________________________________________________ -->
-        @include('tienda.menu')
-
+        @include('tienda.menu',['marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios])
 
         <!-- *** NAVBAR END *** -->
 
