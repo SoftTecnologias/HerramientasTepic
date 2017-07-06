@@ -11,9 +11,20 @@
 |
 */
 /* Se carga y redirecciona a la pagina que sea (si existe el apikey guardada!)*/
+//Sección de la tienda (index)
 Route::get('/', [
     'uses' => 'UsersController@getIndex',
     'as' => 'tienda.index'
+]);
+//Marcas
+Route::get('/brand/{id}',[
+    'uses' => 'UsersController@getMarcaSearch',
+    'as' => 'tienda.marcas'
+]);
+//Categorias
+Route::get('/category/{id}',[
+    'uses' => 'UsersController@getCategoriaSearch',
+    'as' => 'tienda.categorias'
 ]);
 
 /* Obtener formulario y hacer login */

@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
-
+use League\Flysystem\Exception;
 
 
 class UsersController extends Controller
@@ -99,9 +99,16 @@ class UsersController extends Controller
                            ->select('logo')
                            ->where('logo', 'not like','minilogo.png')
                            ->take(12)->get();
-            $marcas = DB::table('brand')->select('id','name')->where('logo', 'not like','minilogo.png')
-                ->take(40)->orderBy('name','asc')->get();
-            $categorias = DB::table('category')->select('id','name')->take(40)->where('name','not like', 'Nota de credito')->orderBy('name','asc')->get();
+            //Menu de marcas
+            $marcas = DB::table('brand')->select('id', 'name')
+                ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'),'>',0)
+                ->take(40)->orderBy('name', 'asc')->get();
+            //Menu de categorias
+            $categorias = DB::table('category')->select('id', 'name')->take(40)
+                ->where('name', 'not like', 'Nota de credito')
+                ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
+                ->orderBy('name', 'asc')->get();
+            //menu de servicios
             $servicios = DB::table('services')->select('id','title')->take(10)->orderBy('title','asc')->get();
             return view('tienda.index',['banner'=>$banner,'productos'=> $productos,'bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
         }
@@ -292,6 +299,96 @@ class UsersController extends Controller
         if($request->cookie('admin') != null){
             Cookie::forget('admin');
             return redirect()->route('area.index')->withCookie(Cookie::forget('admin'));
+        }
+    }
+    public function getMarcaSearch(Request $request, $id){
+        try {
+            if($request->cookie('cliente') != null){
+                //Se tomará en cuenta si hay una session de cliente para el carrito
+            }else {
+                //obtenemos todos los productos de la marca
+                $productos = DB::table('product')
+                    ->select('product.code',
+                        'product.name',
+                        'product.stock',
+                        'product.currency',
+                        'product.photo',
+                        'product.photo2',
+                        'product.photo3',
+                        'product.shortdescription',
+                        'product.longdescription',
+                        'product.quotation'
+                    //         ,'price.price1'
+                    )
+                    ->join('price','price.id', '=', 'product.priceid')
+                    ->where('photo', 'not like','minilogo.png')
+                    ->where('brandid', '=', $id)
+                    ->paginate(12);
+                //Menu de marcas
+                $marcas = DB::table('brand')->select('id', 'name')
+                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'),'>',0)
+                    ->take(40)->orderBy('name', 'asc')->get();
+                //Menu de categorias
+                $categorias = DB::table('category')->select('id', 'name')->take(40)
+                    ->where('name', 'not like', 'Nota de credito')
+                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
+                    ->orderBy('name', 'asc')->get();
+                //menu de servicios
+                $servicios = DB::table('services')->select('id', 'title')->take(10)->orderBy('title', 'asc')->get();
+                //Marca actual (Migaja)
+                $actual = Marca::find($id);
+
+            }
+            return view('tienda.marcas',['productos'=> $productos,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios, 'actual'=>$actual['name']]);
+        }catch (Exception $e){
+
+        }
+    }
+    public function getCategoriaSearch(Request $request, $id){
+        try {
+            if($request->cookie('cliente') != null){
+                //Se tomará en cuenta si hay una session de cliente para el carrito
+            }else {
+                $productos = DB::table('product')
+                    ->select('product.code',
+                        'product.name',
+                        'product.stock',
+                        'product.currency',
+                        'product.photo',
+                        'product.photo2',
+                        'product.photo3',
+                        'product.shortdescription',
+                        'product.longdescription',
+                        'product.quotation'
+                    //         ,'price.price1'
+                    )
+                    ->join('price','price.id', '=', 'product.priceid')
+                    ->where('photo', 'not like','minilogo.png')
+                    ->where('categoryid', '=', $id)
+                    ->paginate(12);
+                //Menu de marcas
+                $marcas = DB::table('brand')->select('id', 'name')
+                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'),'>',0)
+                    ->take(40)->orderBy('name', 'asc')->get();
+                //Menu de categorias
+                $categorias = DB::table('category')->select('id', 'name')->take(40)
+                    ->where('name', 'not like', 'Nota de credito')
+                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
+                    ->orderBy('name', 'asc')->get();
+                //menu de servicios
+                $servicios = DB::table('services')->select('id', 'title')->take(10)->orderBy('title', 'asc')->get();
+                $actual = Categoria::find($id);
+                //filtro por marca de los productos
+                $filtromarca = DB::table('brand')
+                               ->select('name',
+                                    DB::raw("(select COUNT(*) from product  where brand.id = product.brandid and product.categoryid = $id and product.photo not like 'minilogo.png') as total"))
+                               ->where(DB::raw("(select COUNT(*) from product where brand.id = product.brandid and product.photo not like 'minilogo.png' and product.categoryid = $id )"),'>',0)
+                               ->orderBy('name','asc')
+                               ->get();
+            }
+            return view('tienda.categorias',['productos'=> $productos,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios, 'actual'=>$actual['name'],'filtroMarcas'=> $filtromarca]);
+        }catch (Exception $e){
+
         }
     }
 
