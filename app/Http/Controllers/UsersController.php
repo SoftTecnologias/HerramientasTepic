@@ -337,9 +337,28 @@ class UsersController extends Controller
                 $servicios = DB::table('services')->select('id', 'title')->take(10)->orderBy('title', 'asc')->get();
                 //Marca actual (Migaja)
                 $actual = Marca::find($id);
+                $todasCategorias = DB::table('category')
+                    ->select('id',
+                             'name',
+                             DB::raw("(SELECT count(*) FROM product where product.categoryid = category.id AND product.photo not like 'minilogo.png' AND product.brandid = $id) as total"))
+                    ->where(DB::raw("(SELECT count(*) FROM product where product.categoryid = category.id AND product.photo not like 'minilogo.png' AND product.brandid = $id)"),'>',0)
+                    ->orderBy('name','asc')
+                    ->get();
+                $filtroCategorias=[];
+                foreach ($todasCategorias as $categoria){
+                    $subcategorias = DB::table('subcategory')
+                        ->select('id',
+                                 'name',
+                                 DB::raw("(SELECT COUNT(*) FROM product where product.subcategoryid = subcategory.id AND product.categoryid = $categoria->id
+                                           AND product.photo not like 'minilogo.png' and product.brandid = $id) as total"))
+                        ->where(DB::raw("(SELECT COUNT(*) FROM product where product.subcategoryid = subcategory.id AND product.categoryid = $categoria->id
+                                           AND product.photo not like 'minilogo.png' and product.brandid = $id)"),'>',0)
+                        ->orderBy('name','asc')->get();
+                   array_push($filtroCategorias,['id'=>$categoria->id,'name' => $categoria->name, 'total' => $categoria->total, 'subcategorias' => $subcategorias]);
+                }
 
             }
-            return view('tienda.marcas',['productos'=> $productos,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios, 'actual'=>$actual['name']]);
+            return view('tienda.marcas',['productos'=> $productos,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios, 'actual'=>$actual['name'],'filtroCategorias'=>$filtroCategorias]);
         }catch (Exception $e){
 
         }
@@ -385,8 +404,12 @@ class UsersController extends Controller
                                ->where(DB::raw("(select COUNT(*) from product where brand.id = product.brandid and product.photo not like 'minilogo.png' and product.categoryid = $id )"),'>',0)
                                ->orderBy('name','asc')
                                ->get();
+                $filtrosubcategoria = DB::table('subcategory')->select('id','name',DB::raw("(SELECT COUNT(*) FROM product WHERE subcategoryid = subcategory.id AND photo not like 'minilogo.png' AND categoryid = $id) as total"))
+                               ->where(DB::raw("(SELECT COUNT(*) FROM product WHERE subcategoryid = subcategory.id AND photo not like 'minilogo.png' AND categoryid = $id)"),'>',0)
+                               ->orderBy('name','asc')
+                               ->get();
             }
-            return view('tienda.categorias',['productos'=> $productos,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios, 'actual'=>$actual['name'],'filtroMarcas'=> $filtromarca]);
+            return view('tienda.categorias',['productos'=> $productos,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios, 'actual'=>$actual['name'],'filtroMarcas'=> $filtromarca, 'filtroSubcategoria' => $filtrosubcategoria]);
         }catch (Exception $e){
 
         }

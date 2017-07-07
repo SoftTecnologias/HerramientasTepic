@@ -128,46 +128,17 @@
                         </div>
                         <div class="panel-body">
                             <ul class="nav nav-pills nav-stacked category-menu">
-                                <li>
-                                    <a href="shop-category.html">Categoria 1<span class="badge pull-right">42</span></a>
-                                    <ul>
-                                        <li><a href="shop-category.html">subcategoria 1</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 2</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 3</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 4</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="shop-category.html">Categoria 2<span class="badge pull-right">42</span></a>
-                                    <ul>
-                                        <li><a href="shop-category.html">subcategoria 1</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 2</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 3</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 4</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="shop-category.html">Categoria 3<span class="badge pull-right">42</span></a>
-                                    <ul>
-                                        <li><a href="shop-category.html">subcategoria 1</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 2</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 3</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 4</a>
-                                        </li>
-                                    </ul>
-                                </li>
-
+                                @foreach($filtroCategorias as $categoria)
+                                    <li>
+                                        <a href="{{$categoria['id']}}">{{$categoria['name']}}<span class="badge pull-right">{{$categoria['total']}}</span></a>
+                                        <ul>
+                                            @foreach($categoria['subcategorias'] as $subcategoria)
+                                                <li><a href="{{$subcategoria->id}}">{{$subcategoria->name}} ({{$subcategoria->total}})</a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
+                                @endforeach
                             </ul>
 
                         </div>

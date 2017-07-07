@@ -82,22 +82,10 @@
                                 <li>
                                     <a href="shop-category.html">{{$actual}} <span class="badge pull-right">{{$productos->total()}}</span></a>
                                     <ul>
-                                        <li><a href="shop-category.html">subcategoria 1 (x)</a>
+                                        @foreach($filtroSubcategoria as $subcategoria)
+                                        <li><a href="{{$subcategoria->id}}">{{$subcategoria->name}} ({{$subcategoria->total}})</a>
                                         </li>
-                                        <li><a href="shop-category.html">subcategoria 2 (x)</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 3 (x)</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 4 (x)</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 5 (x)</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 6 (x)</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 7 (x)</a>
-                                        </li>
-                                        <li><a href="shop-category.html">subcategoria 8 (x)</a>
-                                        </li>
+                                        @endforeach
                                     </ul>
                                 </li>
                             </ul>
