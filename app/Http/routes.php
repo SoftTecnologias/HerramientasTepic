@@ -47,6 +47,19 @@ Route::group(['prefix' => 'area'],function(){
         'as' => 'area.perfil'
     ]);
 
+    Route::resource('/resource/servicios','ServiciosController');
+
+    Route::get('/servicios',[
+       'uses' => 'UsersController@getServiciosForm',
+        'as' => 'area.servicios'
+    ]);
+
+    Route::POST('/resource/servicios/{id}',[
+       'uses' => 'ServiciosController@update',
+        'as' => 'area.resource.servicios.update'
+    ]);
+
+
     Route::get('/',[
         'uses' => 'UsersController@getAreaIndex',
         'as' => 'area.index'
@@ -83,6 +96,17 @@ Route::group(['prefix' => 'area'],function(){
     ]);
 
     /* Recursos */
+
+    Route::resource('/resource/banner','BannerController');
+    Route::get('/banner',[
+        'uses' => 'UsersController@getBannerForm',
+        'as' => 'area.banner'
+    ]);
+    Route::post('/resource/banner/{id}',[
+        'uses' => 'BannerController@update',
+        'as' => 'area.resource.banner.update'
+    ]);
+
     Route::resource('/resource/marcas','MarcasController');
     Route::post('/resource/marcas/{id}',[
         'uses' => 'MarcasController@update',

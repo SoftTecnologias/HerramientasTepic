@@ -109,7 +109,7 @@ class UsersController extends Controller
                 ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                 ->orderBy('name', 'asc')->get();
             //menu de servicios
-            $servicios = DB::table('services')->select('id','title')->take(10)->orderBy('title','asc')->get();
+            $servicios = DB::table('services')->select('id','title','img')->take(10)->orderBy('title','asc')->get();
             return view('tienda.index',['banner'=>$banner,'productos'=> $productos,'bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
         }
     }
@@ -438,4 +438,49 @@ class UsersController extends Controller
         }
     }
 
+    public function getServiciosForm(Request $request){
+        if($request->cookie('admin') != null){
+            //Existe la cookie, solo falta averiguar que rol es
+            $cookie = Cookie::get('admin');
+            if($cookie['rol'] == 2) { //es un administrador
+                $user = Usuarios::where('apikey',$cookie['apikey'])->first();
+                $fecha = explode("-",substr($user->signindate,0,10));
+                return view('forms.servicios',['usuario' => $user, 'datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                    'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
+                    'photo' => $user->photo,
+                    'username' => $user->username,
+                    'permiso' => 'Administrador']
+                ]);
+            }elseif ($cookie['rol'] == 3){
+                //vendedor solo que tenga el id 3
+                return view('sale.area',['nombre'=> 'Vendedor puñetas']);
+            }
+        }else{
+            //no existe una session de administrador y lo manda al login
+            return view('login');
+        }
+    }
+
+    public function getBannerForm(Request $request){
+        if($request->cookie('admin') != null){
+            //Existe la cookie, solo falta averiguar que rol es
+            $cookie = Cookie::get('admin');
+            if($cookie['rol'] == 2) { //es un administrador
+                $user = Usuarios::where('apikey',$cookie['apikey'])->first();
+                $fecha = explode("-",substr($user->signindate,0,10));
+                return view('forms.banner',['usuario' => $user, 'datos'=>['name'=>$user->name. ' '. $user->lastname ,
+                    'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
+                    'photo' => $user->photo,
+                    'username' => $user->username,
+                    'permiso' => 'Administrador']
+                ]);
+            }elseif ($cookie['rol'] == 3){
+                //vendedor solo que tenga el id 3
+                return view('sale.area',['nombre'=> 'Vendedor puñetas']);
+            }
+        }else{
+            //no existe una session de administrador y lo manda al login
+            return view('login');
+        }
+    }
 }

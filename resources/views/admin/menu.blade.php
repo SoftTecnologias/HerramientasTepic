@@ -24,6 +24,14 @@
             <li><a href="{{route('area.categorias')}}"><i class='fa fa-tasks'></i> <span>Categorias</span></a></li>
             <li><a href="{{route('area.subcategorias')}}"><i class='fa fa-tags'></i><span>Subcategorias</span></a></li>
             <li><a href="{{route('area.usuarios')}}"><i class='fa fa-user'></i> <span>Usuarios</span></a></li>
+            <li><a href="{{route('area.servicios')}}"><i class='fa fa-bug'></i> <span>Servicios</span></a></li>
+            <li><a href="{{route('area.banner')}}"><i class="glyphicon glyphicon-wrench"></i> <span>Banner</span></a></li>
+
+
+<!--php artisan make:controller ServiciosController --resource
+            routes
+            Route::resource('','');
+            php artisan make:model Servicio -->
 
         </ul><!-- /.sidebar-menu -->
     </section>

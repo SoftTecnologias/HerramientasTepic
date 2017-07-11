@@ -102,7 +102,7 @@ _________________________________________________________ -->
     <!-- *** LOGIN MODAL END *** -->
 
 @yield('content')
-@include('tienda.footer')
+@include('tienda.footer',['servicios'=>$servicios])
 
 </div>
 <!-- /#all -->
