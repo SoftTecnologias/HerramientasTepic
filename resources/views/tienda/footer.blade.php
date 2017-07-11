@@ -38,48 +38,22 @@ _________________________________________________________ -->
             <h4>Servicios</h4>
 
             <div class="blog-entries">
-                <div class="item same-height-row clearfix">
-                    <div class="image same-height-always">
-                        <a href="#">
-                            <img class="img-responsive" src="img/detailsquare.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="name same-height-always">
-                        <h5><a href="#">Servicio 1</a></h5>
-                    </div>
-                </div>
 
-                <div class="item same-height-row clearfix">
-                    <div class="image same-height-always">
-                        <a href="#">
-                            <img class="img-responsive" src="img/detailsquare.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="name same-height-always">
-                        <h5><a href="#">Servicio 2</a></h5>
-                    </div>
-                </div>
 
-                <div class="item same-height-row clearfix">
-                    <div class="image same-height-always">
-                        <a href="#">
-                            <img class="img-responsive" src="img/detailsquare.jpg" alt="">
-                        </a>
+                @foreach($servicios as $servicio)
+                    <div class="item same-height-row clearfix">
+                        <div class="image same-height-always">
+                            <a href="#">
+                                <img class="img-responsive" src="img/servicios/{{$servicio->img}}" alt="">
+                            </a>
+                        </div>
+                        <div class="name same-height-always">
+                            <h5><a href="#">{{$servicio->title}}</a></h5>
+                        </div>
                     </div>
-                    <div class="name same-height-always">
-                        <h5><a href="#">Servicio 3</a></h5>
-                    </div>
-                </div>
-                <div class="item same-height-row clearfix">
-                    <div class="image same-height-always">
-                        <a href="#">
-                            <img class="img-responsive" src="img/detailsquare.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="name same-height-always">
-                        <h5><a href="#">Servicio 4</a></h5>
-                    </div>
-                </div>
+                @endforeach
+
+
 
             </div>
 

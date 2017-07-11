@@ -172,7 +172,7 @@ class ServiciosController extends Controller
         try{
             $id = base64_decode($id);
             $servicio = Servicio::findOrFail($id);
-            if($servicio->img != "minilogo.png") {
+            if($servicio->img != "servicios.png") {
                 Storage::delete("/servicios/". $servicio->img);
             }
             $servicio->delete();

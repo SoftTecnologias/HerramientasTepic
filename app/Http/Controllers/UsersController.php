@@ -109,7 +109,7 @@ class UsersController extends Controller
                 ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                 ->orderBy('name', 'asc')->get();
             //menu de servicios
-            $servicios = DB::table('services')->select('id','title')->take(10)->orderBy('title','asc')->get();
+            $servicios = DB::table('services')->select('id','title','img')->take(10)->orderBy('title','asc')->get();
             return view('tienda.index',['banner'=>$banner,'productos'=> $productos,'bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
         }
     }
