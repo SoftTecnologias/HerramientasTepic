@@ -27,6 +27,17 @@ Route::get('/category/{id}',[
     'as' => 'tienda.categorias'
 ]);
 
+//Servicios
+Route::get('/servicios',[
+   'uses' => 'UsersController@getAllServices',
+    'as' => 'tienda.servicios'
+]);
+
+Route::get('/servicios/detalle/{id}',[
+   'uses' => 'UsersController@getServiceDetail',
+    'as' => 'tienda.detalleServicio'
+]);
+
 /* Obtener formulario y hacer login */
 Route::get('/login',[
     'uses' => 'UsersController@getLoginForm',
