@@ -117,34 +117,36 @@ _________________________________________________________ -->
                     eléctricos, neumáticos, a gasolina, escaleras de tijera, extensión, convertibles, manómetros,
                     filtros, reguladores y lubricadores, ruedas y rodajas, un extenso surtido en herramienta manual y
                     calzado industrial.
-                    <span class="accent">¡Revisa nuestro catalogo de Servicios!</span>
+                    <span class="accent"><a href="{{asset('servicios')}}">¡Revisa nuestro catalogo de Servicios!</a></span>
                 </p>
 
                 <!-- *** BLOG HOMEPAGE ***
 _________________________________________________________ -->
 
                 <div class="row">
+                    <input type="hidden" value="{{$i=0}}">
+                    @foreach($servicios as $servicio)
+                        @if($i++<4)
                     <div class="col-md-3 col-sm-6">
                         <div class="box-image-text blog">
                             <div class="top">
                                 <div class="image">
-                                    <img src="http://i2.ytimg.com/vi/uToZS0kgsZw/mqdefault.jpg" alt=""
-                                         class="img-responsive"> <!-- photo -->
+                                    <img src="{{asset('img/servicios/'.$servicio->img)}}" alt=""
+                                         height="200px"> <!-- photo -->
                                 </div>
                                 <div class="bg"></div>
                                 <div class="text">
                                     <p class="buttons">
-                                        <a href="blog-post.html" class="btn btn-template-transparent-primary"><i
+                                        <a href="{{asset('servicios/detalle/'.base64_encode($servicio->id))}}" class="btn btn-template-transparent-primary"><i
                                                     class="fa fa-link"></i> Ver mas</a>
                                     </p>
                                 </div>
                             </div>
                             <div class="content">
-                                <h4><a href="blog-post.html">Reparación de Motores electricos</a></h4> <!-- Titulo -->
-                                <p class="intro">Reparación de este tipo de motores, usados comunmente dentro de otros
-                                    aparatos, tales como lavadoras, refrigeradores, autos, etc.</p>
+                                <h4><a href="blog-post.html">{{$servicio->title}}</a></h4> <!-- Titulo -->
+                                <p class="intro">{{$servicio->shortdescription}}</p>
                                 <!-- Descripcion corta -->
-                                <p class="read-more"><a href="blog-post.html" class="btn btn-template-main">Continuar
+                                <p class="read-more"><a href="{{asset('servicios/detalle/'.base64_encode($servicio->id))}}" class="btn btn-template-main">Continuar
                                         leyendo</a>
                                 </p>
                             </div>
@@ -152,89 +154,8 @@ _________________________________________________________ -->
                         <!-- /.box-image-text -->
 
                     </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="box-image-text blog">
-                            <div class="top">
-                                <div class="image">
-                                    <img src="http://www.codesolar.com/Energia-Solar/Fotos/Bombas_agua_F_32_Pedrollo.jpg"
-                                         alt="" class="img-responsive"> <!-- photo -->
-                                </div>
-                                <div class="bg"></div>
-                                <div class="text">
-                                    <p class="buttons">
-                                        <a href="blog-post.html" class="btn btn-template-transparent-primary"><i
-                                                    class="fa fa-link"></i> Ver mas</a>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="content">
-                                <h4><a href="blog-post.html">Reparación de Bombas de agua</a></h4> <!-- Titulo -->
-                                <p class="intro">Las bombas de agua, nos ayudan a bombear agua a aquellos lugares cuando
-                                    la presión del agua no es la suficiente.</p> <!-- Descripcion corta -->
-                                <p class="read-more"><a href="blog-post.html" class="btn btn-template-main">Continuar
-                                        leyendo</a>
-                                </p>
-                            </div>
-                        </div>
-                        <!-- /.box-image-text -->
-
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="box-image-text blog">
-                            <div class="top">
-                                <div class="image">
-                                    <img src="http://www.blindajesdemexico.com.mx/upload/Fotosnuevas/lol/SERVICIOMECANICO.jpg"
-                                         alt="" class="img-responsive"> <!-- photo -->
-                                </div>
-                                <div class="bg"></div>
-                                <div class="text">
-                                    <p class="buttons">
-                                        <a href="blog-post.html" class="btn btn-template-transparent-primary"><i
-                                                    class="fa fa-link"></i> Ver mas</a>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="content">
-                                <h4><a href="blog-post.html">Servicio Mecanico de automotores</a></h4> <!-- Titulo -->
-                                <p class="intro">¿Tu automovil sufrió una avería? Nosotros lo solucionamos, trae tu auto
-                                    y nosotros le hacemos un diagnostico.</p> <!-- Descripcion corta -->
-                                <p class="read-more"><a href="blog-post.html" class="btn btn-template-main">Continuar
-                                        leyendo</a>
-                                </p>
-                            </div>
-                        </div>
-                        <!-- /.box-image-text -->
-
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="box-image-text blog">
-                            <div class="top">
-                                <div class="image">
-                                    <img src="http://solariseco.com/uploads/products/3.jpg" alt=""
-                                         class="img-responsive"> <!-- photo -->
-                                </div>
-                                <div class="bg"></div>
-                                <div class="text">
-                                    <p class="buttons">
-                                        <a href="blog-post.html" class="btn btn-template-transparent-primary"><i
-                                                    class="fa fa-link"></i> Ver mas</a>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="content">
-                                <h4><a href="blog-post.html">Instalación de calentadores solares</a></h4>
-                                <!-- Titulo -->
-                                <p class="intro">¿Necesitas instalar un calentador solar? Nosotros somos la mejor
-                                    opcion, llamanos e iremos a donde estés.</p> <!-- Descripcion corta -->
-                                <p class="read-more"><a href="blog-post.html" class="btn btn-template-main">Continuar
-                                        leyendo</a>
-                                </p>
-                            </div>
-                        </div>
-                        <!-- /.box-image-text -->
-
-                    </div>
-
+                        @endif
+                    @endforeach
                 </div>
                 <!-- /.row -->
 

@@ -6,6 +6,7 @@ use App\Categoria;
 use App\Marca;
 use App\Producto;
 use App\Roles;
+use App\Servicio;
 use App\Subcategoria;
 use App\Usuarios;
 use Carbon\Carbon;
@@ -109,7 +110,7 @@ class UsersController extends Controller
                 ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                 ->orderBy('name', 'asc')->get();
             //menu de servicios
-            $servicios = DB::table('services')->select('id','title','img')->take(10)->orderBy('title','asc')->get();
+            $servicios = DB::table('services')->select('id','title','img','shortdescription')->take(10)->orderBy('title','asc')->get();
             return view('tienda.index',['banner'=>$banner,'productos'=> $productos,'bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
         }
     }
@@ -414,7 +415,93 @@ class UsersController extends Controller
 
         }
     }
+    public function getAllServices(Request $request){
+        if($request->cookie('cliente') != null){
+            //Se tomará en cuenta si hay una session de cliente para el carrito
+        }else{
+            //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
+            $productos = DB::table('product')
+                ->select('product.code',
+                    'product.name',
+                    'product.stock',
+                    'product.currency',
+                    'product.photo',
+                    'product.photo2',
+                    'product.photo3',
+                    'product.shortdescription',
+                    'product.longdescription',
+                    'product.quotation'
+                //         ,'price.price1'
+                )
+                ->join('price','price.id', '=', 'product.priceid')
+                ->where('photo', 'not like','minilogo.png')
+                ->take(12)->get();
+            $bMarcas = DB::table('brand')
+                ->select('logo')
+                ->where('logo', 'not like','minilogo.png')
+                ->take(12)->get();
+            //Menu de marcas
+            $marcas = DB::table('brand')->select('id', 'name')
+                ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'),'>',0)
+                ->take(40)->orderBy('name', 'asc')->get();
+            //Menu de categorias
+            $categorias = DB::table('category')->select('id', 'name')->take(40)
+                ->where('name', 'not like', 'Nota de credito')
+                ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
+                ->orderBy('name', 'asc')->get();
+            //menu de servicios
+            $servicios = DB::table('services')->select('id','title','shortdescription','longdescription','img')->take(10)->orderBy('title','asc')->get();
 
+            return view('tienda.servicios',['productos'=> $productos,'bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
+        }
+    }
+    public function getServiceDetail(Request $request, $id){
+        try {
+            $id = base64_decode($id);
+            if($request->cookie('cliente') != null){
+                //Se tomará en cuenta si hay una session de cliente para el carrito
+            }else {
+                //obtenemos todos los productos de la marca
+                $productos = DB::table('product')
+                    ->select('product.code',
+                        'product.name',
+                        'product.stock',
+                        'product.currency',
+                        'product.photo',
+                        'product.photo2',
+                        'product.photo3',
+                        'product.shortdescription',
+                        'product.longdescription',
+                        'product.quotation'
+                    //         ,'price.price1'
+                    )
+                    ->join('price','price.id', '=', 'product.priceid')
+                    ->where('photo', 'not like','minilogo.png')
+                    ->where('brandid', '=', $id)
+                    ->paginate(12);
+                //Menu de marcas
+                $marcas = DB::table('brand')->select('id', 'name')
+                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'),'>',0)
+                    ->take(40)->orderBy('name', 'asc')->get();
+                //Menu de categorias
+                $categorias = DB::table('category')->select('id', 'name')->take(40)
+                    ->where('name', 'not like', 'Nota de credito')
+                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
+                    ->orderBy('name', 'asc')->get();
+                //menu de servicios
+                $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img')->take(10)->orderBy('title', 'asc')->get();
+                //Marca actual (Migaja)
+                $actual =  DB::table('services')->select('id', 'title','shortdescription','longdescription','img')
+                    ->take(10)
+                    ->orderBy('title', 'asc')
+                    ->where('id','=',$id)
+                    ->get();
+            }
+            return view('tienda.detalleServicio',['productos'=> $productos,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios, 'actual'=>$actual]);
+        }catch (Exception $e){
+
+        }
+    }
     public function getProfile(Request $request){
         if($request->cookie('admin') != null){
             //Existe la cookie, solo falta averiguar que rol es
@@ -437,7 +524,6 @@ class UsersController extends Controller
             return view('login');
         }
     }
-
     public function getServiciosForm(Request $request){
         if($request->cookie('admin') != null){
             //Existe la cookie, solo falta averiguar que rol es
@@ -460,7 +546,6 @@ class UsersController extends Controller
             return view('login');
         }
     }
-
     public function getBannerForm(Request $request){
         if($request->cookie('admin') != null){
             //Existe la cookie, solo falta averiguar que rol es
