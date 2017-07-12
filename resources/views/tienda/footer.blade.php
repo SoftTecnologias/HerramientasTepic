@@ -39,18 +39,20 @@ _________________________________________________________ -->
 
             <div class="blog-entries">
 
-
+                <input type="hidden" value="{{$i=0}}">
                 @foreach($servicios as $servicio)
+                    @if($i++<4)
                     <div class="item same-height-row clearfix">
                         <div class="image same-height-always">
-                            <a href="#">
-                                <img class="img-responsive" src="img/servicios/{{$servicio->img}}" alt="">
+                            <a href="{{route('tienda.detalleServicio',base64_encode($servicio->id))}}">
+                                <img class="img-responsive" src="{{asset('img/servicios/'.$servicio->img)}}" alt="">
                             </a>
                         </div>
                         <div class="name same-height-always">
-                            <h5><a href="#">{{$servicio->title}}</a></h5>
+                            <h5><a href="{{route('tienda.detalleServicio',base64_encode($servicio->id))}}">{{$servicio->title}}</a></h5>
                         </div>
                     </div>
+                    @endif
                 @endforeach
 
 
