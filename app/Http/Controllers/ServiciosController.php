@@ -20,7 +20,7 @@ class ServiciosController extends Controller
      */
     public function index()
     {
-        return Datatables::of(collect(DB::select("select id, [title],[shortdescription],[longdescription],[img]
+        return Datatables::of(collect(DB::select("select id, [title],[shortdescription],[longdescription],[img], [show]
                                 FROM [services] order by title")))->make(true);
     }
 
@@ -52,7 +52,8 @@ class ServiciosController extends Controller
                 "title"        => $request->input('title')   ,
                 "shortdescription"        => $request->input('shortdesc')   ,
                 "longdescription"   => $request->input('longdesc')   ,
-                "img"      => "servicios.png"
+                "img"      => "servicios.png"   ,
+                "show"     => "0"
             ]);
 
             if($imgu1==null){
@@ -188,5 +189,27 @@ class ServiciosController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
+
+    public function verMiniatura(Request $request,$id){
+        try{
+            $id = base64_decode($id);
+            $servicio = Servicio::findOrFail($id);
+            $dat = $request->input('no');
+
+            $up=([
+                "show"   => $dat
+            ]);
+
+            $servicio->fill($up);
+            $servicio->save();
+
+            /*No hay manera de revisar (hasta el momento) para revisar que cambiaron todos asi que los actualizaré a ambos*/
+
+            $respuesta = ["code"=>200, "msg"=>"Servicio Actualizado","detail"=>"success"];
+        }catch(Exception $e){
+            $respuesta = ["code"=>500, "msg"=>$e->getMessage(),"detail"=>"error"];
+        }
+        return Response::json($respuesta);
+    }
 
 }

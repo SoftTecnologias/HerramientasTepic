@@ -110,7 +110,7 @@ class UsersController extends Controller
                 ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                 ->orderBy('name', 'asc')->get();
             //menu de servicios
-            $servicios = DB::table('services')->select('id','title','img','shortdescription')->take(10)->orderBy('title','asc')->get();
+            $servicios = DB::table('services')->select('id','title','img','shortdescription','show')->take(10)->orderBy('title','asc')->get();
             return view('tienda.index',['banner'=>$banner,'productos'=> $productos,'bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
         }
     }
@@ -304,6 +304,7 @@ class UsersController extends Controller
     }
     public function getMarcaSearch(Request $request, $id){
         try {
+            $id = base64_decode($id);
             if($request->cookie('cliente') != null){
                 //Se tomará en cuenta si hay una session de cliente para el carrito
             }else {
@@ -335,7 +336,7 @@ class UsersController extends Controller
                     ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                     ->orderBy('name', 'asc')->get();
                 //menu de servicios
-                $servicios = DB::table('services')->select('id', 'title')->take(10)->orderBy('title', 'asc')->get();
+                $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','show')->take(10)->orderBy('title', 'asc')->get();
                 //Marca actual (Migaja)
                 $actual = Marca::find($id);
 
@@ -347,6 +348,7 @@ class UsersController extends Controller
     }
     public function getCategoriaSearch(Request $request, $id){
         try {
+            $id = base64_decode($id);
             if($request->cookie('cliente') != null){
                 //Se tomará en cuenta si hay una session de cliente para el carrito
             }else {
@@ -377,7 +379,7 @@ class UsersController extends Controller
                     ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                     ->orderBy('name', 'asc')->get();
                 //menu de servicios
-                $servicios = DB::table('services')->select('id', 'title')->take(10)->orderBy('title', 'asc')->get();
+                $servicios = DB::table('services')->select('id', 'title','shortdescriptio','longdescription','img','show')->take(10)->orderBy('title', 'asc')->get();
                 $actual = Categoria::find($id);
                 //filtro por marca de los productos
                 $filtromarca = DB::table('brand')
@@ -427,7 +429,7 @@ class UsersController extends Controller
                 ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                 ->orderBy('name', 'asc')->get();
             //menu de servicios
-            $servicios = DB::table('services')->select('id','title','shortdescription','longdescription','img')->take(10)->orderBy('title','asc')->get();
+            $servicios = DB::table('services')->select('id','title','shortdescription','longdescription','img','show')->take(10)->orderBy('title','asc')->get();
 
             return view('tienda.servicios',['productos'=> $productos,'bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
         }
@@ -466,7 +468,7 @@ class UsersController extends Controller
                     ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                     ->orderBy('name', 'asc')->get();
                 //menu de servicios
-                $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img')->take(10)->orderBy('title', 'asc')->get();
+                $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','show')->take(10)->orderBy('title', 'asc')->get();
                 //Marca actual (Migaja)
                 $actual =  DB::table('services')->select('id', 'title','shortdescription','longdescription','img')
                     ->take(10)
