@@ -38,7 +38,7 @@
                                                 <ul>
                                                     @foreach($column as $item)
                                                         <li>
-                                                            <a href="{{route('tienda.marcas',base64_encode($item->id))}}">{{$item->name}}</a>
+                                                            <a href="{{route('tienda.marcas',$item->id)}}">{{$item->name}}</a>
                                                         </li>
                                                     @endforeach
                                                 </ul>
@@ -61,7 +61,7 @@
                                             <div class="col-sm-3">
                                                 <ul>
                                                     @foreach($columna as $item)
-                                                        <li><a href="{{route('tienda.categorias',base64_encode($item->id))}}">{{$item->name}}</a>
+                                                        <li><a href="{{route('tienda.categorias',$item->id)}}">{{$item->name}}</a>
                                                         </li>
                                                     @endforeach
                                                 </ul>
@@ -82,7 +82,7 @@
                             <input type="hidden" value="{{$i =0}}">
                             @foreach($servicios as $servicio)
                                 @if($i++<4)
-                                <li><a href="{{route('tienda.detalleServicio',base64_encode($servicio->id))}}">{{$servicio->title}}</a>
+                                <li><a href="{{route('tienda.detalleServicio',$servicio->id)}}">{{$servicio->title}}</a>
                                 </li>
                                 @endif
                             @endforeach

@@ -45,12 +45,12 @@ _________________________________________________________ -->
                     @if($i<4 && $servicio->show)
                     <div class="item same-height-row clearfix">
                         <div class="image same-height-always">
-                            <a href="{{route('tienda.detalleServicio',base64_encode($servicio->id))}}">
+                            <a href="{{route('tienda.detalleServicio',$servicio->id)}}">
                                 <img class="img-responsive" src="{{asset('img/servicios/'.$servicio->img)}}" alt="">
                             </a>
                         </div>
                         <div class="name same-height-always">
-                            <h5><a href="{{route('tienda.detalleServicio',base64_encode($servicio->id))}}">{{$servicio->title}}</a></h5>
+                            <h5><a href="{{route('tienda.detalleServicio',$servicio->id)}}">{{$servicio->title}}</a></h5>
                         </div>
                     </div>
                         <?php $i++; ?>

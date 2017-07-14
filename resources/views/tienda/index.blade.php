@@ -139,16 +139,16 @@ _________________________________________________________ -->
                                 <div class="bg"></div>
                                 <div class="text">
                                     <p class="buttons">
-                                        <a href="{{asset('servicios/detalle/'.base64_encode($servicio->id))}}" class="btn btn-template-transparent-primary"><i
+                                        <a href="{{asset('servicios/detalle/'.$servicio->id)}}" class="btn btn-template-transparent-primary"><i
                                                     class="fa fa-link"></i> Ver mas</a>
                                     </p>
                                 </div>
                             </div>
                             <div class="content">
-                                <h4><a href="blog-post.html">{{$servicio->title}}</a></h4> <!-- Titulo -->
+                                <h4><a href="{{asset('servicios/detalle/'.$servicio->id)}}">{{$servicio->title}}</a></h4> <!-- Titulo -->
                                 <p class="intro">{{$servicio->shortdescription}}</p>
                                 <!-- Descripcion corta -->
-                                <p class="read-more"><a href="{{asset('servicios/detalle/'.base64_encode($servicio->id))}}" class="btn btn-template-main">Continuar
+                                <p class="read-more"><a href="{{asset('servicios/detalle/'.$servicio->id)}}" class="btn btn-template-main">Continuar
                                         leyendo</a>
                                 </p>
                             </div>
@@ -193,6 +193,9 @@ _________________________________________________________ -->
             </div>
         </div>
     </section>
+
+
+
     <?php $items=0;?>
     @foreach($productos as $producto)
         <!-- Modal correspondiente al producto -->

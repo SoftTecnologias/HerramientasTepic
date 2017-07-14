@@ -20,8 +20,8 @@ class MarcasController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {   $marcas = Marca::all();
-        return Datatables::of($marcas)->make(true);
+    {    return Datatables::of(collect(DB::select("select id, [name],[logo],[authorized],[total_sales]
+                                FROM [brand]")))->make(true);
     }
 
     /**
@@ -48,7 +48,9 @@ class MarcasController extends Controller
 
             $brandid= DB::table("brand")->insertGetId([
                 "name" => $request->input("name"),
-                "logo" => "minilogo.png"
+                "logo" => "minilogo.png",
+                "authorized" => 0,
+                "total_sales" => 0
             ]);
 
             if($imgu1==null){
@@ -171,6 +173,28 @@ class MarcasController extends Controller
             $respuesta = ["code"=>200, "msg"=>'La marca ha sido eliminada', 'detail' => 'success'];
         }catch(Exception $e){
             $respuesta = ["code"=>500, "msg"=>$e->getMessage(), 'detail' => 'warning'];
+        }
+        return Response::json($respuesta);
+    }
+
+    public function verMiniatura(Request $request,$id){
+        try{
+            $id = base64_decode($id);
+            $marca = Marca::findOrFail($id);
+            $dat = $request->input('no');
+
+            $up=([
+                "authorized"   => $dat
+            ]);
+
+            $marca->fill($up);
+            $marca->save();
+
+            /*No hay manera de revisar (hasta el momento) para revisar que cambiaron todos asi que los actualizaré a ambos*/
+
+            $respuesta = ["code"=>200, "msg"=>"Marca Actualizada","detail"=>"success"];
+        }catch(Exception $e){
+            $respuesta = ["code"=>500, "msg"=>$e->getMessage(),"detail"=>"error"];
         }
         return Response::json($respuesta);
     }

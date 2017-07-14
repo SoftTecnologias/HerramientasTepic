@@ -38,6 +38,7 @@ Route::get('/servicios/detalle/{id}',[
     'as' => 'tienda.detalleServicio'
 ]);
 
+
 /* Obtener formulario y hacer login */
 Route::get('/login',[
     'uses' => 'UsersController@getLoginForm',
@@ -74,6 +75,10 @@ Route::group(['prefix' => 'area'],function(){
         'as' => 'area.resource.servicio.verMiniatura'
     ]);
 
+    Route::POST('/resource/marcaauthorizada/{id}',[
+        'uses' => 'MarcasController@verMiniatura',
+        'as' => 'area.resource.marca.verMiniatura'
+    ]);
 
     Route::get('/',[
         'uses' => 'UsersController@getAreaIndex',
