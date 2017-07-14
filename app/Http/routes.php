@@ -27,11 +27,11 @@ Route::get('/category/{id}',[
     'as' => 'tienda.categorias'
 ]);
 
-/* Obtener formulario y hacer login */
-Route::get('/login',[
-    'uses' => 'UsersController@getLoginForm',
-    'as' => 'panel.login'
+Route::get('/category/prueba/{dato}',[
+    'uses' => 'UsersController@getDato',
+    'as' => 'tienda.dato'
 ]);
+/* Obtener formulario y hacer login */
 
 Route::post('/login',[
     'uses' => 'UsersController@doLogin',

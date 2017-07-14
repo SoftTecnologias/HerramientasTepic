@@ -38,6 +38,7 @@
     <link rel="apple-touch-icon" sizes="120x120" href="img/apple-touch-icon-120x120.png"/>
     <link rel="apple-touch-icon" sizes="144x144" href="img/apple-touch-icon-144x144.png"/>
     <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icon-152x152.png"/>
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
     @yield('styles')
     <!-- owl carousel css -->
     {{ Html::style('css/tienda/owl.carousel.css')}}

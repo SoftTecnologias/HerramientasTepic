@@ -41,7 +41,7 @@ _________________________________________________________ -->
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
                         <a href="#">
-                            <img class="img-responsive" src="img/detailsquare.jpg" alt="">
+                            <img class="img-responsive" src="{{asset('img/minilogo.png')}}" alt="">
                         </a>
                     </div>
                     <div class="name same-height-always">
@@ -52,7 +52,7 @@ _________________________________________________________ -->
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
                         <a href="#">
-                            <img class="img-responsive" src="img/detailsquare.jpg" alt="">
+                            <img class="img-responsive" src="{{asset('img/minilogo.png')}}" alt="">
                         </a>
                     </div>
                     <div class="name same-height-always">
@@ -63,7 +63,7 @@ _________________________________________________________ -->
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
                         <a href="#">
-                            <img class="img-responsive" src="img/detailsquare.jpg" alt="">
+                            <img class="img-responsive" src="{{asset('img/minilogo.png')}}" alt="">
                         </a>
                     </div>
                     <div class="name same-height-always">
@@ -73,7 +73,7 @@ _________________________________________________________ -->
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
                         <a href="#">
-                            <img class="img-responsive" src="img/detailsquare.jpg" alt="">
+                            <img class="img-responsive" src="{{asset('img/minilogo.png')}}" alt="">
                         </a>
                     </div>
                     <div class="name same-height-always">
@@ -117,47 +117,47 @@ _________________________________________________________ -->
             <div class="photostream">
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B17.jpg')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare2.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B18.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare3.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B19.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare3.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B20.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare2.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B21.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare2.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B22.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B23.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare2.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B24.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare3.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B25.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
             </div>

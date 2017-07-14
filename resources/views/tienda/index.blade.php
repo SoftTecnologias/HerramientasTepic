@@ -251,7 +251,7 @@ _________________________________________________________ -->
             <div class="row">
                 <div class="col-md-12">
                     <div class="heading text-center">
-                        <h2>Las mejores marcas </h2>
+                        <h2>Distribuidor autorizado </h2>
                     </div>
 
                     <ul class="owl-carousel customers">
