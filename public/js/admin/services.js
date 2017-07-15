@@ -40,8 +40,8 @@ $(function(){
 
                 str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6'" +
                     "onclick='deleteService(\""+Base64.encode(row['id'])+"\")'><i class='fa fa-trash-o'></i></button>";
-                 str += (row['show'] ==1) ?  "<input type='checkbox' id='check' name='check' checked onchange='verMiniatura("+"\""+Base64.encode(row['id'])+"\""+")'>":
-                       "<input type='checkbox' id='check' name='check' onchange='verMiniatura("+"\""+Base64.encode(row['id'])+"\""+")'>";
+                 str += (row['show'] ==1) ?  "<input type='checkbox' id='check' name='check' checked onchange='verMiniatura("+"\""+Base64.encode(row['id'])+"\""+")'>Mostrar":
+                       "<input type='checkbox' id='check' name='check' onchange='verMiniatura("+"\""+Base64.encode(row['id'])+"\""+")'>Mostrar";
                 str += "</div>";
                 return str;
             }}

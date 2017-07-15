@@ -31,8 +31,8 @@ $(function(){
                    str  = "<div align='center'>";
                    str +=   "<button id='btnEditar' class='btn btn-primary block col-md-3' onclick='showBrand(" + row['id'] +", \""+row['name']+"\", \""+row['logo']+"\")'><i class='glyphicon glyphicon-edit'></i></button>";
                    str +=   "<button id='btnEliminar' class='btn btn-danger block col-md-3' onclick='deleteBrand(" + row['id'] + ")'><i class='fa fa-trash-o'></i></button>";
-            str += (row['authorized'] ==1) ?  "<input type='checkbox' id='check' name='check' checked onchange='verMiniatura("+"\""+Base64.encode(row['id'])+"\""+")'>":
-                       "<input type='checkbox' id='check' name='check' onchange='verMiniatura("+"\""+Base64.encode(row['id'])+"\""+")'>";
+            str += (row['authorized'] ==1) ?  "<input type='checkbox' id='check' name='check' checked onchange='verMiniatura("+"\""+Base64.encode(row['id'])+"\""+")'>Distribuidor Authorizado":
+                       "<input type='checkbox' id='check' name='check' onchange='verMiniatura("+"\""+Base64.encode(row['id'])+"\""+")'>Distribuidor Authorizado";
                    str += "</div>";
                    return str;
                }
