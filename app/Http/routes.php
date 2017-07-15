@@ -27,9 +27,15 @@ Route::get('/category/{id}',[
     'as' => 'tienda.categorias'
 ]);
 
-Route::get('/category/prueba/{dato}',[
-    'uses' => 'UsersController@getDato',
-    'as' => 'tienda.dato'
+//Servicios
+Route::get('/servicios',[
+   'uses' => 'UsersController@getAllServices',
+    'as' => 'tienda.servicios'
+]);
+
+Route::get('/servicios/detalle/{id}',[
+   'uses' => 'UsersController@getServiceDetail',
+    'as' => 'tienda.detalleServicio'
 ]);
 /* Obtener formulario y hacer login */
 
@@ -46,6 +52,19 @@ Route::group(['prefix' => 'area'],function(){
         'uses' => 'UsersController@getProfile',
         'as' => 'area.perfil'
     ]);
+
+    Route::resource('/resource/servicios','ServiciosController');
+
+    Route::get('/servicios',[
+       'uses' => 'UsersController@getServiciosForm',
+        'as' => 'area.servicios'
+    ]);
+
+    Route::POST('/resource/servicios/{id}',[
+       'uses' => 'ServiciosController@update',
+        'as' => 'area.resource.servicios.update'
+    ]);
+
 
     Route::get('/',[
         'uses' => 'UsersController@getAreaIndex',
@@ -83,6 +102,17 @@ Route::group(['prefix' => 'area'],function(){
     ]);
 
     /* Recursos */
+
+    Route::resource('/resource/banner','BannerController');
+    Route::get('/banner',[
+        'uses' => 'UsersController@getBannerForm',
+        'as' => 'area.banner'
+    ]);
+    Route::post('/resource/banner/{id}',[
+        'uses' => 'BannerController@update',
+        'as' => 'area.resource.banner.update'
+    ]);
+
     Route::resource('/resource/marcas','MarcasController');
     Route::post('/resource/marcas/{id}',[
         'uses' => 'MarcasController@update',

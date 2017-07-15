@@ -79,10 +79,14 @@
                         <a href="javascript: void(0)" class="dropdown-toggle" data-toggle="dropdown">Servicios <b
                                     class="caret"></b></a>
                         <ul class="dropdown-menu">
+                            <input type="hidden" value="{{$i =0}}">
                             @foreach($servicios as $servicio)
-                                <li><a href="{{$servicio->id}}">{{$servicio->title}}</a>
+                                @if($i++<4)
+                                <li><a href="{{route('tienda.detalleServicio',$servicio->id)}}">{{$servicio->title}}</a>
                                 </li>
+                                @endif
                             @endforeach
+                            <li><a href="{{route('tienda.servicios')}}">Ver Todos</a></li>
                         </ul>
                     </li>
                 </ul>

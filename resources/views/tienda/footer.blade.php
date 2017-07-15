@@ -38,48 +38,23 @@ _________________________________________________________ -->
             <h4>Servicios</h4>
 
             <div class="blog-entries">
-                <div class="item same-height-row clearfix">
-                    <div class="image same-height-always">
-                        <a href="#">
-                            <img class="img-responsive" src="{{asset('img/minilogo.png')}}" alt="">
-                        </a>
-                    </div>
-                    <div class="name same-height-always">
-                        <h5><a href="#">Servicio 1</a></h5>
-                    </div>
-                </div>
 
-                <div class="item same-height-row clearfix">
-                    <div class="image same-height-always">
-                        <a href="#">
-                            <img class="img-responsive" src="{{asset('img/minilogo.png')}}" alt="">
-                        </a>
-                    </div>
-                    <div class="name same-height-always">
-                        <h5><a href="#">Servicio 2</a></h5>
-                    </div>
-                </div>
 
-                <div class="item same-height-row clearfix">
-                    <div class="image same-height-always">
-                        <a href="#">
-                            <img class="img-responsive" src="{{asset('img/minilogo.png')}}" alt="">
-                        </a>
+                <input type="hidden" value="{{$i=0}}">
+                @foreach($servicios as $servicio)
+                    @if($i++<4)
+                    <div class="item same-height-row clearfix">
+                        <div class="image same-height-always">
+                            <a href="{{route('tienda.detalleServicio',base64_encode($servicio->id))}}">
+                                <img class="img-responsive" src="{{asset('img/servicios/'.$servicio->img)}}" alt="">
+                            </a>
+                        </div>
+                        <div class="name same-height-always">
+                            <h5><a href="{{route('tienda.detalleServicio',$servicio->id)}}">{{$servicio->title}}</a></h5>
+                        </div>
                     </div>
-                    <div class="name same-height-always">
-                        <h5><a href="#">Servicio 3</a></h5>
-                    </div>
-                </div>
-                <div class="item same-height-row clearfix">
-                    <div class="image same-height-always">
-                        <a href="#">
-                            <img class="img-responsive" src="{{asset('img/minilogo.png')}}" alt="">
-                        </a>
-                    </div>
-                    <div class="name same-height-always">
-                        <h5><a href="#">Servicio 4</a></h5>
-                    </div>
-                </div>
+                    @endif
+                @endforeach
 
             </div>
 
