@@ -58,7 +58,7 @@
                             <h3 class="panel-title">Subcategorias</h3>
                         </div>
                         <div class="panel-body">
-                            <ul class="nav nav-pills nav-stacked category">
+                            <ul class="nav nav-pills nav-stacked subcategory">
                                     @foreach($filtroSubcategoria as $subcategoria)
                                     <li data-val="{{$subcategoria->id}}"><a data-val="{{$subcategoria->id}}"href="#"  class="fsubcategory">{{$subcategoria->name}} ({{$subcategoria->total}})</a>
                                     </li>

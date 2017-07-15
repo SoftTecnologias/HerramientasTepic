@@ -501,7 +501,7 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img')->take(10)->orderBy('title', 'asc')->get();
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
@@ -690,7 +690,7 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img')->take(10)->orderBy('title', 'asc')->get();
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
