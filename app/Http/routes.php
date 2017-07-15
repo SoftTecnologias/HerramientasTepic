@@ -65,6 +65,16 @@ Route::group(['prefix' => 'area'],function(){
         'as' => 'area.resource.servicios.update'
     ]);
 
+    Route::POST('/resource/servicio/{id}',[
+       'uses' => 'serviciosController@verMiniatura',
+        'as' => 'area.resource.servicio.verMiniatura'
+    ]);
+
+    Route::POST('/resource/marcaauthorizada/{id}',[
+       'uses' => 'MarcasController@verMiniatura',
+        'as' => 'area.resource.marca.verMiniatura'
+    ]);
+
 
     Route::get('/',[
         'uses' => 'UsersController@getAreaIndex',

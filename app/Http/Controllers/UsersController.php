@@ -55,6 +55,7 @@ class UsersController extends Controller
             $bMarcas = DB::table('brand')
                 ->select('logo')
                 ->where('logo', 'not like', 'minilogo.png')
+                ->where('authorized','=',1)
                 ->take(12)->get();
             //Menu de marcas
             $marcas = DB::table('brand')->select('id', 'name')
@@ -72,7 +73,7 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','show')->take(10)->orderBy('title', 'asc')->get();
             //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
@@ -737,8 +738,15 @@ class UsersController extends Controller
                 ->orderBy('name', 'asc')->get();
             //menu de servicios
             $servicios = DB::table('services')->select('id','title','shortdescription','longdescription','img')->take(10)->orderBy('title','asc')->get();
-            foreach ($servicios as $servicio)
-                $servicio->id = base64_encode($servicio->id);
+            foreach ($servicios as $servicio){
+                $servicio->id = base64_encode($servicio->id);}
+
+            foreach ($categorias as $c){
+                $c->id = base64_encode($c->id);}
+            foreach ($marcas as $m){
+                $m->id = base64_encode($m->id);}
+            foreach ($productos as $p){
+                $p->code = base64_encode($p->code);}
             return view('tienda.servicios',['productos'=> $productos,'bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
         }
     }
@@ -785,8 +793,14 @@ class UsersController extends Controller
                     ->where('id','=',$id)
                     ->get();
             }
-            foreach ($servicios as $servicio)
-                $servicio->id = base64_encode($servicio->id);
+            foreach ($servicios as $servicio){
+                $servicio->id = base64_encode($servicio->id);}
+            foreach ($categorias as $c){
+                $c->id = base64_encode($c->id);}
+            foreach ($marcas as $m){
+                $m->id = base64_encode($m->id);}
+            foreach ($productos as $p){
+                $p->code = base64_encode($p->code);}
             return view('tienda.detalleServicio',['productos'=> $productos,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios, 'actual'=>$actual]);
         }catch (Exception $e){
 

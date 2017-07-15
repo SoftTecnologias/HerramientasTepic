@@ -125,8 +125,10 @@ _________________________________________________________ -->
 
                 <div class="row">
                     <input type="hidden" value="{{$i=0}}">
-                    @foreach($servicios as $servicio)
-                        @if($i++<4)
+                    @foreach(array_chunk($servicios,4) as $rows)
+                    <div class="row">
+                        @foreach($rows as $servicio)
+                        @if($servicio->show)
                     <div class="col-md-3 col-sm-6">
                         <div class="box-image-text blog">
                             <div class="top">
@@ -155,6 +157,8 @@ _________________________________________________________ -->
 
                     </div>
                         @endif
+                        @endforeach
+                        </div>
                     @endforeach
                 </div>
                 <!-- /.row -->

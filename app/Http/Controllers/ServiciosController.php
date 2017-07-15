@@ -20,7 +20,7 @@ class ServiciosController extends Controller
      */
     public function index()
     {
-        return Datatables::of(collect(DB::select("select id, [title],[shortdescription],[longdescription],[img]
+        return Datatables::of(collect(DB::select("select id, [title],[shortdescription],[longdescription],[img],show
                                 FROM [services] order by title")))->make(true);
     }
 
@@ -184,6 +184,23 @@ class ServiciosController extends Controller
         return Response::json($respuesta);
     }
 
+    public function verMiniatura(Request $request, $id){
+        try {
+            $id = base64_decode($id);
+            $marca = Servicio::findOrFail($id);
+            $dat = $request->input('no');
+            $up=([
+                    "show" => $dat
+                ]);
+            $marca->fill($up);
+            $marca->save();
+
+           $respuesta = ["code"=>200, "msg"=>"Servicio actualizado","detail"=>"success"];
+        }catch(Exception $e){
+            $respuesta = ["code"=>500, "msg"=>$e->getMessage(),"detail"=>"error"];
+        }
+        return Response::json($respuesta);
+    }
     /**
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View

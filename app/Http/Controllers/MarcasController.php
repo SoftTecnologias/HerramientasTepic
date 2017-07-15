@@ -20,8 +20,8 @@ class MarcasController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {   $marcas = Marca::all();
-        return Datatables::of($marcas)->make(true);
+    {   
+        return Datatables::of(collect(DB::select("select id, name, logo, authorized, total_sales from brand")))->make(true);
     }
 
     /**
@@ -174,4 +174,22 @@ class MarcasController extends Controller
         }
         return Response::json($respuesta);
     }
+
+    public function verMiniatura(Request $request, $id){
+        try {
+            $id = base64_decode($id);
+            $marca = Marca::findOrFail($id);
+            $dat = $request->input('no');
+            $up=([
+                    "authorized" => $dat
+                ]);
+            $marca->fill($up);
+            $marca->save();
+
+           $respuesta = ["code"=>200, "msg"=>"Marca actualizado","detail"=>"success"];
+        }catch(Exception $e){
+            $respuesta = ["code"=>500, "msg"=>$e->getMessage(),"detail"=>"error"];
+        }
+        return Response::json($respuesta);
+    } 
 }

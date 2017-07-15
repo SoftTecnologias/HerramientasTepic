@@ -40,6 +40,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
+                                    <form class="form-horizontal" id="divc" enctype="multipart/form-data"> <input type="hidden" id="no" name="no" class="form-control input-md"></form>
                                         <table id="brandTable" class="table table-bordered table-hover dataTable table-responsive"
                                                role="grid" aria-describedby="Marcas_info">
                                             <thead>

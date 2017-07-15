@@ -52,7 +52,7 @@
                             <div class="text">
                                 <p class="hidden-sm hidden-lg hidden-md">{{$ser->shortdescription}}</p>
                                 <p class="buttons">
-                                    <a href="{{route('tienda.detalleServicio',base64_encode($ser->id))}}" class="btn btn-template-transparent-primary">
+                                    <a href="{{route('tienda.detalleServicio',$ser->id)}}" class="btn btn-template-transparent-primary">
                                     <i class="fa fa-link"></i> Ver mas</a>
                                 </p>
                             </div>
