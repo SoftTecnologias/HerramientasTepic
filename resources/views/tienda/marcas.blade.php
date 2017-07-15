@@ -88,7 +88,6 @@
                         </div>
 
                         <div class="panel-body">
-
                             <ul class="nav nav-pills nav-stacked price">
                                 <li data-val="MC0zOTk="><a href="#"  class="fprice" data-val="MC0zOTk=">$ 0.00 - $ 399.00 </a>
                                 </li>
@@ -103,8 +102,6 @@
                                 <li data-val="MjAwMA=="><a href="#"  class="fprice" data-val="MjAwMA==">$ 2000.00 + </a>
                                 </li>
                             </ul>
-
-
                         </div>
                     </div>
                     <div class="panel panel-default sidebar-menu">

@@ -7,12 +7,20 @@ $(function(){
     var uPath = url.split("/");
     var pfinal = uPath.length-1;
     //Desencriptamos la URL
+<<<<<<< HEAD
     asignaFiltros(uPath[pfinal]);
+=======
+    asignaFiltros((uPath[pfinal].indexOf('?') == -1) ? uPath[pfinal] : uPath[pfinal].split('?')[0]);
+>>>>>>> CarlosDeveloper
     // Asignamos los eventos a los filtros
     //Filtro de Precios
     $('.fprice').on('click',function(){
         if( $(this).hasClass('active') )
+<<<<<<< HEAD
             removeUrlParameters('precio',$(this).data('val'),uPath[pfinal]);
+=======
+            removeUrlParameters('precio',$(this).data('val'),(uPath[pfinal].indexOf('?') == -1) ? uPath[pfinal] : uPath[pfinal].split('?')[0]);
+>>>>>>> CarlosDeveloper
         else
             toUrlParameters('precio',$(this).data('val'));
     });
@@ -80,7 +88,11 @@ function toUrlParameters(name,value) {
     });
 
 
+<<<<<<< HEAD
    document.location = prueba.replace(uPath[pfinal],"").replace("#","")+encodeURI(Base64.encode(base+"/"+searchurl.substr(0,searchurl.length-1)));
+=======
+   document.location = ((prueba.replace(uPath[pfinal],"").replace("#","").indexOf('?') == -1 )? prueba.replace(uPath[pfinal],"").replace("#","") : prueba.replace(uPath[pfinal],"").replace("#","").split('?')[0])+encodeURI(Base64.encode(base+"/"+searchurl.substr(0,searchurl.length-1)));
+>>>>>>> CarlosDeveloper
     ;
 }
 
@@ -128,8 +140,12 @@ function removeUrlParameters(name, value, urlBusqueda){
         busqueda+=  "/" + nuevo;
     }
 
+<<<<<<< HEAD
     document.location = url.replace(urlBusqueda,"").replace("#","")+encodeURI(Base64.encode(busqueda));
 
+=======
+    document.location =   ( (url.replace(urlBusqueda,"").replace("#","").indexOf('?') == -1) ? url.replace(urlBusqueda,"").replace("#","") : url.replace(urlBusqueda,"").replace("#","").split('?')[0] ) +encodeURI(Base64.encode(busqueda));
+>>>>>>> CarlosDeveloper
 
 }
 

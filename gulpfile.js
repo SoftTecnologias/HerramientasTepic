@@ -14,3 +14,19 @@ var elixir = require('laravel-elixir');
 elixir(function(mix) {
     mix.sass('app.scss');
 });
+
+var gulp = require('gulp'),
+    js_obfuscator = require('gulp-js-obfuscator');
+
+var path = {
+    build: {
+        js: 'out/',
+    },
+    src: {
+        js: '/js/**/*.js',
+    }
+};
+
+gulp.src(path.src.js)
+    .pipe(js_obfuscator({}, ["**/*.js"]))
+    .pipe(gulp.dest(path.build.js));

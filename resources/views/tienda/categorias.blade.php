@@ -5,14 +5,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-7">
-                    <h1>{{$actual}}</h1>
+                    <h1>{{$actual['name']}}</h1>
                 </div>
                 <div class="col-md-5">
                     <ul class="breadcrumb">
                         <li><a href="index.html">Inicio</a>
                         </li>
                         <li>categorias</li>
-                        <li>{{$actual}}</li>
+                        <li>{{$actual['name']}}</li>
                     </ul>
 
                 </div>
@@ -32,42 +32,24 @@
 
                         <div class="panel-heading">
                             <h3 class="panel-title clearfix">Precios</h3>
-                            <a class="btn btn-xs btn-danger pull-right" href="#"><i class="fa fa-times-circle"></i>
-                                <span class="hidden-sm">Clear</span></a>
+                            <a class="btn btn-xs btn-danger pull-right" href="{{route('tienda.categorias',[base64_encode($actual['id'])])}}"><i class="fa fa-times-circle"></i>
+                                <span class="hidden-sm">Limpiar filtros</span></a>
                         </div>
-
                         <div class="panel-body">
-
-                            <form id="filtroPrecios">
-                                <div class="form-group">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" data-val="MQ==" class="fprice">$ 0.00 - $ 299.00
-                                        </label>
-                                    </div>
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" data-val="Mg==" class="fprice"> $ 300.00 - $ 599.00
-                                        </label>
-                                    </div>
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" data-val="Mw==" class="fprice"> $ 600.00 - $ 999.00
-                                        </label>
-                                    </div>
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" data-val="NA==" class="fprice"> $ 1000.00 - $ 1499.00
-                                        </label>
-                                    </div>
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" data-val="NQ==" class="fprice"> + $ 1500.00
-                                        </label>
-                                    </div>
-                                </div>
-
-                            </form>
+                            <ul class="nav nav-pills nav-stacked price">
+                                <li data-val="MC0zOTk="><a href="#"  class="fprice" data-val="MC0zOTk=">$ 0.00 - $ 399.00 </a>
+                                </li>
+                                <li data-val="NDAwLTc5OQ=="><a href="#"  class="fprice" data-val="NDAwLTc5OQ==">$ 400.00 - $ 799.00 </a>
+                                </li>
+                                <li data-val="ODAwLTExOTk=" ><a href="#" class="fprice" data-val="ODAwLTExOTk=">$ 800.00 - $ 1199.00 </a>
+                                </li>
+                                <li data-val="MTIwMC0xNTk5"><a href="#"  class="fprice" data-val="MTIwMC0xNTk5">$ 1200.00 - $ 1599.00 </a>
+                                </li>
+                                <li data-val="MTYwMC0xOTk5"><a href="#" class="fprice" data-val="MTYwMC0xOTk5">$ 1600.00 - $ 1999.00 </a>
+                                </li>
+                                <li data-val="MjAwMA=="><a href="#"  class="fprice" data-val="MjAwMA==">$ 2000.00 + </a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     <div class="panel panel-default sidebar-menu">
@@ -76,51 +58,31 @@
                             <h3 class="panel-title">Subcategorias</h3>
                         </div>
                         <div class="panel-body">
-                            <form id="filtroSubcategorias">
-                                <div class="form-group nav nav-pills nav-stacked category-menu">
-                                    <a href="shop-category.html">{{$actual}} <span
-                                                class="badge pull-right">{{$productos->total()}}</span></a>
+                            <ul class="nav nav-pills nav-stacked category">
                                     @foreach($filtroSubcategoria as $subcategoria)
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="{{$subcategoria->id}}"
-                                                       class="fprice">{{$subcategoria->name}} ({{$subcategoria->total}})
-                                            </label>
-                                        </div>
+                                    <li data-val="{{$subcategoria->id}}"><a data-val="{{$subcategoria->id}}"href="#"  class="fsubcategory">{{$subcategoria->name}} ({{$subcategoria->total}})</a>
+                                    </li>
                                     @endforeach
-                                </div>
-                            </form>
+                            </ul>
                         </div>
                     </div>
                     <div class="panel panel-default sidebar-menu">
 
                         <div class="panel-heading">
                             <h3 class="panel-title">Marcas</h3>
-                            <a class="btn btn-xs btn-danger pull-right" href="#"><i class="fa fa-times-circle"></i>
-                                <span class="hidden-sm">Clear</span></a>
+
+
                         </div>
 
                         <div class="panel-body">
 
-                            <form id="filtroMarca">
-                                <div class="form-group">
+                            <ul class="nav nav-pills nav-stacked brand">
                                     @foreach($filtroMarcas as $filtroMarca)
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox"
-                                                       value="{{$filtroMarca->id}}">{{$filtroMarca->name}}
-                                                ({{$filtroMarca->total}})
-                                            </label>
-                                        </div>
+                                    <li data-val="{{$filtroMarca->id}}"><a data-val="{{$filtroMarca->id}}"href="#"  class="fbrand">{{$filtroMarca->name}} ({{$filtroMarca->total}})</a>
+                                    </li>
                                     @endforeach
-                                </div>
-                            </form>
-
+                            </ul>
                         </div>
-                        <button class="btn btn-default btn-sm btn-template-main"><i class="fa fa-pencil"></i>
-                            Aplicar filtros
-                        </button>
-
                     </div>
                     <!-- *** MENUS AND FILTERS END *** -->
 

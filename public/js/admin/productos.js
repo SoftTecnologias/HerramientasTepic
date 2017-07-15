@@ -39,7 +39,7 @@ $(function(){
         'scrollY':'600px',
         "processing": true,
         "serverSide": true,
-        "ajax": document.location.protocol+'//'+document.location.host  +'/area/resource/productos',
+        "ajax": document.location.protocol+'//'+document.location.host+'/area/resource/productos',
         'createdRow':function(row,data,index){
             if(data.stock <= data.reorderpoint ){
               $('td', row).addClass("danger");
@@ -270,7 +270,7 @@ function productAction(){
 function newProduct(){
     var data = new FormData(document.getElementById("productForm"));
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host  +"/area/resource/productos",
+        url:document.location.protocol+'//'+document.location.host+  +"/area/resource/productos",
         type:"POST",
         data: data,
         contentType:false,
