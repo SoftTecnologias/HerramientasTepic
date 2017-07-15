@@ -137,7 +137,7 @@ _________________________________________________________ -->
                                 <div class="bg"></div>
                                 <div class="text">
                                     <p class="buttons">
-                                        <a href="{{asset('servicios/detalle/'.base64_encode($servicio->id))}}" class="btn btn-template-transparent-primary"><i
+                                        <a href="{{asset('servicios/detalle/'.$servicio->id)}}" class="btn btn-template-transparent-primary"><i
                                                     class="fa fa-link"></i> Ver mas</a>
                                     </p>
                                 </div>
@@ -146,7 +146,7 @@ _________________________________________________________ -->
                                 <h4><a href="blog-post.html">{{$servicio->title}}</a></h4> <!-- Titulo -->
                                 <p class="intro">{{$servicio->shortdescription}}</p>
                                 <!-- Descripcion corta -->
-                                <p class="read-more"><a href="{{asset('servicios/detalle/'.base64_encode($servicio->id))}}" class="btn btn-template-main">Continuar
+                                <p class="read-more"><a href="{{asset('servicios/detalle/'.$servicio->id)}}" class="btn btn-template-main">Continuar
                                         leyendo</a>
                                 </p>
                             </div>
@@ -172,7 +172,7 @@ _________________________________________________________ -->
             <div class="row">
                 <div class="col-md-12">
                     <div class="heading text-center">
-                        <h2>Las mejores marcas </h2>
+                        <h2>Distribuidor autorizado </h2>
                     </div>
 
                     <ul class="owl-carousel customers">

@@ -39,6 +39,7 @@ _________________________________________________________ -->
 
             <div class="blog-entries">
 
+
                 <input type="hidden" value="{{$i=0}}">
                 @foreach($servicios as $servicio)
                     @if($i++<4)
@@ -49,13 +50,11 @@ _________________________________________________________ -->
                             </a>
                         </div>
                         <div class="name same-height-always">
-                            <h5><a href="{{route('tienda.detalleServicio',base64_encode($servicio->id))}}">{{$servicio->title}}</a></h5>
+                            <h5><a href="{{route('tienda.detalleServicio',$servicio->id)}}">{{$servicio->title}}</a></h5>
                         </div>
                     </div>
                     @endif
                 @endforeach
-
-
 
             </div>
 
@@ -93,47 +92,47 @@ _________________________________________________________ -->
             <div class="photostream">
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B17.jpg')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare2.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B18.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare3.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B19.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare3.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B20.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare2.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B21.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare2.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B22.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B23.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare2.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B24.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
                 <div>
                     <a href="#">
-                        <img src="img/detailsquare3.jpg" class="img-responsive" alt="#">
+                        <img src="{{asset('img/marcas/B25.png')}}" class="img-responsive" alt="#">
                     </a>
                 </div>
             </div>

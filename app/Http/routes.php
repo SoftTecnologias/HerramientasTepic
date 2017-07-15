@@ -37,12 +37,7 @@ Route::get('/servicios/detalle/{id}',[
    'uses' => 'UsersController@getServiceDetail',
     'as' => 'tienda.detalleServicio'
 ]);
-
 /* Obtener formulario y hacer login */
-Route::get('/login',[
-    'uses' => 'UsersController@getLoginForm',
-    'as' => 'panel.login'
-]);
 
 Route::post('/login',[
     'uses' => 'UsersController@doLogin',

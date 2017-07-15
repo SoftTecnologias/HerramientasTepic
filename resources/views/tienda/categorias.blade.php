@@ -1,5 +1,4 @@
 @extends('layouts.tienda',['marcas'=> $marcas,'categorias'=>$categorias,'servicios'=> $servicios])
-
 <!-- Index -->
 @section('content')
     <div id="heading-breadcrumbs">
@@ -39,37 +38,36 @@
 
                         <div class="panel-body">
 
-                            <form>
+                            <form id="filtroPrecios">
                                 <div class="form-group">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox">$ 0.00 - $ 299.00
+                                            <input type="checkbox" data-val="MQ==" class="fprice">$ 0.00 - $ 299.00
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox"> $ 300.00 - $599.00
+                                            <input type="checkbox" data-val="Mg==" class="fprice"> $ 300.00 - $ 599.00
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox"> $ 600.00 - $999.00
+                                            <input type="checkbox" data-val="Mw==" class="fprice"> $ 600.00 - $ 999.00
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox"> $ 1000.00 - $1499.00
+                                            <input type="checkbox" data-val="NA==" class="fprice"> $ 1000.00 - $ 1499.00
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox"> + $ 1500.00
+                                            <input type="checkbox" data-val="NQ==" class="fprice"> + $ 1500.00
                                         </label>
                                     </div>
                                 </div>
 
                             </form>
-
                         </div>
                     </div>
                     <div class="panel panel-default sidebar-menu">
@@ -78,18 +76,20 @@
                             <h3 class="panel-title">Subcategorias</h3>
                         </div>
                         <div class="panel-body">
-                            <ul class="nav nav-pills nav-stacked category-menu">
-                                <li>
-                                    <a href="shop-category.html">{{$actual}} <span class="badge pull-right">{{$productos->total()}}</span></a>
-                                    <ul>
-                                        @foreach($filtroSubcategoria as $subcategoria)
-                                        <li><a href="{{$subcategoria->id}}">{{$subcategoria->name}} ({{$subcategoria->total}})</a>
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                </li>
-                            </ul>
-
+                            <form id="filtroSubcategorias">
+                                <div class="form-group nav nav-pills nav-stacked category-menu">
+                                    <a href="shop-category.html">{{$actual}} <span
+                                                class="badge pull-right">{{$productos->total()}}</span></a>
+                                    @foreach($filtroSubcategoria as $subcategoria)
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" value="{{$subcategoria->id}}"
+                                                       class="fprice">{{$subcategoria->name}} ({{$subcategoria->total}})
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <div class="panel panel-default sidebar-menu">
@@ -102,12 +102,14 @@
 
                         <div class="panel-body">
 
-                            <form>
+                            <form id="filtroMarca">
                                 <div class="form-group">
                                     @foreach($filtroMarcas as $filtroMarca)
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox">{{$filtroMarca->name}} ({{$filtroMarca->total}})
+                                                <input type="checkbox"
+                                                       value="{{$filtroMarca->id}}">{{$filtroMarca->name}}
+                                                ({{$filtroMarca->total}})
                                             </label>
                                         </div>
                                     @endforeach
@@ -124,7 +126,7 @@
 
                     <div class="banner">
                         <a href="shop-category.html">
-                            <img src="img/banner.jpg" alt="sales 2014" class="img-responsive">
+                            <img src="{{asset('img/banner.jpg')}}" alt="sales 2014" class="img-responsive">
                         </a>
                     </div>
                     <!-- /.banner -->
@@ -171,7 +173,7 @@
 
                         <div class="col-md-12 banner">
                             <a href="#">
-                                <img src="img/banner2.jpg" alt="" class="img-responsive">
+                                <img src="{{asset('img/banner2.jpg')}}" alt="" class="img-responsive">
                             </a>
                         </div>
 
@@ -195,4 +197,7 @@
         </div>
         <!-- /.container -->
     </div>
+@endsection
+@section('scripts')
+    <script src="{{asset('/js/tienda/categorias.js')}}" type="text/javascript"></script>
 @endsection

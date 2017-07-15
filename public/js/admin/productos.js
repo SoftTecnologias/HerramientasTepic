@@ -24,7 +24,7 @@ $(function(){
                         text:'Seleccione una subcategoria'
                     }).attr('value',"00").appendTo('#subcategoryid');
                     $.each($.parseJSON(response.msg),function(i, row){
-                        $('<option>',{text:row.name}).attr('value',row.subcategoryid).appendTo('#subcategoryid');
+                        $('<option>',{text:row.name}).attr('value',row.id).appendTo('#subcategoryid');
                     });
                 }
             }).fail(function(){
