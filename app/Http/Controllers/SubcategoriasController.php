@@ -20,9 +20,14 @@ class SubcategoriasController extends Controller
      */
     public function index()
     {
-        return Datatables::of(collect(DB::select("select s.id, s.name, c.name as categoria, s.categoryid
+        $sub = DB::select("select s.id, s.name, c.name as categoria, s.categoryid
 from subcategory s, category c
-where s.categoryid = c.id")))->make(true);
+where s.categoryid = c.id");
+
+        foreach ($sub as $item){
+            $item->id=base64_encode($item->id);
+        }
+        return Datatables::of(collect($sub))->make(true);
     }
 
     /**
@@ -87,6 +92,7 @@ where s.categoryid = c.id")))->make(true);
     public function update(Request $request, $id)
     {
         try{
+            $id = base64_decode($id);
             $cat = Subcategoria::find($id);
             $cat -> fill([
                 'name'=>$request->input('name'),
@@ -109,6 +115,7 @@ where s.categoryid = c.id")))->make(true);
     public function destroy($id)
     {
         try{
+            $id = base64_decode($id);
             $cate = Subcategoria::findOrFail($id);
             $cate ->delete();
             $respuesta = ["code"=>200, "msg"=>'La subcategoria se ha eliminado', 'detail' => 'success'];

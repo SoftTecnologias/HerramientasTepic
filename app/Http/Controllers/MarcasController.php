@@ -20,8 +20,12 @@ class MarcasController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {   
-        return Datatables::of(collect(DB::select("select id, name, logo, authorized, total_sales from brand")))->make(true);
+    {
+        $marcas = DB::select("select id, name, logo, authorized, total_sales from brand");
+        foreach ($marcas as $marca){
+            $marca->id = base64_encode($marca->id);
+        }
+        return Datatables::of(collect($marcas))->make(true);
     }
 
     /**
@@ -89,6 +93,7 @@ class MarcasController extends Controller
     public function show($id)
     {
         /*Mostrar una marca en concreto*/
+        $id = base64_decode($id);
         try{
             $marca = Marca::findOrFail($id);
             $respuesta=["code"=>200,"msg"=>$marca,"detail"=>"ok"];
@@ -119,6 +124,7 @@ class MarcasController extends Controller
     public function update(Request $request, $id)
     {
         try{
+            $id = base64_decode($id);
             $img1 = $request->file("img1");
             $imgu1  = $request->input("imgu1");
             $marca = Marca::findOrFail($id);
@@ -163,6 +169,7 @@ class MarcasController extends Controller
     public function destroy($id)
     {
         try{
+            $id = base64_decode($id);
             $marca = Marca::findOrFail($id);
             if($marca->logo != "brand.png") {
                 Storage::delete("/marcas/".$marca->logo);

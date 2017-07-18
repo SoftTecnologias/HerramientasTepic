@@ -24,14 +24,18 @@ class ProductosController extends Controller
     public function index()
     {
 
-        return Datatables::of(collect(DB::select("select p.[id], [code], p.[name], [stock], [currency], p.[brandid] ,b.[name] as marca,
+        $products = DB::select("select p.[id], [code], p.[name], [stock], [currency], p.[brandid] ,b.[name] as marca,
                                 [photo], [photo2], [photo3], p.[subcategoryid], s.name as subcategoria, p.[categoryid],
                                 c.name as categoria, [priceid], [shortdescription], [longdescription], [reorderpoint],
-                                pr.price1, pr.price2, pr.price3, pr.price4, pr.price5, p.quotation
+                                pr.price1, pr.price2, pr.price3, pr.price4, pr.price5, p.quotation,p.show
                                 FROM [product] p , [price] pr, [category] c ,
                                      [subcategory] s,[brand] b 
                                 WHERE p.brandid = b.id AND p.categoryid = c.id AND p.subcategoryid = s.id AND p.priceid = pr.id
-                                order by name")))->make(true);
+                                order by name");
+            foreach ($products as $p){
+                $p->id = base64_encode($p->id);
+            }
+        return Datatables::of(collect($products)) ->make(true);
     }
 
     /**
@@ -165,7 +169,7 @@ class ProductosController extends Controller
     public function show($id)
     {
         try{
-
+            $id=base64_decode($id);
             $producto = Producto::findOrFail($id);
             $respuesta=["code"=>200,"msg"=>$producto,"detail"=>"ok"];
         }catch(Exception $e){
@@ -196,6 +200,7 @@ class ProductosController extends Controller
     public function update(Request $request, $id)
     {
         try{
+            $id=base64_decode($id);
             $img1 = $request->file("img1");
             $img2 = $request->file("img2");
             $img3 = $request->file("img3");
@@ -306,6 +311,7 @@ class ProductosController extends Controller
     public function destroy($id)
     {
         try{
+            $id=base64_decode($id);
             $producto = Producto::findOrFail($id);
             $priceid = $producto->priceid;
             if($producto->photo != "minilogo.png") {
@@ -325,6 +331,24 @@ class ProductosController extends Controller
             $respuesta = ["code"=>200, "msg"=>'El producto ha sido eliminado', 'detail' => 'success'];
         }catch(Exception $e){
             $respuesta = ["code"=>500, "msg"=>$e->getMessage(), 'detail' => 'warning'];
+        }
+        return Response::json($respuesta);
+    }
+
+    public function verMiniatura(Request $request, $id){
+        try {
+            $id = base64_decode($id);
+            $producto = Producto::findOrFail($id);
+            $dat = $request->input('no');
+            $up=([
+                "show" => $dat
+            ]);
+            $producto->fill($up);
+            $producto->save();
+
+            $respuesta = ["code"=>200, "msg"=>"Producto actualizado","detail"=>"success"];
+        }catch(Exception $e){
+            $respuesta = ["code"=>500, "msg"=>$e->getMessage(),"detail"=>"error"];
         }
         return Response::json($respuesta);
     }

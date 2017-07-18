@@ -20,8 +20,12 @@ class BannerController extends Controller
      */
     public function index()
     {
-        return Datatables::of(collect(DB::select("select id, [titulo],[contenido],[img]
-                                FROM [banner_principal] order by titulo")))->make(true);
+        $baners = DB::select("select id, [titulo],[contenido],[img]
+                                FROM [banner_principal] order by titulo");
+        foreach ($baners as $baner){
+            $baner->id = base64_encode($baner->id);
+        }
+        return Datatables::of(collect($baners))->make(true);
     }
 
     /**

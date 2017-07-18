@@ -20,8 +20,12 @@ class ServiciosController extends Controller
      */
     public function index()
     {
-        return Datatables::of(collect(DB::select("select id, [title],[shortdescription],[longdescription],[img],show
-                                FROM [services] order by title")))->make(true);
+        $servicios =DB::select("select id, [title],[shortdescription],[longdescription],[img],show
+                                FROM [services] order by title");
+        foreach ($servicios as $servicio) {
+            $servicio->id = base64_encode($servicio->id);
+        }
+        return Datatables::of(collect($servicios))->make(true);
     }
 
     /**

@@ -20,6 +20,9 @@ class CategoriasController extends Controller
     public function index()
     {
        $categorias = Categoria::all();
+       foreach ($categorias as $categoria){
+           $categoria->id=base64_encode($categoria->id);
+       }
        return Datatables::of($categorias)->make(true);
 
     }

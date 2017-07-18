@@ -10,6 +10,7 @@ $(function(){
     $('#btnAceptar').on('click',function(){
         $('#productForm').submit();
     });
+
     /* Dependencia de los combos*/
     $('#categoryid').change(function(){
         var categoria = $(this).val();
@@ -91,7 +92,7 @@ $(function(){
                 }
             }},
             {data: function (row) {
-            console.log(row);
+                console.log(row);
                 str = "<div align='center'>";
                 str +=" <button id='btnEditar' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("
                      + row['id'] + ","
@@ -114,6 +115,10 @@ $(function(){
                      +row['stock'] +","
                      +row['subcategoryid']+")'><i class='glyphicon glyphicon-edit'></i></button>";
                 str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteProduct(" + row['id'] + ")'><i class='fa fa-trash-o'></i></button>";
+
+                 str += (row['show'] ==1) ?  "<input type='checkbox' id='check"+row['id']+"' name='check' checked onchange='verMiniatura("+"\""+row['id']+"\""+")'>Mostrar":
+                    "<input type='checkbox' id='check"+row['id']+
+                    "' name='check' onchange='verMiniatura("+"\""+row['id']+"\""+")'>Mostrar";
                 str += "</div>";
                 return str;
             }}
@@ -420,4 +425,50 @@ function formato(numero) {
     }
 }
 
+function verMiniatura(id) {
+    var texto1 = "";
+    var checkbox = document.getElementById('check'+id);
+    if(checkbox.checked){
+        texto1 = 'El producto se mostrara en la pagina Principal';
+    }else{
+        texto1 = 'El producto se dejará de mostrar en la pagina principal';
+    }
+    swal({
+        title: '¿Estás seguro?',
+        text: texto1,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: "Cancelar"
+    }).then(function () {
+        ruta =document.location.protocol+'//'+document.location.host  +'/area/resource/verproducto/'+id;
+        if(checkbox.checked){
+            $('#no').val(1);
+        }else{
+            $('#no').val(0);
+        }
+        var datos = new FormData(document.getElementById('divc'));
+        $.ajax({
+            url:ruta,
+            type:"POST",
+            data: datos,
+            contentType:false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        }).done(function(json){
+            if(json.code==200) {
+                swal("Realizado", json.msg, json.detail);
+                $('#tblproducts').dataTable().api().ajax.reload(null,false);
+            }else{
+                swal("Error", json.msg, json.detail);
+            }
+        }).fail(function(response){
+            swal("Error", "tuvimos un problema", "warning");
+        });
+    });
+}
 

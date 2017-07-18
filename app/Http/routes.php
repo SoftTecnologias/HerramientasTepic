@@ -70,6 +70,11 @@ Route::group(['prefix' => 'area'],function(){
         'as' => 'area.resource.servicio.verMiniatura'
     ]);
 
+    Route::POST('/resource/verproducto/{id}',[
+        'uses' => 'ProductosController@verMiniatura',
+        'as' => 'area.resource.producto.verMiniatura'
+    ]);
+
     Route::POST('/resource/marcaauthorizada/{id}',[
        'uses' => 'MarcasController@verMiniatura',
         'as' => 'area.resource.marca.verMiniatura'

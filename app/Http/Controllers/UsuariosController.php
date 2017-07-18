@@ -22,9 +22,14 @@ class UsuariosController extends Controller
      */
     public function index()
     {
-        return Datatables::of(collect(DB::select("select u.id, u.photo, u.name, u.lastname, u.email, u.phone, r.name as rol,u.status,u.roleid,u.username
+        $usuarios = DB::select("select u.id, u.photo, u.name, u.lastname, u.email, u.phone, r.name as rol,u.status,u.roleid,u.username
         from users u 
-        inner join  roles r on r.id = u.roleid")))->make(true);
+        inner join  roles r on r.id = u.roleid");
+
+        foreach ($usuarios as $usuario){
+            $usuario->id=base64_encode($usuario->id);
+        }
+        return Datatables::of(collect($usuarios))->make(true);
     }
 
     /**
@@ -111,6 +116,7 @@ class UsuariosController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $id = base64_decode($id);
             $user = Usuarios::findOrFail($id);
             $user->name = $request->name;
             $user->lastname = $request->lastname;
@@ -198,6 +204,7 @@ class UsuariosController extends Controller
     public function destroy($id)
     {
         try {
+            $id = base64_decode($id);
             $user = Usuarios::findOrFail($id);
             if ($user->photo != "user.png") {
                 Storage::delete("/usuarios/" . $user->photo);

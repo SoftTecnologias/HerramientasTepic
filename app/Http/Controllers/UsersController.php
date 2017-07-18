@@ -46,12 +46,14 @@ class UsersController extends Controller
                     'product.photo3',
                     'product.shortdescription',
                     'product.longdescription',
-                    'product.quotation'
+                    'product.quotation',
+                    'product.show'
                 //         ,'price.price1'
                 )
                 ->join('price', 'price.id', '=', 'product.priceid')
                 ->where('photo', 'not like', 'minilogo.png')
-                ->take(12)->get();
+                ->where('show',1)
+                ->take(39)->get();
             $bMarcas = DB::table('brand')
                 ->select('logo')
                 ->where('logo', 'not like', 'minilogo.png')
