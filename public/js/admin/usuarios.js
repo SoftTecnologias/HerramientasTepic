@@ -38,13 +38,6 @@ $(function () {
         "processing": true,
         "serverSide": true,
         'ajax': document.location.protocol + '//' + document.location.host  + '/area/resource/usuarios',
-        'createdRow': function (row, data, index) {
-            if (data.status == 'I') {
-                $('td', row).addClass("danger");
-            } else {
-                $('td', row).addClass("success");
-            }
-        },
         'columns': [
             {
                 data: function (row) {
@@ -67,15 +60,16 @@ $(function () {
             }, {
                 data: function (row) {
                     str = "<div align='center'>";
-                    str += "<button id='btnEditar' class='btn btn-primary block col-md-3' onclick='showUser(" + row['id']
-                        +",\""+row['name']+"\", \""
-                        +row['lastname']+"\", \""
-                        +row['email'] +"\", \""
-                        +row['phone']+"\", "
-                        +row['roleid']+", \""
-                        +row['status']+"\", \""
-                        +row['username']+"\""+");'><i class='glyphicon glyphicon-edit'></i></button> ";
-                    str += "<button id='btnEliminar' class='btn btn-danger block col-md-3' onclick='deleteUser(" + row['id'] + ")'><i class='fa fa-trash-o'></i></button> ";
+                    str +=" <button id='btnEditar' class='btn btn-primary btn-xs col-md-3' onclick='showUser("
+                        +"\""+row['id']+"\", "
+                        +"\""+row['name']+"\", "
+                        +"\""+row['lastname']+"\","
+                        +"\""+row['email'] +"\","
+                        +"\""+row['phone']+"\","
+                        +"\""+row['roleid']+"\", "
+                        +"\""+row['status']+"\","
+                        +"\""+row['username']+"\""+")'><i class='glyphicon glyphicon-edit'></i></button> ";
+                    str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-3' onclick='deleteUser(\""+row['id']+"\")'><i class='fa fa-trash-o'></i></button>";
                     str += "</div>";
                     return str;
                 }
@@ -170,7 +164,7 @@ $(function () {
         removeClass: "btn btn-danger",
         removeLabel: "Eliminar",
         removeIcon: "<i class=\"glyphicon glyphicon-trash\"></i> ",
-        maxFileSize: 1024,
+        maxFileSize: 1024
     });
 });
 
@@ -234,6 +228,7 @@ function updateUser(id) {
     });
 }
 function deleteUser(id) {
+    window.alert("a");
     swal({
         title: '¿Estás seguro?',
         text: "Esto no se puede revertir!",
@@ -264,7 +259,6 @@ function deleteUser(id) {
     });
 }
 function showUser(id, name, lastname, email, phone, roleid, status, username) {
-
     $("#password").rules("remove", "required");
     $("#npassword").rules("remove", "required");
     $("#cpassword").rules("remove", "required");

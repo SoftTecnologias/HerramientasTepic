@@ -123,6 +123,7 @@ _________________________________________________________ -->
 <script src="{{ asset('/js/tienda/jquery.counterup.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/js/tienda/jquery.parallax-1.1.3.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/js/tienda/front.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/js/tienda/products.js')}}" type="text/javascript"></script>
 <!-- owl carousel -->
 <script src="{{ asset('/js/tienda/owl.carousel.min.js') }}" type="text/javascript"></script>
 @yield('scripts')

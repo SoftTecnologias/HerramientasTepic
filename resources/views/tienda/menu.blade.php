@@ -1,3 +1,21 @@
+<style>
+    #search {
+        border-radius: 6px;
+        width: 300px;
+        padding: 8px 20px;
+        text-align: center;
+    }
+    #buscar{
+        width: 35px;
+        height: 35px;
+        border-radius: 6px;
+        border: 0px;
+        background-color: #337ab7;
+        color: white;
+    }
+
+</style>
+
 <div class="navbar-affixed-top" data-spy="affix" data-offset-top="200">
 
     <div class="navbar navbar-default yamm" role="navigation" id="navbar">
@@ -89,6 +107,15 @@
                             <li><a href="{{route('tienda.servicios')}}">Ver Todos</a></li>
                         </ul>
                     </li>
+                    
+                    <li class="dropdown use-yamm yamm-fw">
+                        <div class="yamm-content">
+                            <input type="text" id="search" placeholder="Busca por nombre, descripcion o codigo" style="text-align:left"/>
+                            <button  class="glyphicon glyphicon-search" id="buscar" name="buscar"></button>
+                        </div>
+                    </li>
+
+
                 </ul>
 
             </div>

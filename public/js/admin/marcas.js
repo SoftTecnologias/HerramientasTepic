@@ -28,8 +28,8 @@ $(function(){
             },{
                data:function (row) {
                    str  = "<div align='center'>";
-                   str +=   "<button id='btnEditar' class='btn btn-primary block col-md-3' onclick='showBrand(" + row['id'] +", \""+row['name']+"\", \""+row['logo']+"\")'><i class='glyphicon glyphicon-edit'></i></button>";
-                   str +=   "<button id='btnEliminar' class='btn btn-danger block col-md-3' onclick='deleteBrand(" + row['id'] + ")'><i class='fa fa-trash-o'></i></button>";
+                   str +=   "<button id='btnEditar' class='btn btn-primary block col-md-3' onclick='showBrand(" +"\""+ row['id']+"\"" +", \""+row['name']+"\", \""+row['logo']+"\")'><i class='glyphicon glyphicon-edit'></i></button>";
+                   str +=   "<button id='btnEliminar' class='btn btn-danger block col-md-3' onclick='deleteBrand(" +"\""+ row['id']+"\"" + ")'><i class='fa fa-trash-o'></i></button>";
             str += (row['authorized'] ==1) ?  "<input type='checkbox' id='check"+row['id']+"' name='check' checked onchange='verMiniatura("+"\""+row['id']+"\""+")'>Distribuidor Authorizado":
                        "<input type='checkbox' id='check"+row['id']+"' name='check' onchange='verMiniatura("+"\""+row['id']+"\""+")'>Distribuidor Authorizado";
                    str += "</div>";

@@ -37,6 +37,11 @@ Route::get('/servicios/detalle/{id}',[
    'uses' => 'UsersController@getServiceDetail',
     'as' => 'tienda.detalleServicio'
 ]);
+//Productos
+Route::get('/productos/search/{filtro}',[
+    'uses' => 'UsersController@searchProductos',
+    'as' => 'tienda.search.productos'
+]);
 /* Obtener formulario y hacer login */
 
 Route::post('/login',[
