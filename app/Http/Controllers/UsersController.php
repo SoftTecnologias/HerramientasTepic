@@ -311,7 +311,6 @@ class UsersController extends Controller
         return Response::json($respuesta);
     }
     public function searchProductos(Request $request){
-        $x = "%".base64_decode($request->filtro)."%";
         //parte de los filtros
         $url =base64_decode($request->filtro);
         $request->filtro = base64_decode($request->filtro);
@@ -758,7 +757,7 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','show')->take(10)->orderBy('title', 'asc')->get();
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
@@ -948,7 +947,7 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','show')->take(10)->orderBy('title', 'asc')->get();
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
