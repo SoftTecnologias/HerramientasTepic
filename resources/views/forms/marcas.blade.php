@@ -1,4 +1,4 @@
-@extends('layouts.administracion',['user_info' => $datos])
+@extends('layouts.administrador',['user_info' => $datos])
 @section('styles')
     <link media="all" type="text/css" rel="stylesheet"
           href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"/>
@@ -29,7 +29,6 @@
                             <div class="pull-right">
                                 <a class="btn btn-success" id="btnNew"><i class="fa fa-plus"></i>Agregar Marca</a>
                             </div>
-
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body">
@@ -38,6 +37,7 @@
                                     <div class="col-sm-6"></div>
                                     <div class="col-sm-6"></div>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-sm-12">
                                     <form class="form-horizontal" id="divc" enctype="multipart/form-data"> <input type="hidden" id="no" name="no" class="form-control input-md"></form>

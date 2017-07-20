@@ -49,7 +49,6 @@ class UsersController extends Controller
                     'product.longdescription',
                     'product.quotation',
                     'product.show'
-                //         ,'price.price1'
                 )
                 ->join('price', 'price.id', '=', 'product.priceid')
                 ->where('photo', 'not like', 'minilogo.png')
@@ -1043,7 +1042,7 @@ class UsersController extends Controller
                     ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                     ->orderBy('name', 'asc')->get();
                 //menu de servicios
-                $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img')->take(10)->orderBy('title', 'asc')->get();
+                $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','show')->take(10)->orderBy('title', 'asc')->get();
                 //Marca actual (Migaja)
                 $actual =  DB::table('services')->select('id', 'title','shortdescription','longdescription','img')
                     ->take(10)
@@ -1060,6 +1059,7 @@ class UsersController extends Controller
             foreach ($productos as $p){
                 $p->code = base64_encode($p->code);}
             return view('tienda.detalleServicio',['productos'=> $productos,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios, 'actual'=>$actual]);
+
         }catch (Exception $e){
 
 

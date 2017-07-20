@@ -56,7 +56,7 @@
                                                 <ul>
                                                     @foreach($column as $item)
                                                         <li>
-                                                            <a href="{{route('tienda.marcas',[$item->id])}}">{{$item->name}}</a>
+                                                            <a href="{{route('tienda.marcas',$item->id)}}">{{$item->name}}</a>
                                                         </li>
                                                     @endforeach
                                                 </ul>
@@ -79,7 +79,7 @@
                                             <div class="col-sm-3">
                                                 <ul>
                                                     @foreach($columna as $item)
-                                                        <li><a href="{{route('tienda.categorias',[$item->id])}}">{{$item->name}}</a>
+                                                        <li><a href="{{route('tienda.categorias',$item->id)}}">{{$item->name}}</a>
                                                         </li>
                                                     @endforeach
                                                 </ul>
