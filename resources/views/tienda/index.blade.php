@@ -145,7 +145,7 @@ _________________________________________________________ -->
                                 </div>
                             </div>
                             <div class="content">
-                                <h4><a href="blog-post.html">{{$servicio->title}}</a></h4> <!-- Titulo -->
+                                <h4><a href="{{asset('servicios/detalle/'.$servicio->id)}}">{{$servicio->title}}</a></h4> <!-- Titulo -->
                                 <p class="intro">{{$servicio->shortdescription}}</p>
                                 <!-- Descripcion corta -->
                                 <p class="read-more"><a href="{{asset('servicios/detalle/'.$servicio->id)}}" class="btn btn-template-main">Continuar
@@ -156,10 +156,12 @@ _________________________________________________________ -->
                         <!-- /.box-image-text -->
 
                     </div>
+
                         @endif
                         @endforeach
                         </div>
                     @endforeach
+                    </div>
                 </div>
                 <!-- /.row -->
 
@@ -192,6 +194,9 @@ _________________________________________________________ -->
             </div>
         </div>
     </section>
+
+
+
     <?php $items=0;?>
     @foreach($productos as $producto)
         <!-- Modal correspondiente al producto -->

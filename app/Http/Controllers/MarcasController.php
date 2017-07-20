@@ -52,7 +52,9 @@ class MarcasController extends Controller
 
             $brandid= DB::table("brand")->insertGetId([
                 "name" => $request->input("name"),
-                "logo" => "minilogo.png"
+                "logo" => "minilogo.png",
+                "authorized" => 0,
+                "total_sales" => 0
             ]);
 
             if($imgu1==null){
@@ -198,5 +200,5 @@ class MarcasController extends Controller
             $respuesta = ["code"=>500, "msg"=>$e->getMessage(),"detail"=>"error"];
         }
         return Response::json($respuesta);
-    } 
+    }
 }

@@ -2,6 +2,9 @@
  * Created by fenix on 20/03/2017.
  */
 $(function(){
+
+
+
     $('#btnNew').on('click', function () {
         $('#titulo-modal').text("Nuevo Producto");
         reset();
@@ -114,7 +117,7 @@ $(function(){
                      +"\""+escape(row['shortdescription']) +"\","
                      +row['stock'] +","
                      +row['subcategoryid']+")'><i class='glyphicon glyphicon-edit'></i></button>";
-                str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteProduct(" + row['id'] + ")'><i class='fa fa-trash-o'></i></button>";
+                str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteProduct(" +"\""+ row['id']+"\"" + ")'><i class='fa fa-trash-o'></i></button>";
 
                  str += (row['show'] ==1) ?  "<input type='checkbox' id='check"+row['id']+"' name='check' checked onchange='verMiniatura("+"\""+row['id']+"\""+")'>Mostrar":
                     "<input type='checkbox' id='check"+row['id']+
@@ -471,4 +474,3 @@ function verMiniatura(id) {
         });
     });
 }
-

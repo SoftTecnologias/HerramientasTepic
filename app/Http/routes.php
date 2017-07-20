@@ -37,6 +37,11 @@ Route::get('/servicios/detalle/{id}',[
    'uses' => 'UsersController@getServiceDetail',
     'as' => 'tienda.detalleServicio'
 ]);
+//Productos
+Route::get('/productos/search/{filtro}',[
+    'uses' => 'UsersController@searchProductos',
+    'as' => 'tienda.search.productos'
+]);
 /* Obtener formulario y hacer login */
 
 Route::post('/login',[
@@ -63,6 +68,10 @@ Route::group(['prefix' => 'area'],function(){
     Route::POST('/resource/servicios/{id}',[
        'uses' => 'ServiciosController@update',
         'as' => 'area.resource.servicios.update'
+    ]);
+    Route::POST('/resource/servicio/{id}',[
+       'uses' => 'ServiciosController@verMiniatura',
+        'as' => 'area.resource.servicio.verMiniatura'
     ]);
 
     Route::POST('/resource/servicio/{id}',[

@@ -1,4 +1,4 @@
-@extends('layouts.administracion',['user_info' => $datos])
+@extends('layouts.administrador',['user_info' => $datos])
 @section('styles')
     <link media="all" type="text/css" rel="stylesheet"
           href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"/>
