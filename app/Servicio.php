@@ -9,6 +9,6 @@ class Servicio extends Model
   protected $table = "services";
     public $timestamps = false;
     protected $fillable = [
-       'title','shortdescription','longdescription','img','show'
+       'title','shortdescription','longdescription','img','selected'
     ];
 }

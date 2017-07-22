@@ -48,11 +48,11 @@ class UsersController extends Controller
                     'product.shortdescription',
                     'product.longdescription',
                     'product.quotation',
-                    'product.show'
+                    'product.selected'
                 )
                 ->join('price', 'price.id', '=', 'product.priceid')
                 ->where('photo', 'not like', 'minilogo.png')
-                ->where('show',1)
+                ->where('selected',1)
                 ->take(39)->get();
             $bMarcas = DB::table('brand')
                 ->select('logo')
@@ -75,7 +75,7 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','show')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
             //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
@@ -547,7 +547,7 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','show')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
             //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
@@ -562,6 +562,11 @@ class UsersController extends Controller
                                                         'filtroCategorias' => $filtroCategorias,
                                                         'filtroMarcas' => $filtromarcas]);
         }
+    }
+    public function showMovementForm(){
+        $productos = DB::table('product')->select('id','name')->get();
+        $proveedores =DB::table('proveedores')->select('id','nombre')->get();
+        return view('forms.movement',['proveedores' => $proveedores, 'productos' => $productos]);
     }
     //Vistas con filtros
     public function getMarcaSearch(Request $request, $id){
@@ -757,7 +762,7 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','show')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','selected')->take(10)->orderBy('title', 'asc')->get();
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
@@ -947,7 +952,7 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','show')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','selected')->take(10)->orderBy('title', 'asc')->get();
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
@@ -1041,7 +1046,7 @@ class UsersController extends Controller
                     ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                     ->orderBy('name', 'asc')->get();
                 //menu de servicios
-                $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','show')->take(10)->orderBy('title', 'asc')->get();
+                $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','selected')->take(10)->orderBy('title', 'asc')->get();
                 //Marca actual (Migaja)
                 $actual =  DB::table('services')->select('id', 'title','shortdescription','longdescription','img')
                     ->take(10)
@@ -1096,7 +1101,7 @@ class UsersController extends Controller
                     'apikey' => $users->apikey,
                     'rol' => $users->roleid,
                 ];
-                
+
                 if($users->roleid == "2" || $users->roleid == "3") {
                    $cookie = Cookie::make('admin', $datos, 180);
                 }else{

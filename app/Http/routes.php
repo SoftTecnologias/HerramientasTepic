@@ -95,6 +95,7 @@ Route::group(['prefix' => 'area'],function(){
         'as' => 'area.index'
     ]);
 
+
     Route::get('/productos',[
         'uses' => 'UsersController@getProductosForm',
         'as' => 'area.productos'
@@ -177,6 +178,18 @@ Route::group(['prefix' => 'area'],function(){
         'uses' => 'UsersController@doLogout',
         'as' => 'area.logout'
     ]);
+
+    Route::get('/movements', [
+        'uses'=>'UsersController@showMovementForm',
+        'as' =>'area.movements'
+        ]);
+});
+
+Route::group(['prefix' => 'sale'],function (){
+    Route::get('/',[
+        'uses' => 'UsersController@getAreaIndex',
+        'as' => 'sale.index'
+        ]);
 });
 
 /* Rutas para Ajax*/
@@ -191,6 +204,7 @@ Route::group(['prefix'=>'/api'],function(){
     ]);
 
 });
+
 
 
 

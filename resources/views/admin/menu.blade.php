@@ -26,6 +26,7 @@
             <li><a href="{{route('area.usuarios')}}"><i class='fa fa-user'></i> <span>Usuarios</span></a></li>
             <li><a href="{{route('area.servicios')}}"><i class='fa fa-bug'></i> <span>Servicios</span></a></li>
             <li><a href="{{route('area.banner')}}"><i class="glyphicon glyphicon-wrench"></i> <span>Banner</span></a></li>
+            <li><a href="#"><i class="fa fa-archive"></i> <span>Movimientos de almacén</span></a></li>
 
 
 <!--php artisan make:controller ServiciosController --resource
