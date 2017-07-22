@@ -43,7 +43,7 @@ _________________________________________________________ -->
                 <input type="hidden" value="{{$i=0}}">
                 @foreach($servicios as $servicio)
 
-                    @if($i<4 && $servicio->show)
+                    @if($i<4 && $servicio->selected)
                     <div class="item same-height-row clearfix">
                         <div class="image same-height-always">
                             <a href="{{route('tienda.detalleServicio',$servicio->id)}}">
