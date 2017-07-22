@@ -27,7 +27,7 @@ class ProductosController extends Controller
         $products = DB::select("select p.[id], [code], p.[name], [stock], [currency], p.[brandid] ,b.[name] as marca,
                                 [photo], [photo2], [photo3], p.[subcategoryid], s.name as subcategoria, p.[categoryid],
                                 c.name as categoria, [priceid], [shortdescription], [longdescription], [reorderpoint],
-                                pr.price1, pr.price2, pr.price3, pr.price4, pr.price5, p.quotation,p.show
+                                pr.price1, pr.price2, pr.price3, pr.price4, pr.price5, p.quotation,p.selected
                                 FROM [product] p , [price] pr, [category] c ,
                                      [subcategory] s,[brand] b 
                                 WHERE p.brandid = b.id AND p.categoryid = c.id AND p.subcategoryid = s.id AND p.priceid = pr.id

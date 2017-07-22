@@ -9,9 +9,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Yajra\Datatables\Facades\Datatables;
+
 
 class UsuariosController extends Controller
 {
@@ -22,6 +24,7 @@ class UsuariosController extends Controller
      */
     public function index()
     {
+
         $usuarios = DB::select("select u.id, u.photo, u.name, u.lastname, u.email, u.phone, r.name as rol,u.status,u.roleid,u.username
         from users u 
         inner join  roles r on r.id = u.roleid");
@@ -52,32 +55,63 @@ class UsuariosController extends Controller
     {
         /* Nota actualizar las excepciones*/
         try {
-            /*Creamos aun nuevo usuario aqui insertamos y luego obtenemos el id*/
-            $user = new Usuarios;
-            $user->name = $request->name;
-            $user->lastname = $request->lastname;
-            $user->email = $request->email;
-            $user->password = bcrypt($request->password);
-            $user->phone = $request->phone;
-            $user->roleid = $request->roleid;
-            if ($request->roleid == 1)
+            if(strpos($request->url(),'/resource/usuarios')) { //es un usuario agregado desde el panel administrativo
+                /*Creamos aun nuevo usuario aqui insertamos y luego obtenemos el id*/
+                $user = new Usuarios;
+                $user->name = $request->name;
+                $user->lastname = $request->lastname;
+                $user->email = $request->email;
+                $user->password = bcrypt($request->password);
+                $user->phone = $request->phone;
+                $user->roleid = $request->roleid;
+                if ($request->roleid == 1)
+                    $user->userprice = 1;
+                $user->status = $request->status;
+                $user->username = $request->username;
+                $user->photo = 'user.png';
+                $user->save();
+                /*Creamos el apikey*/
+                $user->apikey = bcrypt($user->id);
+                /*Guardamos el registro, de aquí renombramos la imagen*/
+                if ($request->file('photo') != null) {
+                    $user->photo = "U" . $user->id . '.' . $request->file('photo')->getClientOriginalExtension();
+                    $nombre = "/usuarios/U" . $user->id . "." . $request->file("photo")->getClientOriginalExtension();
+                    Storage::disk('local')->put($nombre, File::get($request->file("photo")));
+                }
+                $user->save();
+                $respuesta = ["code" => 200, "msg" => 'El usuario fue creado exitosamente', 'detail' => 'success'];
+            }elseif (strpos($request->url(),'/usuario/registro')){ //Desde el registro de clientes
+                /*Creamos aun nuevo usuario aqui insertamos y luego obtenemos el id*/
+                $user = new Usuarios;
+                $user->name = $request->name;
+                $user->lastname = $request->lastname;
+                $user->email = $request->email;
+                $user->password = bcrypt($request->password);
+                $user->phone = $request->phone;
+                $user->roleid = 1;
                 $user->userprice = 1;
-            $user->status = $request->status;
-            $user->username = $request->username;
-            $user->photo = 'user.png';
-            $user->save();
-            /*Creamos el apikey*/
-            $user->apikey = bcrypt($user->id);
-            /*Guardamos el registro, de aquí renombramos la imagen*/
-            if ($request->file('photo') != null) {
-                $user->photo = "U" . $user->id . '.' . $request->file('photo')->getClientOriginalExtension();
-                $nombre = "/usuarios/U" . $user->id . "." . $request->file("photo")->getClientOriginalExtension();
-                Storage::disk('local')->put($nombre, File::get($request->file("photo")));
+                $user->status = 'I';
+                $user->username = $request->username;
+                $user->photo = 'user.png';
+                $user->save();
+                /*Creamos el apikey*/
+                $user->apikey = bcrypt($user->id);
+                /*Guardamos el registro, de aquí renombramos la imagen*/
+                if ($request->file('photo') != null) {
+                    $user->photo = "U" . $user->id . '.' . $request->file('photo')->getClientOriginalExtension();
+                    $nombre = "/usuarios/U" . $user->id . "." . $request->file("photo")->getClientOriginalExtension();
+                    Storage::disk('local')->put($nombre, File::get($request->file("photo")));
+                }
+                $user->save();
+                $respuesta = ["code" => 200, "msg" => 'El usuario fue creado exitosamente', 'detail' => 'success'];
             }
-            $user->save();
-            $respuesta = ["code" => 200, "msg" => 'El usuario fue creado exitosamente', 'detail' => 'success'];
+            //Codigo para enviar el correo electronico soporte.herramientas.tepic@gmail.com herramientastepic
+            Mail::send('emails.confirm',['user'=>$user],function($msg)use($user){
+                $msg->subject('Confirmación de cuenta');
+                $msg->to($user->email);
+            });
         } catch (Exception $e) {
-            $respuesta = ["code" => 500, "msg" => $e->getMessage(), 'detail' => 'success'];
+            $respuesta = ["code" => 500, "msg" => $e->getMessage(), 'detail' => 'error'];
         }
 
         return Response::json($respuesta);

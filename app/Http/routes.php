@@ -43,7 +43,30 @@ Route::post('/login',[
     'uses' => 'UsersController@doLogin',
     'as' => 'panel.dologin'
 ]);
+Route::post('/usuario/login',[
+    'uses' => 'UsersController@doCLogin',
+    'as' => 'panel.doclogin'
+]);
 
+//Registro de clientes!!
+Route::get('/usuario/registro',[
+    'as' => 'tienda.registro',
+    'uses' => 'UsersController@getRegisterForm'
+]);
+
+Route::post('/usuario/registro',[
+    'as' => 'tienda.registro',
+    'uses' => 'UsuariosController@store'
+]);
+
+Route::get('/usuario/{id}',[
+    'uses' => 'UsuariosController@confirmEmail',
+    'as' => 'tienda.confirmar'
+]);
+Route::get('/usuario/situacion/{id}',[
+    'uses' => 'UsuariosController@errorMail',
+    'as' => 'tienda.problema'
+]);
 /* Area de administracion */
 Route::group(['prefix' => 'area'],function(){
     /*Obtenemos los formularios ... */
