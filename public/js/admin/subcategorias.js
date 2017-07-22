@@ -20,8 +20,11 @@ $(function(){
             },{
                 data:function (row) {
                     str = "<div align='center'>";
-                    str += " <button id='btnEditar' class='btn btn-primary block col-md-3' onclick='showSubcategory(" + row['id'] +", \""+row['name']+"\","+row['categoryid']+")'><i class='glyphicon glyphicon-edit'></i></button>";
-                    str += "<button id='btnEliminar' class='btn btn-danger block col-md-3' onclick='deleteSubcategory(" + row['id'] + ")'><i class='fa fa-trash-o'></i></button>";
+                    str += " <button id='btnEditar' class='btn btn-primary block col-md-3' onclick='showSubcategory("
+                        +"\""+ row['id']+"\""+","
+                        +" \""+row['name']+"\""+","
+                        +row['categoryid']+")'><i class='glyphicon glyphicon-edit'></i></button>";
+                    str += "<button id='btnEliminar' class='btn btn-danger block col-md-3' onclick='deleteSubcategory(" +"\""+ row['id']+"\"" + ")'><i class='fa fa-trash-o'></i></button>";
                     str += "</div>";
                     return str;
                 }

@@ -42,10 +42,11 @@ _________________________________________________________ -->
 
                 <input type="hidden" value="{{$i=0}}">
                 @foreach($servicios as $servicio)
-                    @if($i++<4)
+
+                    @if($i<4 && $servicio->show)
                     <div class="item same-height-row clearfix">
                         <div class="image same-height-always">
-                            <a href="{{route('tienda.detalleServicio',base64_encode($servicio->id))}}">
+                            <a href="{{route('tienda.detalleServicio',$servicio->id)}}">
                                 <img class="img-responsive" src="{{asset('img/servicios/'.$servicio->img)}}" alt="">
                             </a>
                         </div>
@@ -53,7 +54,9 @@ _________________________________________________________ -->
                             <h5><a href="{{route('tienda.detalleServicio',$servicio->id)}}">{{$servicio->title}}</a></h5>
                         </div>
                     </div>
+                        <?php $i++; ?>
                     @endif
+
                 @endforeach
 
             </div>

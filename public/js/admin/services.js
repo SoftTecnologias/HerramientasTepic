@@ -67,16 +67,18 @@ $(function(){
         rules: {
             title: {
                 required: true,
-                maxlength: 150
+                minlength: 2,
+                maxlength: 20
             },
             shortdesc: {
                 required: true,
-                maxlength:200
+                maxlength:100
             },
             longdesc: {
                 required: true,
+                maxlength: 150
             },
-            img1: {
+            img: {
                 extension: "png|jpg|gif",
                 filesize: 1048576
             }
@@ -126,7 +128,7 @@ $(function(){
         });
     });
     /* Inputs con url*/
-    $("#imgu").on("change",function(){
+    $("#img").on("change",function(){
         if($(this).val()!==""){
             $('#im1').attr("src",$(this).val());
             $('#im1').removeClass("hidden");

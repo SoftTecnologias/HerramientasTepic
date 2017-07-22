@@ -10,6 +10,7 @@ use App\Subcategoria;
 use App\Usuarios;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Redis\Database;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -48,8 +49,7 @@ class UsersController extends Controller
                     'product.shortdescription',
                     'product.longdescription',
                     'product.quotation',
-                    'product.selected'
-                //         ,'price.price1'
+                    'product.show'
                 )
                 ->join('price', 'price.id', '=', 'product.priceid')
                 ->where('photo', 'not like', 'minilogo.png')
@@ -83,6 +83,7 @@ class UsersController extends Controller
             return view('tienda.index', ['banner' => $banner, 'productos' => $productos, 'bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
         }
     }
+
     //Vistas con filtros
     public function getMarcaSearch(Request $request, $id){
         try{
@@ -277,7 +278,7 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','show')->take(10)->orderBy('title', 'asc')->get();
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
@@ -421,7 +422,8 @@ class UsersController extends Controller
                     ->get();
                 foreach ($filtromarcas as $item)
                     $item->id = base64_encode($item->id);
-            }else{
+            }
+            else{
                 /* Parte de los filtros */
                 $filtromarcas = DB::table('brand')
                     ->select('id', 'name',
@@ -438,6 +440,7 @@ class UsersController extends Controller
                     ->get();
                 foreach ($filtrosubcategorias as $item)
                     $item->id = base64_encode($item->id);
+
 
             }
             /* Aplicacion Recuperación de los productos con o sin filtros*/
@@ -767,7 +770,8 @@ class UsersController extends Controller
             return view('login');
         }
     }
-    public function getPedidosForm(Request $request){
+    public function getPedidosForm(Request $request)
+    {
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -784,9 +788,6 @@ class UsersController extends Controller
                 //vendedor solo que tenga el id 3
                 return view('sale.area', ['nombre' => 'Vendedor puñetas']);
             }
-        } else {
-            //no existe una session de administrador y lo manda al login
-            return view('login');
         }
     }
     public function getServiciosForm(Request $request){
@@ -812,24 +813,25 @@ class UsersController extends Controller
 
         }
     }
-    public function getBannerForm(Request $request){
-        if($request->cookie('admin') != null){
+    public function getBannerForm(Request $request)
+    {
+        if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
-            if($cookie['rol'] == 2) { //es un administrador
-                $user = Usuarios::where('apikey',$cookie['apikey'])->first();
-                $fecha = explode("-",substr($user->signindate,0,10));
-                return view('forms.banner',['usuario' => $user, 'datos'=>['name'=>$user->name. ' '. $user->lastname ,
-                    'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
+            if ($cookie['rol'] == 2) { //es un administrador
+                $user = Usuarios::where('apikey', $cookie['apikey'])->first();
+                $fecha = explode("-", substr($user->signindate, 0, 10));
+                return view('forms.banner', ['usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
+                    'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador']
                 ]);
-            }elseif ($cookie['rol'] == 3){
+            } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
-                return view('sale.area',['nombre'=> 'Vendedor puñetas']);
+                return view('sale.area', ['nombre' => 'Vendedor puñetas']);
             }
-        }else{
+        } else {
             //no existe una session de administrador y lo manda al login
             return view('login');
         }

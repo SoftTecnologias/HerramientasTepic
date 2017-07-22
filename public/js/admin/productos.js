@@ -2,6 +2,9 @@
  * Created by fenix on 20/03/2017.
  */
 $(function(){
+
+
+
     $('#btnNew').on('click', function () {
         $('#titulo-modal').text("Nuevo Producto");
         reset();
@@ -95,26 +98,26 @@ $(function(){
                 console.log(row);
                 str = "<div align='center'>";
                 str +=" <button id='btnEditar' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("
-                     + row['id'] + ","
-                     + row['categoryid'] + ","
+                    +"\""+row['id']+"\", "
+                    +"\""+row['categoryid']+"\", "
                      + "\""+encodeURI(row['code']) + "\","
                      + "\""+row['currency'] + "\","
                      +"\""+encodeURI(row['longdescription']) + "\","
                      + row['brandid']+", \""
-                     +encodeURI(row['name'])+"\", \""
-                     +row['photo'] +"\", \""
-                     +row['photo2'] +"\", \""
-                     +row['photo3'] +"\","
+                     +encodeURI(row['name'])+"\","
+                    +" \""+row['photo'] +"\","
+                    +" \""+row['photo2'] +"\","
+                    +"\""+row['photo3'] +"\","
                      +row['price1'] +","
                      +row['price2'] +","
                      +row['price3'] +","
                      +row['price4'] +","
                      +row['price5'] +","
-                     +row['reorderpoint'] +",\""
-                     +escape(row['shortdescription']) +"\","
+                     +row['reorderpoint'] +","
+                     +"\""+escape(row['shortdescription']) +"\","
                      +row['stock'] +","
                      +row['subcategoryid']+")'><i class='glyphicon glyphicon-edit'></i></button>";
-                str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteProduct(" + row['id'] + ")'><i class='fa fa-trash-o'></i></button>";
+                str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteProduct(" +"\""+ row['id']+"\"" + ")'><i class='fa fa-trash-o'></i></button>";
 
                  str += (row['show'] ==1) ?  "<input type='checkbox' id='check"+row['id']+"' name='check' checked onchange='verMiniatura("+"\""+row['id']+"\""+")'>Mostrar":
                     "<input type='checkbox' id='check"+row['id']+
@@ -471,4 +474,3 @@ function verMiniatura(id) {
         });
     });
 }
-
