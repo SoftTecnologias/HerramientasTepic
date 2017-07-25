@@ -12,10 +12,17 @@ $(function(){
     //*
     $('#providerTable').DataTable({
         stateSave: true,
-        'ajax':{
-            url: 'api/proveedores',
-            dataSrc: function (json) {
-                return json;
+        'ajax':document.location.protocol+'//'+document.location.host  +'/area/resource/proveedores',
+        'createdRow':function(row,data,index){
+            console.log("tipo: ",data.tipo, "status: ", data.status);
+            if(data.status==1){
+                if(data.tipo == 1) {
+                    $('td', row).addClass("info");
+                }else {
+                    $('td', row).addClass("warning");
+                }
+            }else{
+                $('td',row).addClass("danger");
             }
         },
         'columns':[
@@ -61,6 +68,12 @@ $(function(){
                 required: true,
                 minlength:3
             },
+            estados:{
+                required: true
+            },
+            municipio:{
+                required: true
+            },
             numero_int: {
                 required: '#numero_ext:blank'
             },
@@ -71,12 +84,7 @@ $(function(){
                 required: true,
                 number:true
             },
-            estado: {
-                required: true
-            },
-            municipio: {
-                required: true
-            },
+
             telefono1: {
                 required: true,
                 minlength:7,
@@ -118,26 +126,27 @@ $(function(){
 
     });
 
-    $("#estado").on('change',function(){
-        $('#municipio option').remove();
-        if($(this).val()!= "") {
-            $.ajax({
-                url: 'api/municipios/' + $(this).val(),
-                type: 'get'
-            }).done(function(json){
-                if(json.code===200){
-                    $('<option></option>', {text: "Seleccione un municipio"}).attr('value', "").appendTo('#municipio');
-                    $.each(json.msg, function (i, row) {
-                        $('<option></option>', {text: row.nombre}).attr('value', row.id).appendTo('#municipio');
-                    });
-                }else{
-                    $('<option></option>', {text: "No se obtuvieron resultados"}).attr('value', "").appendTo('#municipio');
-                }
+
+});
+$("select#estados").on('change',function(){
+  var value = $(this).val();
+    console.log(value);
+    $('#municipio option').remove();
+    $.ajax({
+        url: document.location.protocol+'//'+document.location.host  +'/area/resource/proveedores/municipios/' + $(this).val(),
+        type: 'GET'
+    }).done(function(json){
+        if(json.code===200){
+            $('<option></option>', {text: "Seleccione un municipio"}).attr('value', "").appendTo('#municipio');
+            $.each(json.msg, function (i, row) {
+                $('<option></option>', {text: row.nombre}).attr('value', row.id).appendTo('#municipio');
             });
+        }else{
+            $('<option></option>', {text: "No se obtuvieron resultados"}).attr('value', "").appendTo('#municipio');
         }
     });
-});
 
+});
 //
 function providerAction(){
     if($("#id").val()==""){
@@ -148,15 +157,21 @@ function providerAction(){
 }
 //
 function newProvider(){
+    var data = new FormData(document.getElementById("providerForm"));
     $.ajax({
-        url:"api/proveedores",
+        url:document.location.protocol+'//'+document.location.host  +"/area/resource/proveedores",
         type:"POST",
-        data: $('#providerForm').serialize()
+        data: data,
+        contentType:false,
+        processData: false,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     }).done(function(json){
         if(json.code == 200) {
             swal("Realizado", json.msg, json.detail);
             $('#modalProvider').modal("hide");
-            $('#providerTable').dataTable().api().ajax.reload();
+            $('#providerTable').dataTable().api().ajax.reload(null,false);
             reset();
         }else{
             swal("Error",json.msg,json.detail);
@@ -168,18 +183,25 @@ function newProvider(){
 //
 function updateProvider(id){
     $("#id").val(id);
+    var datos = new FormData(document.getElementById("providerForm"));
     $.ajax({
-        url:"api/proveedores/"+id,
-        type:"put",
-        data: $('#providerForm').serialize()
+        url:document.location.protocol+'//'+document.location.host  +'/area/resource/proveedores/update/'+id,
+        type:"POST",
+        data: datos,
+        contentType:false,
+        processData: false,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     }).done(function(json){
         if(json.code == 200) {
             swal("Realizado", json.msg, json.detail);
-            $('#modalProvider').modal("hide");
-            $('#providerTable').dataTable().api().ajax.reload();
+            $('#modalServices').modal("hide");
+            location.reload(3);
+            //$('#tblservicios').dataTable().api().ajax.reload(null,false);
             reset();
         }else{
-            console.log(json);
+
             swal("Error",json.msg,json.detail);
         }
     }).fail(function(){
@@ -198,14 +220,17 @@ function deleteProvider(id){
         confirmButtonText: 'Si, deseo eliminarlo!',
         cancelButtonText: "Lo pensaré"
     }).then(function () {
-        ruta ='api/proveedores/'+id;
+        ruta =document.location.protocol+'//'+document.location.host  +'/area/resource/proveedores/'+id;
         $.ajax({
             url:ruta,
-            type:'delete'
+            type:'delete',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
         }).done(function(json){
             if(json.code==200) {
                 swal("Realizado", json.msg, json.detail);
-                $('#providerTable').dataTable().api().ajax.reload();
+                $('#tblServicios').dataTable().api().ajax.reload(null,false);
             }else{
                 swal("Error", json.msg, json.detail);
             }
@@ -217,7 +242,7 @@ function deleteProvider(id){
 //
 function showProvider(id){
     $.ajax({
-        url: "api/proveedores/"+id,
+        url: document.location.protocol+'//'+document.location.host  +'/area/resource/proveedores/'+id,
         type: 'GET'
     }).done(function(json){
         if(json.code==200){

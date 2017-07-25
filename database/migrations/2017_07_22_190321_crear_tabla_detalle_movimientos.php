@@ -39,12 +39,12 @@ class CrearTablaDetalleMovimientos extends Migration
                        SELECT @TIPO = tipo FROM movimientos WHERE id = (SELECT TOP 1 movimiento_id FROM inserted)
                        SELECT @CANTIDAD = cantidad,  @PRODUCTO= producto_id, @TOTAL=total, @MOVIMIENTO = movimiento_id from inserted
                        IF @TIPO = 1 --ES UNA ENTRADA
-	                       UPDATE productos 
+	                       UPDATE product 
 	                       SET stock = stock + @CANTIDAD
 	                       WHERE id = @PRODUCTO
                        ELSE
                        IF @TIPO = 2 --ES UNA SALIDA
-                           UPDATE productos
+                           UPDATE product
                            SET stock = stock - @CANTIDAD
                            WHERE id = @PRODUCTO
                        UPDATE movimientos
@@ -65,12 +65,12 @@ class CrearTablaDetalleMovimientos extends Migration
                        SELECT @TIPO = tipo FROM movimientos WHERE id = (SELECT TOP 1 movimiento_id FROM deleted)
                        SELECT @CANTIDAD = cantidad,  @PRODUCTO= producto_id, @TOTAL=total, @MOVIMIENTO = movimiento_id from deleted
                        IF @TIPO = 1 --ES UNA ENTRADA
-	                       UPDATE productos 
+	                       UPDATE product
 	                       SET stock = stock - @CANTIDAD
 	                       WHERE id = @PRODUCTO
                        ELSE
                        IF @TIPO = 2 --ES UNA SALIDA
-                           UPDATE productos
+                           UPDATE product
                            SET stock = stock + @CANTIDAD
                            WHERE id = @PRODUCTO
                        UPDATE movimientos

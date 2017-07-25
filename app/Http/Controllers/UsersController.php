@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Categoria;
 use App\Marca;
+use App\Estado;
 use App\Roles;
 use App\Servicio;
 use App\Subcategoria;
@@ -866,6 +867,61 @@ class UsersController extends Controller
             //no existe una session de administrador y lo manda al login
             return view('login');
         }
+    }
+    public function showMovementForm(Request $request){
+        if ($request->cookie('admin') != null) {
+            //Existe la cookie, solo falta averiguar que rol es
+            $cookie = Cookie::get('admin');
+            if ($cookie['rol'] == 2) { //es un administrador
+                $user = Usuarios::where('apikey', $cookie['apikey'])->first();
+                $fecha = explode("-", substr($user->signindate, 0, 10));
+                $productos = DB::table('product')->select('id','name')->get();
+                $proveedores =DB::table('proveedores')->select('id','nombre')->get();
+                return view('forms.movement', [
+                    'proveedores' => $proveedores,
+                    'productos' => $productos,
+                    'usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
+                        'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
+                        'photo' => $user->photo,
+                        'username' => $user->username,
+                        'permiso' => 'Administrador']
+                ]);
+            } elseif ($cookie['rol'] == 3) {
+                //vendedor solo que tenga el id 3
+                return view('sale.area', ['nombre' => 'Vendedor puñetas']);
+            }
+        } else {
+            //no existe una session de administrador y lo manda al login
+            return view('login');
+        }
+
+    }
+    public function showProviderForm(Request $request){
+
+        if ($request->cookie('admin') != null) {
+            //Existe la cookie, solo falta averiguar que rol es
+            $cookie = Cookie::get('admin');
+            if ($cookie['rol'] == 2) { //es un administrador
+                $user = Usuarios::where('apikey', $cookie['apikey'])->first();
+                $fecha = explode("-", substr($user->signindate, 0, 10));
+                $estados = Estado::all();
+                return view('forms.provider', [
+                    'estados' => $estados,
+                    'usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
+                        'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
+                        'photo' => $user->photo,
+                        'username' => $user->username,
+                        'permiso' => 'Administrador']
+                ]);
+            } elseif ($cookie['rol'] == 3) {
+                //vendedor solo que tenga el id 3
+                return view('sale.area', ['nombre' => 'Vendedor puñetas']);
+            }
+        } else {
+            //no existe una session de administrador y lo manda al login
+            return view('login');
+        }
+
     }
     /*Parte de Login y logout (Sirve para ambas partes)*/
     public function doLogin(Request $request){
