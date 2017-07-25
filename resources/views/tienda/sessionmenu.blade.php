@@ -22,7 +22,7 @@
                 <div class="login">
                     <a href="#" data-toggle="modal" data-target="#login-modal"><i class="fa fa-sign-in"></i>
                         <span class="hidden-xs text-uppercase">Iniciar Sesión</span></a>
-                    <a href="customer-register.html"><i class="fa fa-user"></i> <span
+                    <a href="{{route('tienda.registro')}}"><i class="fa fa-user"></i> <span
                                 class="hidden-xs text-uppercase">Registrarse</span></a>
                 </div>
 

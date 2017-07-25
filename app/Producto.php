@@ -11,7 +11,7 @@ class Producto extends Model
     protected $fillable = [
         'code', 'name', 'stock', 'currency', 'brandid',
         'subcategoryid','categoryid','priceid', 'shortdescription',
-        'longdescription', 'reorderpoint','photo','photo2','photo3','show'
+        'longdescription', 'reorderpoint','photo','photo2','photo3','selected'
     ];
 
 }

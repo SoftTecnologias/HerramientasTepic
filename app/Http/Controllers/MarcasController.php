@@ -21,7 +21,7 @@ class MarcasController extends Controller
      */
     public function index()
     {
-        $marcas = DB::select("select id, name, logo, authorized, total_sales from brand");
+        $marcas = DB::select("select [id], [name], [logo], [authorized], [total_sales] from brand");
         foreach ($marcas as $marca){
             $marca->id = base64_encode($marca->id);
         }

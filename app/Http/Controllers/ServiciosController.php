@@ -20,7 +20,7 @@ class ServiciosController extends Controller
      */
     public function index()
     {
-        $servicios =DB::select("select id, [title],[shortdescription],[longdescription],[img],show
+        $servicios =DB::select("select id, [title],[shortdescription],[longdescription],[img],[selected]
                                 FROM [services] order by title");
         foreach ($servicios as $servicio) {
             $servicio->id = base64_encode($servicio->id);
@@ -57,7 +57,7 @@ class ServiciosController extends Controller
                 "shortdescription"        => $request->input('shortdesc')   ,
                 "longdescription"   => $request->input('longdesc')   ,
                 "img"      => "servicios.png"   ,
-                "show"     => "0"
+                "selected"     => "0"
             ]);
 
             if($imgu1==null){
@@ -197,7 +197,7 @@ class ServiciosController extends Controller
             $dat = $request->input('no');
 
             $up=([
-                "show"   => $dat
+                "selected"   => $dat
             ]);
 
             $servicio->fill($up);

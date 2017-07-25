@@ -18,14 +18,16 @@
         <ul class="sidebar-menu">
             <!-- Optionally, you can add icons to the links -->
             <li class="active"><a href="{{ route('area.index') }}"><i class='fa fa-dashboard'></i> <span>Inicio</span></a></li>
-            <li><a href="{{route('area.pedidos')}}"><i class='fa fa-truck'></i> <span>Pedidos</span></a></li>
+            <li><a href="{{route('area.pedidos')}}"><i class='fa fa-cart-plus'></i> <span>Pedidos</span></a></li>
             <li><a href="{{route('area.productos')}}"><i class='fa fa-list-alt'></i> <span>Productos</span></a></li>
             <li><a href="{{route('area.marcas')}}"><i class='fa fa-shirtsinbulk'></i> <span>Marcas</span></a></li>
             <li><a href="{{route('area.categorias')}}"><i class='fa fa-tasks'></i> <span>Categorias</span></a></li>
             <li><a href="{{route('area.subcategorias')}}"><i class='fa fa-tags'></i><span>Subcategorias</span></a></li>
             <li><a href="{{route('area.usuarios')}}"><i class='fa fa-user'></i> <span>Usuarios</span></a></li>
             <li><a href="{{route('area.servicios')}}"><i class='fa fa-bug'></i> <span>Servicios</span></a></li>
-            <li><a href="{{route('area.banner')}}"><i class="glyphicon glyphicon-wrench"></i> <span>Banner</span></a></li>
+            <li><a href="{{route('area.banner')}}"><i class="glyphicon glyphicon-wrench"></i><span>Banner</span></a></li>
+            <li><a href="{{route('area.provider')}}"><i class="fa fa-truck"></i><span>Proveedores</span></a></li>
+            <li><a href="{{route('area.movements')}}"><i class="fa fa-archive"></i> <span>Movimientos de almacén</span></a></li>
 
 
 <!--php artisan make:controller ServiciosController --resource

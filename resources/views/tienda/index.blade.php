@@ -128,7 +128,7 @@ _________________________________________________________ -->
                     @foreach(array_chunk($servicios,4) as $rows)
                     <div class="row">
                         @foreach($rows as $servicio)
-                        @if($servicio->show)
+                        @if($servicio->selected)
                     <div class="col-md-3 col-sm-6">
                         <div class="box-image-text blog">
                             <div class="top">
