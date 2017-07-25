@@ -15,7 +15,7 @@ $(function () {
     //*
     var table = $('#movementTable').DataTable({
         stateSave: true,
-        'ajax':document.location.protocol+'//'+document.location.host+"/HerramientasTepic/public"  +'/area/resource/movimientos',
+        'ajax':document.location.protocol+'//'+document.location.host +'/area/resource/movimientos',
         'createdRow':function(row,data,index){
             console.log("tipo: ",data.tipo, "status: ", data.status);
             if(data.status==1){
@@ -182,7 +182,7 @@ $(function () {
 function newMovement(){
     var data = new FormData(document.getElementById("movementForm"));
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host+"/HerramientasTepic/public"  +"/area/resource/movimientos",
+        url:document.location.protocol+'//'+document.location.host  +"/area/resource/movimientos",
         type:"POST",
         data: data,
         contentType:false,
@@ -247,7 +247,7 @@ function resetD() {
 //
 function subtable(row) {
     $.ajax({
-        url: document.location.protocol+'//'+document.location.host+"/HerramientasTepic/public"  +"/area/resource/movimientos/" + row.data()['id'] + '/detalle',
+        url: document.location.protocol+'//'+document.location.host  +"/area/resource/movimientos/" + row.data()['id'] + '/detalle',
         type: 'get'
     }).done(function (json) {
         console.log(json.code);
@@ -347,7 +347,7 @@ function showDetailForm(id){
 function newDetail(id){
     var data = new FormData(document.getElementById("detailForm"));
     $.ajax({
-        url: document.location.protocol+'//'+document.location.host+"/HerramientasTepic/public"  +"/area/resource/movimientos/"+id+"/create",
+        url: document.location.protocol+'//'+document.location.host  +"/area/resource/movimientos/"+id+"/create",
         type:"POST",
         data: data,
         contentType:false,
@@ -380,7 +380,7 @@ function removeDetail(id){
         confirmButtonText: 'Si, deseo eliminarlo!',
         cancelButtonText: "Lo pensaré"
     }).then(function () {
-        ruta =document.location.protocol+'//'+document.location.host+"/HerramientasTepic/public"  +'/area/resource/movimientos/detail/'+id;
+        ruta =document.location.protocol+'//'+document.location.host  +'/area/resource/movimientos/detail/'+id;
         $.ajax({
             url:ruta,
             type:'delete',
