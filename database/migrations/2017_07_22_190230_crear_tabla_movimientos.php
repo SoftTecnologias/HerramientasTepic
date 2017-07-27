@@ -48,12 +48,12 @@ class CrearTablaMovimientos extends Migration
 		                        WHILE @@FETCH_STATUS = 0
 		                        BEGIN
 			                        IF @TIPO = 1
-				                        UPDATE productos
+				                        UPDATE product
 				                        SET stock = stock - @CANTIDAD
 				                        WHERE id = @PRODUCTO
 			                        ELSE
 				                        IF @TIPO = 2
-					                        UPDATE productos
+					                        UPDATE product
 					                        SET stock = stock + @CANTIDAD
 					                        WHERE id = @PRODUCTO
 			                        FETCH NEXT FROM DETALLES INTO @CANTIDAD, @PRODUCTO 

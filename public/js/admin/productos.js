@@ -97,7 +97,8 @@ $(function(){
             {data: function (row) {
                 console.log(row);
                 str = "<div align='center'>";
-                str +=" <button id='btnEditar' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("
+                str +=" <button id='btnEditar"+row['id']+
+                    "' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("
                     +"\""+row['id']+"\", "
                     +"\""+row['categoryid']+"\", "
                      + "\""+encodeURI(row['code']) + "\","
@@ -114,7 +115,7 @@ $(function(){
                      +row['price4'] +","
                      +row['price5'] +","
                      +row['reorderpoint'] +","
-                     +"\""+escape(row['shortdescription']) +"\","
+                     +"\""+encodeURI(row['shortdescription']) +"\","
                      +row['stock'] +","
                      +row['subcategoryid']+")'><i class='glyphicon glyphicon-edit'></i></button>";
                 str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteProduct(" +"\""+ row['id']+"\"" + ")'><i class='fa fa-trash-o'></i></button>";
@@ -367,6 +368,7 @@ function showProduct(productid, categoryid, code, currency, longdescription, bra
     $('#name').val(decodeURI(name));
     $('#currency').val(currency);
     $('#shortdescription').val(decodeURI(shortdescription));
+    console.log(decodeURI(shortdescription));
     $('#longdescription').val(decodeURI(longdescription));
     $('#brandid').val(brandid);
     $('#categoryid').val(categoryid);

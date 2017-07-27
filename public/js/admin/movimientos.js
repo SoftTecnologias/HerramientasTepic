@@ -15,13 +15,7 @@ $(function () {
     //*
     var table = $('#movementTable').DataTable({
         stateSave: true,
-        'ajax': {
-            url: 'api/movimientos',
-            type: 'get',
-            dataSrc: function (json) {
-                return json;
-            }
-        },
+        'ajax':document.location.protocol+'//'+document.location.host +'/area/resource/movimientos',
         'createdRow':function(row,data,index){
             console.log("tipo: ",data.tipo, "status: ", data.status);
             if(data.status==1){
@@ -185,48 +179,57 @@ $(function () {
 });
 
 //
-function newMovement() {
+function newMovement(){
+    var data = new FormData(document.getElementById("movementForm"));
     $.ajax({
-        url: "api/movimientos",
-        type: "POST",
-        data: $('#movementForm').serialize()
-    }).done(function (json) {
-        if (json.code == 200) {
+        url:document.location.protocol+'//'+document.location.host  +"/area/resource/movimientos",
+        type:"POST",
+        data: data,
+        contentType:false,
+        processData: false,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    }).done(function(json){
+        if(json.code == 200) {
             swal("Realizado", json.msg, json.detail);
             $('#modalMovement').modal("hide");
-            $('#movementTable').dataTable().api().ajax.reload();
+            $('#movementTable').dataTable().api().ajax.reload(null,false);
             reset();
-        } else {
-            swal("Error", json.msg, json.detail);
+        }else{
+            swal("Error",json.msg,json.detail);
         }
-    }).fail(function () {
-        swal("Error", "Tuvimos un problema de conexion", "error");
+    }).fail(function(){
+        swal("Error","Tuvimos un problema de conexion","error");
     });
 }
 //
 function cancelMovement(id) {
     swal({
-        title: '¿Estás seguro de cancelar este movimiento?',
+        title: '¿Estás seguro?',
         text: "Esto no se puede revertir!",
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, deseo cancelarlo!',
-        cancelButtonText: "Lo pensaré un poco más"
+        confirmButtonText: 'Si, deseo eliminarlo!',
+        cancelButtonText: "Lo pensaré"
     }).then(function () {
-        ruta = 'api/movimientos/' + id;
+        ruta =document.location.protocol+'//'+document.location.host  +'/area/resource/movimientos/'+id;
         $.ajax({
-            url: ruta,
-            type: 'delete'
-        }).done(function (json) {
-            if (json.code == 200) {
+            url:ruta,
+            type:'delete',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        }).done(function(json){
+            if(json.code==200) {
                 swal("Realizado", json.msg, json.detail);
-                $('#movementTable').dataTable().api().ajax.reload();
-            } else {
+                $('#tblServicios').dataTable().api().ajax.reload(null,false);
+            }else{
                 swal("Error", json.msg, json.detail);
             }
-        }).fail(function (response) {
+        }).fail(function(response){
             swal("Error", "tuvimos un problema", "warning");
         });
     });
@@ -244,7 +247,7 @@ function resetD() {
 //
 function subtable(row) {
     $.ajax({
-        url: 'api/movimientos/' + row.data()['id'] + '/detalle',
+        url: document.location.protocol+'//'+document.location.host  +"/area/resource/movimientos/" + row.data()['id'] + '/detalle',
         type: 'get'
     }).done(function (json) {
         console.log(json.code);
@@ -342,48 +345,56 @@ function showDetailForm(id){
 }
 //
 function newDetail(id){
+    var data = new FormData(document.getElementById("detailForm"));
     $.ajax({
-        url: "api/movimientos/"+id+"/create",
-        type: "POST",
-        data: $('#detailForm').serialize()
-    }).done(function (json) {
-        if (json.code == 200) {
+        url: document.location.protocol+'//'+document.location.host  +"/area/resource/movimientos/"+id+"/create",
+        type:"POST",
+        data: data,
+        contentType:false,
+        processData: false,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    }).done(function(json){
+        if(json.code == 200) {
             swal("Realizado", json.msg, json.detail);
             $('#modalDetail').modal("hide");
-            $('#movementTable').dataTable().api().ajax.reload();
-            resetD();
-        } else {
-            swal("Error", json.msg, json.detail);
+            $('#movementTable').dataTable().api().ajax.reload(null,false);
+            reset();
+        }else{
+            swal("Error",json.msg,json.detail);
         }
-    }).fail(function () {
-        swal("Error", "Tuvimos un problema de conexion", "error");
+    }).fail(function(){
+        swal("Error","Tuvimos un problema de conexion","error");
     });
 }
 //
 function removeDetail(id){
     swal({
-        title: '¿Estás seguro de borrar este detalle?',
+        title: '¿Estás seguro?',
         text: "Esto no se puede revertir!",
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Si, deseo eliminarlo!',
-        cancelButtonText: "Lo pensaré un poco más"
+        cancelButtonText: "Lo pensaré"
     }).then(function () {
-        ruta = 'api/movimientos/detail/' + id;
+        ruta =document.location.protocol+'//'+document.location.host  +'/area/resource/movimientos/detail/'+id;
         $.ajax({
-            url: ruta,
-            type: 'delete'
-        }).done(function (json) {
-            if (json.code == 200) {
+            url:ruta,
+            type:'delete',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        }).done(function(json){
+            if(json.code==200) {
                 swal("Realizado", json.msg, json.detail);
-                //Aqui lo agrego manual
-                $('#movementTable').dataTable().api().ajax.reload();
-            } else {
+                $('#tblServicios').dataTable().api().ajax.reload(null,false);
+            }else{
                 swal("Error", json.msg, json.detail);
             }
-        }).fail(function (response) {
+        }).fail(function(response){
             swal("Error", "tuvimos un problema", "warning");
         });
     });

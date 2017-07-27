@@ -1,9 +1,10 @@
-@extends('layouts.administrador')
+@extends('layouts.administrador',['user_info' => $datos])
 @section('styles')
     <link media="all" type="text/css" rel="stylesheet"
           href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
     {{Html::style('css/admin/movimientos.css')}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
     <div class="content-wrapper" id="ContenidoPrincipal">
@@ -175,7 +176,7 @@
                                                 class="form-control" style="width:220px">
                                             <option value="">Seleccione un producto</option>
                                             @foreach($productos as $producto)
-                                                <option value="{{$producto->id}}">{{$producto->nombre}}</option>
+                                                <option value="{{$producto->id}}">{{$producto->name}}</option>
                                             @endforeach
                                         </select>
                                     </div>

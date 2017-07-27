@@ -20,7 +20,7 @@ class ServiciosController extends Controller
      */
     public function index()
     {
-        $servicios =DB::select("select id, [title],[shortdescription],[longdescription],[img],selected
+        $servicios =DB::select("select id, [title],[shortdescription],[longdescription],[img],[selected]
                                 FROM [services] order by title");
         foreach ($servicios as $servicio) {
             $servicio->id = base64_encode($servicio->id);

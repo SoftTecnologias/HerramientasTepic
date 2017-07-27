@@ -201,18 +201,51 @@ Route::group(['prefix' => 'area'],function(){
         'uses' => 'UsersController@doLogout',
         'as' => 'area.logout'
     ]);
-
-    Route::get('/movements', [
+    Route::resource('/resource/movimientos','MovimientosController');
+    Route::get('/movimientos', [
         'uses'=>'UsersController@showMovementForm',
         'as' =>'area.movements'
         ]);
+    Route::get('/resource/movimientos/{id}/detalle',[
+        'uses' => 'MovimientosController@detailIndex',
+        'as' => 'panel.resource.movimientos.indexdetalle'
+    ]);
+    Route::post('/resource/movimientos/{mov}/create',[
+        'uses'=>'MovimientosController@create',
+        'as' => 'area.resource.movimientos.detalle'
+    ]);
+    Route::POST('/resource/proveedores/update/{id}',[
+        'uses' => 'proveedoresController@update',
+        'as' => 'area.resource.proveedores.update'
+    ]);
+
+    Route::get("/resource/proveedores/municipios/{id}", [
+        'uses' => 'ProveedoresController@municipios',
+            'as' => 'municipio.get'
+    ]);
+
+    //Eliminar Detalle
+    Route::delete('/resource/movimientos/detail/{id}',[
+        'uses'=>'MovimientosController@removeDetail',
+        'as' => 'area.resource.movimientos.remove'
+    ]);
+    Route::resource('/resource/proveedores','ProveedoresController');
+    Route::get('/proveedores',[
+        'uses'=>'UsersController@showProviderForm',
+        'as' =>'area.provider'
+    ]);
+
 });
+
+
 
 Route::group(['prefix' => 'sale'],function (){
     Route::get('/',[
         'uses' => 'UsersController@getAreaIndex',
         'as' => 'sale.index'
         ]);
+
+
 });
 
 /* Rutas para Ajax*/
