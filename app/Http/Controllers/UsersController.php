@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ActivateMail;
 use App\Categoria;
 use App\Marca;
 use App\Roles;
@@ -33,28 +34,32 @@ class UsersController extends Controller
 
       /*Parte de la tienda de Herramientas Tepic*/
     public function getIndex(Request $request){
-        if ($request->cookie('cliente') != null) {
-            //Se tomará en cuenta si hay una session de cliente para el carrito
-        } else {
+       try{
             //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
             $banner = DB::table('banner_principal')->get();
+           $precioUsuario = $this->precioUsuario($request);
+           $select=[
+               'product.code',
+               'product.name',
+               'product.stock',
+               'product.currency',
+               'product.photo',
+               'product.photo2',
+               'product.photo3',
+               'product.shortdescription',
+               'product.longdescription',
+               'product.quotation'
+           ];
+           if($precioUsuario!=""){
+               array_push($select,$precioUsuario." as price");
+           }
             $productos = DB::table('product')
-                ->select('product.code',
-                    'product.name',
-                    'product.stock',
-                    'product.currency',
-                    'product.photo',
-                    'product.photo2',
-                    'product.photo3',
-                    'product.shortdescription',
-                    'product.longdescription',
-                    'product.quotation',
-                    'product.selected'
-                )
+                ->select($select)
                 ->join('price', 'price.id', '=', 'product.priceid')
                 ->where('photo', 'not like', 'minilogo.png')
                 ->where('selected',1)
                 ->take(39)->get();
+
             $bMarcas = DB::table('brand')
                 ->select('logo')
                 ->where('logo', 'not like', 'minilogo.png')
@@ -81,7 +86,9 @@ class UsersController extends Controller
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             return view('tienda.index', ['banner' => $banner, 'productos' => $productos, 'bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
-        }
+        }catch(Exception $e){
+            return Response::json($e->getMessage()."  Linea: ".$e->getLine());
+       }
     }
 
     //Vistas con filtros
@@ -105,7 +112,7 @@ class UsersController extends Controller
                 'product.quotation'
             ];
             if($precioUsuario!=""){
-                array_push($select,$precioUsuario);
+                array_push($select,$precioUsuario." as price");
             }
             if(strpos($url, "/")){ //Existe al menos un parametro a parte del id
                 $partes = explode("/",$url); //Separamos el id y los parametros
@@ -310,7 +317,7 @@ class UsersController extends Controller
                 'product.quotation'
             ];
             if($precioUsuario!=""){
-                array_push($select,$precioUsuario);
+                array_push($select,$precioUsuario." as price");
             }
             if(strpos($url, "/")){ //Existe al menos un parametro a parte del id
                 $partes = explode("/",$url); //Separamos el id y los parametros
@@ -469,7 +476,8 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
+            //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
@@ -514,18 +522,18 @@ class UsersController extends Controller
                 ->where('name', 'not like', 'Nota de credito')
                 ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                 ->orderBy('name', 'asc')->get();
-            //menu de servicios
-            $servicios = DB::table('services')->select('id','title','shortdescription','longdescription','img')->take(10)->orderBy('title','asc')->get();
-            foreach ($servicios as $servicio){
-                $servicio->id = base64_encode($servicio->id);}
-
+            //Menu de servicios
+            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
+            //Encriptar id de servicios
+            foreach ($servicios as $servicio)
+                $servicio->id = base64_encode($servicio->id);
             foreach ($categorias as $c){
                 $c->id = base64_encode($c->id);}
             foreach ($marcas as $m){
                 $m->id = base64_encode($m->id);}
             foreach ($productos as $p){
                 $p->code = base64_encode($p->code);}
-            return view('tienda.servicios',['productos'=> $productos,'bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
+            return view('tienda.servicios',['bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
         }
     }
     public function getServiceDetail(Request $request, $id){
@@ -563,7 +571,7 @@ class UsersController extends Controller
                     ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
                     ->orderBy('name', 'asc')->get();
                 //menu de servicios
-                $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img')->take(10)->orderBy('title', 'asc')->get();
+                $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
                 //Marca actual (Migaja)
                 $actual =  DB::table('services')->select('id', 'title','shortdescription','longdescription','img')
                     ->take(10)
@@ -586,11 +594,6 @@ class UsersController extends Controller
         }
     }
     public function getRegisterForm(Request $request){
-            $bMarcas = DB::table('brand')
-                ->select('logo')
-                ->where('logo', 'not like', 'minilogo.png')
-                ->where('authorized','=',1)
-                ->take(12)->get();
             //Menu de marcas
             $marcas = DB::table('brand')->select('id', 'name')
                 ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
@@ -872,7 +875,7 @@ class UsersController extends Controller
         try {
             $cookie = null;
             $users = Usuarios::where('email', $request->email)->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
-            if (Hash::check($request->password, $users->password)) {
+            if (Hash::check($request->password, $users->password) && $users->status == "A") {
                 $datos = [
                     'apikey' => $users->apikey,
                     'rol' => $users->roleid,
@@ -882,8 +885,9 @@ class UsersController extends Controller
                    $cookie = Cookie::make('admin', $datos, 180);
                 }else{
                  $datos['userprice']= $users->userprice;
+                 $datos['carrito'] = null;//En caso de no existir el carrito lo cual se agregará mas adelante
                     //revisaremos que exista el carrito y lo agregamos a la cookie
-                    $cookie = Cookie::make('cliente', $datos, 180);
+                    $cookie = Cookie::make('cliente', $datos, 360);
                 }
 
                 $respuesta = [
@@ -894,7 +898,7 @@ class UsersController extends Controller
             } else {
                 $respuesta = [
                     'code' => 500,
-                    'msg' => "Las credenciales son incorrectas",
+                    'msg' => "Las credenciales son incorrectas o el Usuario no está Activo",
                     'detail' => 'Error'
                 ];
             }
@@ -915,7 +919,7 @@ class UsersController extends Controller
         try {
             $cookie = null;
             $users = Usuarios::where('email', $request->email)->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
-            if (Hash::check($request->password, $users->password)) {
+            if (Hash::check($request->password, $users->password)  && $users->status == "A") {
                 $datos = [
                     'apikey' => $users->apikey,
                     'rol' => $users->roleid,
@@ -930,8 +934,9 @@ class UsersController extends Controller
                     ])->withCookie($cookie);
                 }else{
                     $datos['userprice']= $users->userprice;
+                    $datos['carrito'] = null; //En caso de no existir el carrito lo cual se agregará mas adelante
                     //revisaremos que exista el carrito y lo agregamos a la cookie
-                    $cookie = Cookie::make('cliente', $datos, 180);
+                    $cookie = Cookie::make('cliente', $datos, 360);
                 }
 
                 $respuesta = [
@@ -942,7 +947,7 @@ class UsersController extends Controller
             } else {
                 $respuesta = [
                     'code' => 500,
-                    'msg' => "Las credenciales son incorrectas",
+                    'msg' => "Las credenciales son incorrectas o el usuario no está activo",
                     'detail' => 'Error'
                 ];
             }
@@ -950,7 +955,7 @@ class UsersController extends Controller
             $respuesta = [
                 'code' => 500,
                 'msg' => $exception->getMessage(),
-                'detail' => 'Error'
+                'detail' => 'error'
             ];
 
         }
@@ -964,13 +969,69 @@ class UsersController extends Controller
             Cookie::forget('admin');
             return redirect()->route('area.index')->withCookie(Cookie::forget('admin'));
         }
+        if($request->cookie('cliente')!=null){
+            Cookie::forget('cliente');
+            return redirect()->route('tienda.index')->withCookie(Cookie::forget('cliente'));
+        }
     }
-    public function precioUsuario ($request){
+    public function precioUsuario (Request $request){
         if( $request->cookie('cliente') != null ){
             $cliente = $request->cookie('cliente');
-            return 'price.price'.$cliente->userprice;
+            return 'price.price'.$cliente['userprice'];
         }else{
             return '';
+        }
+    }
+    //Seguirle
+    public function confirmEmail (Request $request, $id){
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+     try {
+         //Aqui eliminamos el registro por el id de ambos
+         $params = base64_decode($id);
+         $solicitud = ActivateMail::findOrFail($params);
+         //Eliminamos la solicitud y se activa por trigger o manualmente!!
+         $solicitud->delete();
+         //regresamos la vista de confirmación por eso es GET
+         return view('tienda.confirmation', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
+     }catch(Exception $exception){
+         //Hubo un error y se manda la pantalla de alerta
+         return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios,'exception'=>$exception]);
+     }
+        //Menu de marcas
+
+
+    }
+    //Error de Mail
+    public function errorMail(Request $request, $id){
+        //Se envia un correo electronico con el id del usuario para su subida manual
+        try {
+            $id = base64_decode($id);
+            $user = Usuarios::findOrFail($id);
+            Mail::send('emails.problema', ['user' => $user], function ($msg) {
+                $msg->subject('Confirmación de cuenta');
+                $msg->to('soporte.herramientas.tepic@gmail.com');
+            });
+            return redirect()->route('tienda.index');
+        }catch(Exception $e){
+            return view("Hubo un problema contactenos en soporte.herramientas.tepic@gmail.com");
         }
     }
 }

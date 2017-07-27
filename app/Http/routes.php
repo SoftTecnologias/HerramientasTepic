@@ -65,11 +65,11 @@ Route::post('/usuario/registro',[
 ]);
 
 Route::get('/usuario/{id}',[
-    'uses' => 'UsuariosController@confirmEmail',
+    'uses' => 'UsersController@confirmEmail',
     'as' => 'tienda.confirmar'
 ]);
 Route::get('/usuario/situacion/{id}',[
-    'uses' => 'UsuariosController@errorMail',
+    'uses' => 'UsersController@errorMail',
     'as' => 'tienda.problema'
 ]);
 /* Area de administracion */

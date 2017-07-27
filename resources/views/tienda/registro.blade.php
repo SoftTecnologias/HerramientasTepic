@@ -60,20 +60,20 @@
 
                             <!-- Text input password-->
                             <div class="form-group">
-                                <label class="col-md-4 control-label" for="password" >Contraseña:</label>
-                                    <input id="password" name="password" placeholder="" class="form-control input-md"  type="password">
+                                <label class="col-md-4 control-label" for="pass" >Contraseña:</label>
+                                    <input id="pass" name="pass" placeholder="" class="form-control input-md"  type="password">
                             </div>
                             <!-- Text input confirmar password-->
                             <div class="form-group">
-                                <label class="col-md-4 control-label" for="cpassword">Confirme la contraseña:</label>
-                                    <input id="cpassword" name="cpassword" placeholder="" class="form-control input-md" type="password">
+                                <label class="col-md-4 control-label" for="cpass">Confirme la contraseña:</label>
+                                    <input id="cpass" name="cpass" placeholder="" class="form-control input-md" type="password">
                             </div>
 
                             <!-- Text input-->
                             <div class="form-group">
                                 <label class="col-md-4 control-label" for="phone">Telefono :</label>
 
-                                    <input id="phone" name="phone" placeholder="111-111-11-11 ó 111-11-11"
+                                    <input id="phone" name="phone"
                                            class="form-control input-md" type="text">
 
                             </div>
@@ -108,6 +108,9 @@
 <!-- /#content -->
 @endsection
 @section('scripts')
+    <script type="text/javascript" src="{{asset('js/plugins/jquery.validate.min.js')}}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/additional-methods.min.js"></script>
     <script type="text/javascript" src="{{asset('js/plugins/fileinput.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/tienda/registro.js')}}"></script>
+
 @endsection

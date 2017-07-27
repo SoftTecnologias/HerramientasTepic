@@ -39,8 +39,7 @@
                                     <!-- /.image -->
                                     <div class="text">
                                         <h3><p class="verProducto">{{$producto->name}}</p></h3>
-                                        <p class="price">{{isset($producto->price1)? '<span
-                                            class="glyphicon glyphicon-usd"></span> '.$producto->price1." ".$producto->currency : "Inicia sesión para verlos precios"}}</p>
+                                        <p class="price">{{isset($producto->price)? "$ $producto->price $producto->currency ": "Inicia sesión para verlos precios"}}</p>
                                     </div>
                                     <!-- /.text -->
                                 </div>

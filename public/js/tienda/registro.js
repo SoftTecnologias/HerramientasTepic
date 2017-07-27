@@ -33,6 +33,18 @@ $(function(){
             'img': {
                 extension: "png|jpg|gif",
                 filesize: 1048576
+            },
+            'phone': {
+                required: true,
+                minlength: 10,
+                maxlength: 20
+            },
+            'pass': {
+                required:true,
+                minlength: 4
+            },
+            'cpass': {
+                equalTo: '#pass'
             }
         },
         messages: {
@@ -54,6 +66,18 @@ $(function(){
             'username': {
                 required: "Este campo es requerido",
                 remote: ""
+            },
+            'phone': {
+                required: 'Este campo es obligatorio',
+                minlength: "El numero debe estar conformado de al menos 10 digitos",
+                maxlength: "El telefono debe estar conformado por no mas de 20 digitos"
+            },
+            'pass':{
+                required: "La contraseña es un campo obligatorio",
+                minlength: "La contraseña debe tener al menos 4 caracteres"
+            },
+            'cpass': {
+                equalTo: "Las contraseñas deben coincidir"
             }
         },
         highlight: function (element) {
@@ -72,7 +96,7 @@ $(function(){
             }
         },
         submitHandler: function () {
-            userAction();
+             newClient();
             return false;
         }
     });
@@ -89,37 +113,41 @@ $(function(){
     });
 
     $('#registro').on('click',function () {
-        console.log("nuevo usuario");
-        data = new FormData(document.getElementById("clientForm"));
-        $.ajax({
-            url: document.location.protocol + '//' + document.location.host   + "/HerramientasTepic/public" +"/usuario/registro",
-            type: "POST",
-            data: data,
-            contentType: false,
-            processData: false,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        }).done(function (json) {
-            if (json.code == 200) {
-                swal("Realizado", json.msg, json.detail);
-                swal({
-                    title: 'Se ha realizado el registro',
-                    text: "para finalizar sigue el link que te mandamos a tu correo!",
-                    type: 'success',
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Entendido!'
-                }).then(function () {
-                    location.href =document.location.protocol + '//' + document.location.host   + "/HerramientasTepic/public/";
-                })
-            } else {
-                swal("Error", json.msg, json.detail);
-            }
-        }).fail(function () {
-            swal("Error", "Tuvimos un problema de conexion", "error");
-        });
+       $('#clientForm').submit();
     });
 
 
 });
+
+function newClient(){
+    console.log("nuevo usuario");
+    data = new FormData(document.getElementById("clientForm"));
+    $.ajax({
+        url: document.location.protocol + '//' + document.location.host   + "/HerramientasTepic/public" +"/usuario/registro",
+        type: "POST",
+        data: data,
+        contentType: false,
+        processData: false,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    }).done(function (json) {
+        if (json.code == 200) {
+            swal("Realizado", json.msg, json.detail);
+            swal({
+                title: 'Se ha realizado el registro',
+                text: "para finalizar sigue el link que te mandamos a tu correo!",
+                type: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Entendido!'
+            }).then(function () {
+                location.href =document.location.protocol + '//' + document.location.host   + "/HerramientasTepic/public/";
+            })
+        } else {
+            swal("Error", json.msg, json.detail);
+        }
+    }).fail(function () {
+        swal("Error", "Tuvimos un problema de conexion", "error");
+    });
+}
 

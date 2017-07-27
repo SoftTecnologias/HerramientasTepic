@@ -8,14 +8,11 @@
                                 class="fa fa-envelope"></i></a>
                 </p>
             </div>
+            <!-- Con el ingreso cambiaremos este menu-->
             <div class="col-xs-7">
                 <div class="social">
-                    <a href="#" class="external facebook" data-animate-hover="pulse"><i
+                    <a href="https://www.facebook.com/HerramientasDeTepic/" class="external facebook" data-animate-hover="pulse"><i
                                 class="fa fa-facebook"></i></a>
-                    <a href="#" class="external gplus" data-animate-hover="pulse"><i
-                                class="fa fa-google-plus"></i></a>
-                    <a href="#" class="external twitter" data-animate-hover="pulse"><i
-                                class="fa fa-twitter"></i></a>
                     <a href="#" class="email" data-animate-hover="pulse"><i class="fa fa-envelope"></i></a>
                 </div>
 
@@ -27,6 +24,7 @@
                 </div>
 
             </div>
+            <!-- Hasta aqui-->
         </div>
     </div>
 </div>

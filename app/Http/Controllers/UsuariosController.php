@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ActivateMail;
 use App\Usuarios;
 use Exception;
 use File;
@@ -86,7 +87,7 @@ class UsuariosController extends Controller
                 $user->name = $request->name;
                 $user->lastname = $request->lastname;
                 $user->email = $request->email;
-                $user->password = bcrypt($request->password);
+                $user->password = bcrypt($request->pass);
                 $user->phone = $request->phone;
                 $user->roleid = 1;
                 $user->userprice = 1;
@@ -103,10 +104,13 @@ class UsuariosController extends Controller
                     Storage::disk('local')->put($nombre, File::get($request->file("photo")));
                 }
                 $user->save();
+                $confirmacion = new ActivateMail;
+                $confirmacion->user_id = $user->id;
+                $confirmacion->save();
                 $respuesta = ["code" => 200, "msg" => 'El usuario fue creado exitosamente', 'detail' => 'success'];
             }
             //Codigo para enviar el correo electronico soporte.herramientas.tepic@gmail.com herramientastepic
-            Mail::send('emails.confirm',['user'=>$user],function($msg)use($user){
+            Mail::send('emails.confirm',['confirmation'=>$confirmacion,'user'=>$user],function($msg)use($user){
                 $msg->subject('Confirmación de cuenta');
                 $msg->to($user->email);
             });

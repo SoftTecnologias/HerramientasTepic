@@ -115,8 +115,7 @@
                                     <!-- /.image -->
                                     <div class="text">
                                         <h3><a href="shop-detail.html">{{$producto->name}}</a></h3>
-                                        <p class="price">{{isset($producto->price1)? '<span
-                                            class="glyphicon glyphicon-usd"></span> '.$producto->price1." ".$producto->currency : "Inicia sesión para verlos precios"}}</p>
+                                        <p class="price">{{isset($producto->price)? "$ $producto->price $producto->currency " : "Inicia sesión para verlos precios"}}</p>
                                         <p class="buttons">
                                             <a href="shop-detail.html" class="btn btn-default">Ver detalle</a>
                                             <a href="shop-basket.html" class="btn btn-template-main"><i

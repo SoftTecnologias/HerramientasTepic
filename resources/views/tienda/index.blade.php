@@ -75,7 +75,7 @@ _________________________________________________________ -->
                                                         </h5>
                                                         <p>{{$producto->shortdescription}}</p>
                                                         <h5 class="price-text-color">
-                                                            {{isset($producto->price1)? "$".$producto->price1." ".$producto->currency : "Inicia sesión para verlos precios"}}</h5>
+                                                            {{isset($producto->price)? "$".$producto->price." ".$producto->currency : "Inicia sesión para verlos precios"}}</h5>
                                                     </div>
                                                 </div>
                                                 <div class="separator clear-left">

@@ -119,32 +119,11 @@
                                                         <font face="Arial, Helvetica, sans-serif" size="4"
                                                               color="#57697e" style="font-size: 15px;">
 					<span style="font-family: Arial, Helvetica, sans-serif; font-size: 15px; color: #57697e;">
-						Te damos la bienvenida <strong>{{$user->name." ".$user->lastname}}</strong> Tenemos el gusto de tenerte como cliente,
-    pero antes te pedimos actives tu cuenta pulsando el siguiente botón
+                        El usuario <strong>{{$user->name." ".$user->lastname}}</strong> con el id <strong>{{$user->id}}</strong> ha indicado que tuvo un problema con su activación
 					</span></font>
                                                     </div>
                                                     <!-- padding -->
                                                     <div style="height: 40px; line-height: 40px; font-size: 10px;"></div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td align="center">
-                                                    <div style="line-height: 24px;">
-                                                        <a style = " background-color: #00a65a;
-                                                                          border-color: #008d4c;
-                                                                         "
-                                                           href="{{route('tienda.confirmar',['id'=> base64_encode($confirmation->id)])}}">
-                                                            Activar mi cuenta </a>
-                                                    </div>
-                                                    <!-- padding -->
-                                                    <br>
-                                                    <hr>
-                                                    <br>
-                                                    <a style="background-color: #f39c12;
-  border-color: #e08e0b; "
-                                                            href="{{route('tienda.problema',['id'=> base64_encode($user->id)])}}">
-                                                        Tuve un problema </a>
-                                                    <div style="height: 60px; line-height: 60px; font-size: 10px;"></div>
                                                 </td>
                                             </tr>
                                         </table>
