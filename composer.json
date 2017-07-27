@@ -9,7 +9,8 @@
         "laravel/framework": "5.2.*",
         "laravelcollective/html": "^5.2.0",
         "yajra/laravel-datatables-oracle": "6.x",
-        "nesbot/carbon": "^1.22"
+        "nesbot/carbon": "^1.22",
+        "orangehill/iseed": "2.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
