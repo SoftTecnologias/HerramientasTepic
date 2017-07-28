@@ -56,7 +56,7 @@ class ProductosController extends Controller
      */
     public function store(Request $request)
     {
-        try{
+        try{  
 
             //Insercion del precion del producto
             $precioid= DB::table('price')->insertGetId([
@@ -224,7 +224,7 @@ class ProductosController extends Controller
 
             if($imgu1==null){
                 if($img1!=null){
-                    $up["img1"]=$id."_1.". $request->file("img1")->getClientOriginalExtension();
+                    $up["photo"]=$id."_1.". $request->file("img1")->getClientOriginalExtension();
                     if($producto->photo != "minilogo.png") {
                         Storage::delete("/productos/". $producto->photo);
                     }

@@ -279,7 +279,7 @@ function productAction(){
 function newProduct(){
     var data = new FormData(document.getElementById("productForm"));
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host+  +"/area/resource/productos",
+        url:document.location.protocol+'//'+document.location.host  +"/area/resource/productos",
         type:"POST",
         data: data,
         contentType:false,
