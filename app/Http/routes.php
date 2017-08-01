@@ -72,6 +72,39 @@ Route::get('/usuario/situacion/{id}',[
     'uses' => 'UsersController@errorMail',
     'as' => 'tienda.problema'
 ]);
+Route::get('/user/profile',[
+    'uses' => 'UsersController@getUserProfile',
+    'as' => 'tienda.user.profile'
+]);
+Route::post('/user/profile/{id}',[
+    'uses' => 'UsuariosController@udateUser',
+    'as' => 'tienda.user.profile.update'
+]);
+
+Route::post('/user/profile/contact/{id}',[
+    'uses' => 'DireccionesController@udateContactUser',
+    'as' => 'tienda.user.profile.contact.update'
+]);
+
+Route::post('/user/profile/pass/{id}',[
+    'uses' => 'UsuariosController@updatePassword',
+    'as' => 'tienda.user.profile.pass.update'
+]);
+
+Route::post('/user/profile/imagen/{id}',[
+    'uses' => 'UsuariosController@updateImage',
+    'as' => 'tienda.user.profile.image.update'
+]);
+
+Route::get('/getMunicipios/{estado}',[
+    'uses' => 'UsersController@getMunicipios',
+    'as' => 'getmuicipio.estado'
+]);
+
+Route::get('/getLocalidades/{municipio}',[
+    'uses' => 'UsersController@getLocalidades',
+    'as' => 'getlocalidades.municipio'
+]);
 /* Area de administracion */
 Route::group(['prefix' => 'area'],function(){
     /*Obtenemos los formularios ... */
@@ -189,6 +222,11 @@ Route::group(['prefix' => 'area'],function(){
     Route::post('/resource/usuarios/{id}',[
         'uses' => 'UsuariosController@update',
         'as' => 'area.resource.usuarios.update'
+    ]);
+
+    Route::post('/resource/usuarios/userprice/{id}',[
+        'uses' => 'UsuariosController@updateUserPrice',
+        'as' => 'area.resource.usuarios.updateUserPrice'
     ]);
 
 

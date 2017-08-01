@@ -60,7 +60,8 @@ $(function () {
             }, {
                 data: function (row) {
                     str = "<div align='center'>";
-                    str +=" <button id='btnEditar' class='btn btn-primary btn-xs col-md-3' onclick='showUser("
+                    if(row['roleid'] != 1){
+                    str +=" <button id='btnEditar' class='btn btn-primary btn-xs col-md-6' onclick='showUser("
                         +"\""+row['id']+"\", "
                         +"\""+row['name']+"\", "
                         +"\""+row['lastname']+"\","
@@ -69,7 +70,36 @@ $(function () {
                         +"\""+row['roleid']+"\", "
                         +"\""+row['status']+"\","
                         +"\""+row['username']+"\""+")'><i class='glyphicon glyphicon-edit'></i></button> ";
-                    str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-3' onclick='deleteUser(\""+row['id']+"\")'><i class='fa fa-trash-o'></i></button>";
+                    str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteUser(\""+row['id']+"\")'><i class='fa fa-trash-o'></i></button>";
+                    }
+                    else{
+                        uspr = row['userprice'];
+                        opc1 = '';  opc2 = '';
+                        opc3 = '';  opc4 = '';
+                        opc5 = '';
+                        console.log(uspr);
+                        switch (uspr){
+                            case '1': opc1='selected';break;
+                            case '2': opc2='selected';break;
+                            case '3': opc3='selected';break;
+                            case '4': opc4='selected';break;
+                            case '5': opc5='selected';break;
+                        }
+
+                        str += "<select class='selectpicker' style='btn-primary' name='userprice' id='userprice"+row['id']+"' onchange='updateClientePrice("
+                            +"\""+row['id']+"\")'>" +
+                            "<option value='1' "+opc1+">Precio 1</option>" +
+                            "<option value='2' "+opc2+">Precio 2</option>" +
+                            "<option value='3' "+opc3+">Precio 3</option>" +
+                            "<option value='4' "+opc4+">Precio 4</option>" +
+                            "<option value='5' "+opc5+">Precio 5</option>" +
+                            "</select>";
+                        $('.selectpicker').selectpicker({
+                            style: 'btn-primary',
+                            color: 'black',
+                            size: 4
+                        });
+                    }
                     str += "</div>";
                     return str;
                 }
@@ -194,10 +224,10 @@ function newUser() {
             $('#userTable').dataTable().api().ajax.reload();
             reset();
         } else {
-            swal("Error", json.msg, json.detail);
+            swal("error", json.msg, json.detail);
         }
     }).fail(function () {
-        swal("Error", "Tuvimos un problema de conexion", "error");
+        swal("error", "Tuvimos un problema de conexion", "error");
     });
 }
 function updateUser(id) {
@@ -313,5 +343,49 @@ function reset() {
     $("#npassword").rules("remove");
     $("#cpassword").rules("remove");
     $("#userForm").validate().resetForm();
+
+}
+function updateClientePrice(id) {
+    console.log("Actualizacion de usuario");
+    var datosprice = document.getElementById('userprice'+id).value;
+    swal({
+            title: "Desea Cambiar el Precio?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "green",
+            cancelButtonColor:"red",
+            confirmButtonText: "Si",
+            cancelButtonText: "No",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        }).then(function()
+        {
+                $.ajax({
+                    url: document.location.protocol + '//' + document.location.host   +"/area/resource/usuarios/userprice/" + id,
+                    type: "post",
+                    data: {userprice:datosprice},
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                }).done(function (json) {
+                    if (json.code == 200) {
+                        swal("Realizado", json.msg, json.detail).then(function () {
+                            location.reload();
+                        });
+
+                    } else {
+                        swal("Error", json.msg, json.detail).then(function(){location.reload(1);});
+                    }
+                }).fail(function () {
+                    swal("Error", "Tuvimos un problema de conexion", "error");
+                });
+
+        },function (isConfirm) {
+            if(isConfirm){
+                location.reload();
+            }
+        }
+        );
+
 
 }

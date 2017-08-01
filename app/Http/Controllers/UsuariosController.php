@@ -26,7 +26,7 @@ class UsuariosController extends Controller
     public function index()
     {
 
-        $usuarios = DB::select("select u.id, u.photo, u.name, u.lastname, u.email, u.phone, r.name as rol,u.status,u.roleid,u.username
+        $usuarios = DB::select("select u.id, u.photo, u.name, u.lastname, u.email, u.phone, r.name as rol,u.status,u.roleid,u.username, u.userprice
         from users u 
         inner join  roles r on r.id = u.roleid");
 
@@ -80,8 +80,18 @@ class UsuariosController extends Controller
                     Storage::disk('local')->put($nombre, File::get($request->file("photo")));
                 }
                 $user->save();
+                if($user->roleid == 1 && $user->status == 'I'){
+                    $confirmacion = new ActivateMail;
+                    $confirmacion->user_id = $user->id;
+                    $confirmacion->save();
+                    Mail::send('emails.confirm',['confirmation'=>$confirmacion,'user'=>$user],function($msg)use($user){
+                        $msg->subject('Confirmación de cuenta');
+                        $msg->to($user->email);
+                    });
+                }
                 $respuesta = ["code" => 200, "msg" => 'El usuario fue creado exitosamente', 'detail' => 'success'];
-            }elseif (strpos($request->url(),'/usuario/registro')){ //Desde el registro de clientes
+            }
+            elseif (strpos($request->url(),'/usuario/registro')){ //Desde el registro de clientes
                 /*Creamos aun nuevo usuario aqui insertamos y luego obtenemos el id*/
                 $user = new Usuarios;
                 $user->name = $request->name;
@@ -107,13 +117,14 @@ class UsuariosController extends Controller
                 $confirmacion = new ActivateMail;
                 $confirmacion->user_id = $user->id;
                 $confirmacion->save();
+                Mail::send('emails.confirm',['confirmation'=>$confirmacion,'user'=>$user],function($msg)use($user){
+                    $msg->subject('Confirmación de cuenta');
+                    $msg->to($user->email);
+                });
                 $respuesta = ["code" => 200, "msg" => 'El usuario fue creado exitosamente', 'detail' => 'success'];
             }
             //Codigo para enviar el correo electronico soporte.herramientas.tepic@gmail.com herramientastepic
-            Mail::send('emails.confirm',['confirmation'=>$confirmacion,'user'=>$user],function($msg)use($user){
-                $msg->subject('Confirmación de cuenta');
-                $msg->to($user->email);
-            });
+
         } catch (Exception $e) {
             $respuesta = ["code" => 500, "msg" => $e->getMessage(), 'detail' => 'error'];
         }
@@ -193,6 +204,20 @@ class UsuariosController extends Controller
         return Response::json($respuesta);
     }
 
+    public function updateUserPrice(Request $request, $id)
+    {
+        try {
+            $id = base64_decode($id);
+            $user = Usuarios::findOrFail($id);
+            $user->userprice = $request->userprice;
+            $user->save();
+            $respuesta = ["code" => 200, "msg" => "Usuario actualizado", "detail" => "success"];
+        } catch (Exception $e) {
+            $respuesta = ["code" => 500, "msg" => $e->getMessage(), "detail" => "error"];
+        }
+        return Response::json($respuesta);
+    }
+
     public function areaProfileEdit(Request $request){
         try{
             if($request->cookie('admin') != null){
@@ -254,4 +279,64 @@ class UsuariosController extends Controller
         }
         return Response::json($respuesta);
     }
+
+    public function udateUser(Request $request, $id)
+    {
+        try {
+            $id = base64_decode($id);
+            $user = Usuarios::findOrFail($id);
+            $user->name = $request->nombre;
+            $user->lastname = $request->apellido;
+            $user->save();
+            $respuesta = ["code" => 200, "msg" => "Usuario actualizado", "detail" => "success"];
+        } catch (Exception $e) {
+            $respuesta = ["code" => 500, "msg" => $e->getMessage(), "detail" => "error"];
+        }
+        return Response::json($respuesta);
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        try {
+            $id = base64_decode($id);
+            $user = Usuarios::findOrFail($id);
+            /*Hay una contraseña por tanto se puede actualizar*/
+            if (Hash::check($request->actual, $user->password)) {
+
+                $user->password = bcrypt($request->nueva);
+            } else {
+                throw  new Exception("La contraseña ingresada no coincide");
+            }
+            $user->save();
+            $respuesta = ["code" => 200, "msg" => "Usuario actualizado", "detail" => "success"];
+        } catch (Exception $e) {
+            $respuesta = ["code" => 500, "msg" => $e->getMessage(), "detail" => "error"];
+        }
+        return Response::json($respuesta);
+    }
+
+    public function updateImage(Request $request,$id){
+        try{
+            $id = base64_decode($id);
+            $user = Usuarios::findOrFail($id);
+            if ($request->file("foto") != null) {
+                $user->photo = 'U'.$user->id . "." . $request->file("foto")->getClientOriginalExtension();
+                if ($user->photo != "user.png") {
+                    Storage::delete("/usuarios/" . $user->photo);
+                }
+                $file = $request->file("foto");
+                $nombre = "/usuarios/U" . $id . "." . $file->getClientOriginalExtension();
+                Storage::disk('local')->put($nombre, File::get($file));
+            }
+            $user->save();
+            $respuesta = ["code" => 200, "msg" => "Usuario actualizado", "detail" => "success"];
+        } catch (Exception $e) {
+            $respuesta = ["code" => 500, "msg" => $e->getMessage(), "detail" => "error"];
+        }
+        return Response::json($respuesta);
+    }
 }
+
+
+
+

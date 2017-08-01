@@ -17,6 +17,10 @@ class CreateActivationEmailTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
 
+
+        });
+
+        Schema::table('activate_email',function (Blueprint $table){
             DB::statement('CREATE TRIGGER activate_email_trigger ON activate_email
                            FOR DELETE
                            AS

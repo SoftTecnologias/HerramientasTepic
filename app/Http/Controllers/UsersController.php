@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\ActivateMail;
 use App\Categoria;
+use App\Direccion;
+use App\Localidad;
 use App\Marca;
 use App\Estado;
+use App\Municipio;
 use App\Roles;
 use App\Servicio;
 use App\Subcategoria;
@@ -19,6 +22,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 use \Exception;
+use Illuminate\Support\Facades\Storage;
+use File;
 
 
 
@@ -31,40 +36,39 @@ class UsersController extends Controller
      * */
 
 
-    
-
-      /*Parte de la tienda de Herramientas Tepic*/
-    public function getIndex(Request $request){
-       try{
+    /*Parte de la tienda de Herramientas Tepic*/
+    public function getIndex(Request $request)
+    {
+        try {
             //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
             $banner = DB::table('banner_principal')->get();
-           $precioUsuario = $this->precioUsuario($request);
-           $select=[
-               'product.code',
-               'product.name',
-               'product.stock',
-               'product.currency',
-               'product.photo',
-               'product.photo2',
-               'product.photo3',
-               'product.shortdescription',
-               'product.longdescription',
-               'product.quotation'
-           ];
-           if($precioUsuario!=""){
-               array_push($select,$precioUsuario." as price");
-           }
+            $precioUsuario = $this->precioUsuario($request);
+            $select = [
+                'product.code',
+                'product.name',
+                'product.stock',
+                'product.currency',
+                'product.photo',
+                'product.photo2',
+                'product.photo3',
+                'product.shortdescription',
+                'product.longdescription',
+                'product.quotation'
+            ];
+            if ($precioUsuario != "") {
+                array_push($select, $precioUsuario . " as price");
+            }
             $productos = DB::table('product')
                 ->select($select)
                 ->join('price', 'price.id', '=', 'product.priceid')
                 ->where('photo', 'not like', 'minilogo.png')
-                ->where('selected',1)
+                ->where('selected', 1)
                 ->take(39)->get();
 
             $bMarcas = DB::table('brand')
                 ->select('logo')
                 ->where('logo', 'not like', 'minilogo.png')
-                ->where('authorized','=',1)
+                ->where('authorized', '=', 1)
                 ->take(12)->get();
             //Menu de marcas
             $marcas = DB::table('brand')->select('id', 'name')
@@ -82,25 +86,26 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
             //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             return view('tienda.index', ['banner' => $banner, 'productos' => $productos, 'bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
-        }catch(Exception $e){
-            return Response::json($e->getMessage()."  Linea: ".$e->getLine());
-       }
+        } catch (Exception $e) {
+            return Response::json($e->getMessage() . "  Linea: " . $e->getLine());
+        }
     }
 
     //Vistas con filtros
-    public function getMarcaSearch(Request $request, $id){
-        try{
+    public function getMarcaSearch(Request $request, $id)
+    {
+        try {
             $url = base64_decode($id);
             $precioUsuario = $this->precioUsuario($request);
-            $consultaPrecios= null;
+            $consultaPrecios = null;
             $consultaCategorias = null;
             $consultaSubcategorias = null;
-            $select=[
+            $select = [
                 'product.code',
                 'product.name',
                 'product.stock',
@@ -112,60 +117,60 @@ class UsersController extends Controller
                 'product.longdescription',
                 'product.quotation'
             ];
-            if($precioUsuario!=""){
-                array_push($select,$precioUsuario." as price");
+            if ($precioUsuario != "") {
+                array_push($select, $precioUsuario . " as price");
             }
-            if(strpos($url, "/")){ //Existe al menos un parametro a parte del id
-                $partes = explode("/",$url); //Separamos el id y los parametros
+            if (strpos($url, "/")) { //Existe al menos un parametro a parte del id
+                $partes = explode("/", $url); //Separamos el id y los parametros
                 $urlid = $partes[0]; //ID en cuestion
-                $parametros = explode('&',$partes[1]); //Separamos los parametros con &
-                foreach ( $parametros as $parametro) { //Recorremos los parametros enviados ("precio", "categorias", "subcategorias")
-                    $filtro = explode('=',$parametro); //Separamos filtros[0] y valor[1]
-                    switch ($filtro[0]){
+                $parametros = explode('&', $partes[1]); //Separamos los parametros con &
+                foreach ($parametros as $parametro) { //Recorremos los parametros enviados ("precio", "categorias", "subcategorias")
+                    $filtro = explode('=', $parametro); //Separamos filtros[0] y valor[1]
+                    switch ($filtro[0]) {
                         case 'precio': //Revisamos los valores que podria tener
-                            $valores = explode(',',$filtro[1]); //Valores a filtrar
-                            $consultaPrecios= "(";
-                            if(sizeof($valores)>1){
+                            $valores = explode(',', $filtro[1]); //Valores a filtrar
+                            $consultaPrecios = "(";
+                            if (sizeof($valores) > 1) {
                                 $i = 0;
-                                foreach ($valores as $valor){ //Recorremos los valores del filtro
-                                    if(strpos($valor,'-')){ //Existe un rango
-                                        $precios =explode('-', $valor);
-                                        if ( $i == 0){
-                                            $consultaPrecios .= "(".(( $precioUsuario == "" )? "price.price1": $precioUsuario )." between " . $precios[0] . " AND " . $precios[1] . ") ";
+                                foreach ($valores as $valor) { //Recorremos los valores del filtro
+                                    if (strpos($valor, '-')) { //Existe un rango
+                                        $precios = explode('-', $valor);
+                                        if ($i == 0) {
+                                            $consultaPrecios .= "(" . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . " between " . $precios[0] . " AND " . $precios[1] . ") ";
                                         } else {
-                                            $consultaPrecios .= " OR (".(( $precioUsuario == "" )? "price.price1": $precioUsuario )." between " . $precios[0] . " AND " . $precios[1] . ") ";
+                                            $consultaPrecios .= " OR (" . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . " between " . $precios[0] . " AND " . $precios[1] . ") ";
                                         }
                                     } else { //no existe el rango
-                                        if( $i == 0 ){
-                                            $consultaPrecios.= "( ".(( $precioUsuario == "" )? "price.price1": $precioUsuario )."> $valor )";
+                                        if ($i == 0) {
+                                            $consultaPrecios .= "( " . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . "> $valor )";
                                         } else {
-                                            $consultaPrecios.= " OR ( ".(( $precioUsuario == "" )? "price.price1": $precioUsuario )."> $valor )";
+                                            $consultaPrecios .= " OR ( " . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . "> $valor )";
                                         }
                                     }
                                     $i++;
                                 }
                             } else { //Solo hay un filtro
-                                if(strpos($valores[0],'-')){ //Existe un rango
-                                    $rango = explode('-',$valores[0]);
-                                    $consultaPrecios .= "(". (( $precioUsuario == "" )? "price.price1": $precioUsuario )." between " . $rango[0] . " AND " . $rango[1] . ") ";
+                                if (strpos($valores[0], '-')) { //Existe un rango
+                                    $rango = explode('-', $valores[0]);
+                                    $consultaPrecios .= "(" . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . " between " . $rango[0] . " AND " . $rango[1] . ") ";
                                 } else {
-                                    $consultaPrecios.= " ( ".(( $precioUsuario == "" )? "price.price1": $precioUsuario )."> $valores[0] )";
+                                    $consultaPrecios .= " ( " . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . "> $valores[0] )";
                                 }
                             }
                             $consultaPrecios .= ")";
                             break;
                         case 'categoria':
-                            $valores = explode(',',$filtro[1]); //Valores a filtrar
-                            $consultaCategorias="(";
-                            if(sizeof($valores)>1) {
+                            $valores = explode(',', $filtro[1]); //Valores a filtrar
+                            $consultaCategorias = "(";
+                            if (sizeof($valores) > 1) {
 
                                 $consultaCategorias .= " product.categoryid IN( ";
-                                $i=0;
-                                foreach ($valores as $valor){ //Recorremos los valores del filtro
-                                    if($i == 0){
-                                        $consultaCategorias .= $valor ;
+                                $i = 0;
+                                foreach ($valores as $valor) { //Recorremos los valores del filtro
+                                    if ($i == 0) {
+                                        $consultaCategorias .= $valor;
                                         $i++;
-                                    }else{
+                                    } else {
                                         $consultaCategorias .= ", $valor";
                                     }
                                 }
@@ -177,16 +182,16 @@ class UsersController extends Controller
                             $consultaCategorias .= ' )';
                             break;
                         case 'subcategoria':
-                            $valores = explode(',',$filtro[1]); //Valores a filtrar
-                            $consultaSubcategorias="(";
-                            if(sizeof($valores)>1) {
+                            $valores = explode(',', $filtro[1]); //Valores a filtrar
+                            $consultaSubcategorias = "(";
+                            if (sizeof($valores) > 1) {
                                 $consultaSubcategorias .= " product.subcategoryid IN( ";
-                                $i=0;
-                                foreach ($valores as $valor){ //Recorremos los valores del filtro
-                                    if($i == 0){
-                                        $consultaSubcategorias .= $valor ;
+                                $i = 0;
+                                foreach ($valores as $valor) { //Recorremos los valores del filtro
+                                    if ($i == 0) {
+                                        $consultaSubcategorias .= $valor;
                                         $i++;
-                                    }else{
+                                    } else {
                                         $consultaSubcategorias .= ", $valor";
                                     }
                                 }
@@ -199,8 +204,8 @@ class UsersController extends Controller
                             break;
                     }
                 }
-            }else{
-                $urlid= $url;
+            } else {
+                $urlid = $url;
             }
             $productos = DB::table('product')
                 ->select($select)
@@ -208,7 +213,7 @@ class UsersController extends Controller
                 ->where('photo', 'not like', 'minilogo.png')
                 ->where('brandid', '=', $urlid);
             /*Aplicacion de los filtros con o sin precios ... */
-            if( $consultaPrecios != null ){
+            if ($consultaPrecios != null) {
                 $productos->whereRaw($consultaPrecios);
                 /* Parte de los filtros con precios */
                 $todasCategorias = DB::table('category')
@@ -234,7 +239,7 @@ class UsersController extends Controller
                     array_push($filtroCategorias, ['id' => base64_encode($categoria->id), 'name' => $categoria->name, 'total' => $categoria->total, 'subcategorias' => $subcategorias]);
 
                 }
-            }else{
+            } else {
                 /* Parte de los filtros */
                 $todasCategorias = DB::table('category')
                     ->select('id',
@@ -261,10 +266,10 @@ class UsersController extends Controller
                 }
             }
             /* Aplicacion Recuperación de los productos con o sin filtros*/
-            if( $consultaCategorias != null ){
+            if ($consultaCategorias != null) {
                 $productos->whereRaw($consultaCategorias);
             }
-            if( $consultaSubcategorias != null ){
+            if ($consultaSubcategorias != null) {
                 $productos->whereRaw($consultaSubcategorias);
             }
             $productos = $productos->paginate(12);
@@ -286,26 +291,27 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','selected')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
             $actual = Marca::find($urlid);
             return view('tienda.marcas', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroCategorias' => $filtroCategorias]);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             //return redirect()->route('tienda.index')->with(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
-            return Response::json(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
+            return Response::json(['code' => 500, 'msg' => $e->getMessage(), 'detail' => $e->getCode()]);
         }
     }
+
     public function getCategoriaSearch(Request $request, $id)
     {
-        try{
+        try {
             $url = base64_decode($id);
             $precioUsuario = $this->precioUsuario($request);
-            $consultaPrecios= null;
-            $consultaMarcas=null;
+            $consultaPrecios = null;
+            $consultaMarcas = null;
             $consultaSubcategorias = null;
-            $select=[
+            $select = [
                 'product.code',
                 'product.name',
                 'product.stock',
@@ -317,59 +323,59 @@ class UsersController extends Controller
                 'product.longdescription',
                 'product.quotation'
             ];
-            if($precioUsuario!=""){
-                array_push($select,$precioUsuario." as price");
+            if ($precioUsuario != "") {
+                array_push($select, $precioUsuario . " as price");
             }
-            if(strpos($url, "/")){ //Existe al menos un parametro a parte del id
-                $partes = explode("/",$url); //Separamos el id y los parametros
+            if (strpos($url, "/")) { //Existe al menos un parametro a parte del id
+                $partes = explode("/", $url); //Separamos el id y los parametros
                 $urlid = $partes[0]; //ID en cuestion
-                $parametros = explode('&',$partes[1]); //Separamos los parametros con &
-                foreach ( $parametros as $parametro) { //Recorremos los parametros enviados ("precio", "categorias", "subcategorias")
-                    $filtro = explode('=',$parametro); //Separamos filtros[0] y valor[1]
-                    switch ($filtro[0]){
+                $parametros = explode('&', $partes[1]); //Separamos los parametros con &
+                foreach ($parametros as $parametro) { //Recorremos los parametros enviados ("precio", "categorias", "subcategorias")
+                    $filtro = explode('=', $parametro); //Separamos filtros[0] y valor[1]
+                    switch ($filtro[0]) {
                         case 'precio': //Revisamos los valores que podria tener
-                            $valores = explode(',',$filtro[1]); //Valores a filtrar
-                            $consultaPrecios= "(";
-                            if(sizeof($valores)>1){
+                            $valores = explode(',', $filtro[1]); //Valores a filtrar
+                            $consultaPrecios = "(";
+                            if (sizeof($valores) > 1) {
                                 $i = 0;
-                                foreach ($valores as $valor){ //Recorremos los valores del filtro
-                                    if(strpos($valor,'-')){ //Existe un rango
-                                        $precios =explode('-', $valor);
-                                        if ( $i == 0){
-                                            $consultaPrecios .= "(".(( $precioUsuario == "" )? "price.price1": $precioUsuario )." between " . $precios[0] . " AND " . $precios[1] . ") ";
+                                foreach ($valores as $valor) { //Recorremos los valores del filtro
+                                    if (strpos($valor, '-')) { //Existe un rango
+                                        $precios = explode('-', $valor);
+                                        if ($i == 0) {
+                                            $consultaPrecios .= "(" . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . " between " . $precios[0] . " AND " . $precios[1] . ") ";
                                         } else {
-                                            $consultaPrecios .= " OR (".(( $precioUsuario == "" )? "price.price1": $precioUsuario )." between " . $precios[0] . " AND " . $precios[1] . ") ";
+                                            $consultaPrecios .= " OR (" . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . " between " . $precios[0] . " AND " . $precios[1] . ") ";
                                         }
                                     } else { //no existe el rango
-                                        if( $i == 0 ){
-                                            $consultaPrecios.= "( ".(( $precioUsuario == "" )? "price.price1": $precioUsuario )."> $valor )";
+                                        if ($i == 0) {
+                                            $consultaPrecios .= "( " . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . "> $valor )";
                                         } else {
-                                            $consultaPrecios.= " OR ( ".(( $precioUsuario == "" )? "price.price1": $precioUsuario )."> $valor )";
+                                            $consultaPrecios .= " OR ( " . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . "> $valor )";
                                         }
                                     }
                                     $i++;
                                 }
                             } else { //Solo hay un filtro
-                                if(strpos($valores[0],'-')){ //Existe un rango
-                                    $rango = explode('-',$valores[0]);
-                                    $consultaPrecios .= "(". (( $precioUsuario == "" )? "price.price1": $precioUsuario )." between " . $rango[0] . " AND " . $rango[1] . ") ";
+                                if (strpos($valores[0], '-')) { //Existe un rango
+                                    $rango = explode('-', $valores[0]);
+                                    $consultaPrecios .= "(" . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . " between " . $rango[0] . " AND " . $rango[1] . ") ";
                                 } else {
-                                    $consultaPrecios.= " OR ( ".(( $precioUsuario == "" )? "price.price1": $precioUsuario )."> $valores[0] )";
+                                    $consultaPrecios .= " OR ( " . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . "> $valores[0] )";
                                 }
                             }
                             $consultaPrecios .= ")";
                             break;
                         case 'marca':
-                            $valores = explode(',',$filtro[1]); //Valores a filtrar
-                            $consultaMarcas="(";
-                            if(sizeof($valores)>1) {
+                            $valores = explode(',', $filtro[1]); //Valores a filtrar
+                            $consultaMarcas = "(";
+                            if (sizeof($valores) > 1) {
                                 $consultaMarcas .= " product.brandid IN( ";
-                                $i=0;
-                                foreach ($valores as $valor){ //Recorremos los valores del filtro
-                                    if($i == 0){
-                                        $consultaMarcas .= $valor ;
+                                $i = 0;
+                                foreach ($valores as $valor) { //Recorremos los valores del filtro
+                                    if ($i == 0) {
+                                        $consultaMarcas .= $valor;
                                         $i++;
-                                    }else{
+                                    } else {
                                         $consultaMarcas .= ", $valor";
                                     }
                                 }
@@ -380,16 +386,16 @@ class UsersController extends Controller
                             $consultaMarcas .= ' )';
                             break;
                         case 'subcategoria':
-                            $valores = explode(',',$filtro[1]); //Valores a filtrar
-                            $consultaSubcategorias="(";
-                            if(sizeof($valores)>1) {
+                            $valores = explode(',', $filtro[1]); //Valores a filtrar
+                            $consultaSubcategorias = "(";
+                            if (sizeof($valores) > 1) {
                                 $consultaSubcategorias .= " product.subcategoryid IN( ";
-                                $i=0;
-                                foreach ($valores as $valor){ //Recorremos los valores del filtro
-                                    if($i == 0){
-                                        $consultaSubcategorias .= $valor ;
+                                $i = 0;
+                                foreach ($valores as $valor) { //Recorremos los valores del filtro
+                                    if ($i == 0) {
+                                        $consultaSubcategorias .= $valor;
                                         $i++;
-                                    }else{
+                                    } else {
                                         $consultaSubcategorias .= ", $valor";
                                     }
                                 }
@@ -402,8 +408,8 @@ class UsersController extends Controller
                             break;
                     }
                 }
-            }else{
-                $urlid= $url;
+            } else {
+                $urlid = $url;
             }
             $productos = DB::table('product')
                 ->select($select)
@@ -411,7 +417,7 @@ class UsersController extends Controller
                 ->where('photo', 'not like', 'minilogo.png')
                 ->where('categoryid', '=', $urlid);
             /*Aplicacion de los filtros con o sin precios ... */
-            if( $consultaPrecios != null ){
+            if ($consultaPrecios != null) {
                 $productos->whereRaw($consultaPrecios);
                 /* Parte de los filtros con precios */
                 $filtrosubcategorias = DB::table('subcategory')
@@ -430,8 +436,7 @@ class UsersController extends Controller
                     ->get();
                 foreach ($filtromarcas as $item)
                     $item->id = base64_encode($item->id);
-            }
-            else{
+            } else {
                 /* Parte de los filtros */
                 $filtromarcas = DB::table('brand')
                     ->select('id', 'name',
@@ -452,10 +457,10 @@ class UsersController extends Controller
 
             }
             /* Aplicacion Recuperación de los productos con o sin filtros*/
-            if( $consultaMarcas != null ){
+            if ($consultaMarcas != null) {
                 $productos->whereRaw($consultaMarcas);
             }
-            if( $consultaSubcategorias != null ){
+            if ($consultaSubcategorias != null) {
                 $productos->whereRaw($consultaSubcategorias);
             }
             $productos = $productos->paginate(12);
@@ -477,22 +482,24 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
             //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
             $actual = Categoria::find($urlid);
-            return view('tienda.categorias', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroMarcas' => $filtromarcas,'filtroSubcategoria' => $filtrosubcategorias]);
-        }catch(Exception $e){
+            return view('tienda.categorias', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroMarcas' => $filtromarcas, 'filtroSubcategoria' => $filtrosubcategorias]);
+        } catch (Exception $e) {
             //return redirect()->route('tienda.index')->with(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
-            return Response::json(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
+            return Response::json(['code' => 500, 'msg' => $e->getMessage(), 'detail' => $e->getCode()]);
         }
     }
-    public function getAllServices(Request $request){
-        if($request->cookie('cliente') != null){
+
+    public function getAllServices(Request $request)
+    {
+        if ($request->cookie('cliente') != null) {
             //Se tomará en cuenta si hay una session de cliente para el carrito
-        }else{
+        } else {
             //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
             $productos = DB::table('product')
                 ->select('product.code',
@@ -507,43 +514,48 @@ class UsersController extends Controller
                     'product.quotation'
                 //         ,'price.price1'
                 )
-                ->join('price','price.id', '=', 'product.priceid')
-                ->where('photo', 'not like','minilogo.png')
+                ->join('price', 'price.id', '=', 'product.priceid')
+                ->where('photo', 'not like', 'minilogo.png')
                 ->take(12)->get();
             $bMarcas = DB::table('brand')
                 ->select('logo')
-                ->where('logo', 'not like','minilogo.png')
+                ->where('logo', 'not like', 'minilogo.png')
                 ->take(12)->get();
             //Menu de marcas
             $marcas = DB::table('brand')->select('id', 'name')
-                ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'),'>',0)
+                ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
                 ->take(40)->orderBy('name', 'asc')->get();
             //Menu de categorias
             $categorias = DB::table('category')->select('id', 'name')->take(40)
                 ->where('name', 'not like', 'Nota de credito')
-                ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
+                ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
                 ->orderBy('name', 'asc')->get();
             //Menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
             //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
-            foreach ($categorias as $c){
-                $c->id = base64_encode($c->id);}
-            foreach ($marcas as $m){
-                $m->id = base64_encode($m->id);}
-            foreach ($productos as $p){
-                $p->code = base64_encode($p->code);}
-            return view('tienda.servicios',['bMarcas' => $bMarcas,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios]);
+            foreach ($categorias as $c) {
+                $c->id = base64_encode($c->id);
+            }
+            foreach ($marcas as $m) {
+                $m->id = base64_encode($m->id);
+            }
+            foreach ($productos as $p) {
+                $p->code = base64_encode($p->code);
+            }
+            return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
         }
     }
-    public function getServiceDetail(Request $request, $id){
+
+    public function getServiceDetail(Request $request, $id)
+    {
         try {
             $id = base64_decode($id);
 
-            if($request->cookie('cliente') != null){
+            if ($request->cookie('cliente') != null) {
                 //Se tomará en cuenta si hay una session de cliente para el carrito
-            }else {
+            } else {
                 //obtenemos todos los productos de la marca
                 $productos = DB::table('product')
                     ->select('product.code',
@@ -558,44 +570,298 @@ class UsersController extends Controller
                         'product.quotation'
                     //         ,'price.price1'
                     )
-                    ->join('price','price.id', '=', 'product.priceid')
-                    ->where('photo', 'not like','minilogo.png')
+                    ->join('price', 'price.id', '=', 'product.priceid')
+                    ->where('photo', 'not like', 'minilogo.png')
                     ->where('brandid', '=', $id)
                     ->paginate(12);
                 //Menu de marcas
                 $marcas = DB::table('brand')->select('id', 'name')
-                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'),'>',0)
+                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
                     ->take(40)->orderBy('name', 'asc')->get();
                 //Menu de categorias
                 $categorias = DB::table('category')->select('id', 'name')->take(40)
                     ->where('name', 'not like', 'Nota de credito')
-                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'),'>',0)
+                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
                     ->orderBy('name', 'asc')->get();
                 //menu de servicios
-                $servicios = DB::table('services')->select('id', 'title','shortdescription','longdescription','img','selected')->take(10)->orderBy('title', 'asc')->get();
+                $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
                 //Marca actual (Migaja)
-                $actual =  DB::table('services')->select('id', 'title','shortdescription','longdescription','img')
+                $actual = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img')
                     ->take(10)
                     ->orderBy('title', 'asc')
-                    ->where('id','=',$id)
+                    ->where('id', '=', $id)
                     ->get();
             }
-            foreach ($servicios as $servicio){
-                $servicio->id = base64_encode($servicio->id);}
-            foreach ($categorias as $c){
-                $c->id = base64_encode($c->id);}
-            foreach ($marcas as $m){
-                $m->id = base64_encode($m->id);}
-            foreach ($productos as $p){
-                $p->code = base64_encode($p->code);}
-            return view('tienda.detalleServicio',['productos'=> $productos,'marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios, 'actual'=>$actual]);
-        }catch (Exception $e){
+            foreach ($servicios as $servicio) {
+                $servicio->id = base64_encode($servicio->id);
+            }
+            foreach ($categorias as $c) {
+                $c->id = base64_encode($c->id);
+            }
+            foreach ($marcas as $m) {
+                $m->id = base64_encode($m->id);
+            }
+            foreach ($productos as $p) {
+                $p->code = base64_encode($p->code);
+            }
+            return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual]);
+        } catch (Exception $e) {
 
 
         }
     }
 
-    public function getRegisterForm(Request $request){
+    public function getRegisterForm(Request $request)
+    {
+        //Menu de marcas
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+        if ($request->cookie('cliente') == null) {
+            return view('tienda.registro', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
+        } else {
+            return view('tienda.index', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
+        }
+
+    }
+
+    public function searchProductos(Request $request)
+    {
+        $x = "%" . base64_decode($request->filtro) . "%";
+        //parte de los filtros
+        $url = base64_decode($request->filtro);
+        $request->filtro = base64_decode($request->filtro);
+        $precioUsuario = $this->precioUsuario($request);
+        $consultaPrecios = null;
+        $consultaCategorias = null;
+        $consultaSubcategorias = null;
+        $consultaMarcas = null;
+        $select = [
+            'product.code',
+            'product.name',
+            'product.stock',
+            'product.currency',
+            'product.photo',
+            'product.photo2',
+            'product.photo3',
+            'product.shortdescription',
+            'product.longdescription',
+            'product.quotation'
+        ];
+        if ($precioUsuario != "") {
+            array_push($select, $precioUsuario);
+        }
+        if (strpos($url, "/")) { //Existe al menos un parametro a parte del id
+            $partes = explode("/", $url); //Separamos el id y los parametros
+            $urlid = $partes[0]; //ID en cuestion
+            $parametros = explode('&', $partes[1]); //Separamos los parametros con &
+            foreach ($parametros as $parametro) { //Recorremos los parametros enviados ("precio", "categorias", "subcategorias")
+                $filtro = explode('=', $parametro); //Separamos filtros[0] y valor[1]
+                switch ($filtro[0]) {
+                    case 'precio': //Revisamos los valores que podria tener
+                        $valores = explode(',', $filtro[1]); //Valores a filtrar
+                        $consultaPrecios = "(";
+                        if (sizeof($valores) > 1) {
+                            $i = 0;
+                            foreach ($valores as $valor) { //Recorremos los valores del filtro
+                                if (strpos($valor, '-')) { //Existe un rango
+                                    $precios = explode('-', $valor);
+                                    if ($i == 0) {
+                                        $consultaPrecios .= "(" . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . " between " . $precios[0] . " AND " . $precios[1] . ") ";
+                                    } else {
+                                        $consultaPrecios .= " OR (" . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . " between " . $precios[0] . " AND " . $precios[1] . ") ";
+                                    }
+                                } else { //no existe el rango
+                                    if ($i == 0) {
+                                        $consultaPrecios .= "( " . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . "> $valor )";
+                                    } else {
+                                        $consultaPrecios .= " OR ( " . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . "> $valor )";
+                                    }
+                                }
+                                $i++;
+                            }
+                        } else { //Solo hay un filtro
+                            if (strpos($valores[0], '-')) { //Existe un rango
+                                $rango = explode('-', $valores[0]);
+                                $consultaPrecios .= "(" . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . " between " . $rango[0] . " AND " . $rango[1] . ") ";
+                            } else {
+                                $consultaPrecios .= " ( " . (($precioUsuario == "") ? "price.price1" : $precioUsuario) . "> $valores[0] )";
+                            }
+                        }
+                        $consultaPrecios .= ")";
+                        break;
+                    case 'categoria':
+                        $valores = explode(',', $filtro[1]); //Valores a filtrar
+                        $consultaCategorias = "(";
+                        if (sizeof($valores) > 1) {
+
+                            $consultaCategorias .= " product.categoryid IN( ";
+                            $i = 0;
+                            foreach ($valores as $valor) { //Recorremos los valores del filtro
+                                if ($i == 0) {
+                                    $consultaCategorias .= $valor;
+                                    $i++;
+                                } else {
+                                    $consultaCategorias .= ", $valor";
+                                }
+                            }
+                            $consultaCategorias .= " ) ";
+
+                        } else { //Solo hay un filtro
+                            $consultaCategorias .= "( product.categoryid = $valores[0] ) ";
+                        }
+                        $consultaCategorias .= ' )';
+                        break;
+                    case 'subcategoria':
+                        $valores = explode(',', $filtro[1]); //Valores a filtrar
+                        $consultaSubcategorias = "(";
+                        if (sizeof($valores) > 1) {
+                            $consultaSubcategorias .= " product.subcategoryid IN( ";
+                            $i = 0;
+                            foreach ($valores as $valor) { //Recorremos los valores del filtro
+                                if ($i == 0) {
+                                    $consultaSubcategorias .= $valor;
+                                    $i++;
+                                } else {
+                                    $consultaSubcategorias .= ", $valor";
+                                }
+                            }
+                            $consultaSubcategorias .= " ) ";
+
+                        } else { //Solo hay un filtro
+                            $consultaSubcategorias .= "( product.subcategoryid = $valores[0] ) ";
+                        }
+                        $consultaSubcategorias .= ' )';
+                        break;
+                    case 'marca':
+                        $valores = explode(',', $filtro[1]); //Valores a filtrar
+                        $consultaMarcas = "(";
+                        if (sizeof($valores) > 1) {
+                            $consultaMarcas .= " product.brandid IN( ";
+                            $i = 0;
+                            foreach ($valores as $valor) { //Recorremos los valores del filtro
+                                if ($i == 0) {
+                                    $consultaMarcas .= $valor;
+                                    $i++;
+                                } else {
+                                    $consultaMarcas .= ", $valor";
+                                }
+                            }
+                            $consultaMarcas .= " ) ";
+                        } else { //Solo hay un filtro
+                            $consultaMarcas .= "( product.brandid = $valores[0] ) ";
+                        }
+                        $consultaMarcas .= ' )';
+                        break;
+                }
+            }
+        } else {
+            $urlid = $url;
+        }
+        $filtromarcas = [];
+        $filtrobusqueda = DB::table('product')
+            ->select($select)
+            ->join('price', 'price.id', '=', 'product.priceid')
+            ->where('photo', 'not like', 'minilogo.png')
+            ->where('name', 'like', '%' . $urlid . '%');
+        /*Aplicacion de los filtros con o sin precios ... */
+        if ($consultaPrecios != null) {
+            $filtrobusqueda->whereRaw($consultaPrecios);
+            /* Parte de los filtros con precios */
+            $todasCategorias = DB::table('category')
+                ->select('category.id',
+                    'category.name',
+                    DB::raw("(SELECT count(*) FROM product  inner join price on product.id = price.id where  product.categoryid = category.id AND product.photo not like 'minilogo.png' AND product.name like '%$urlid%' AND $consultaPrecios) as total"))
+                ->where(DB::raw("(SELECT count(*) FROM product inner join price on product.id = price.id where  product.categoryid = category.id AND product.photo not like 'minilogo.png'  AND product.name like '%$urlid%' AND $consultaPrecios)"), '>', 0)
+                ->orderBy('name', 'asc')
+                ->get();
+            //Filtro  de categorias y subcategorias
+            $filtroCategorias = [];
+            foreach ($todasCategorias as $categoria) {
+                $subcategorias = DB::table('subcategory')
+                    ->select('subcategory.id',
+                        'subcategory.name',
+                        DB::raw("(SELECT COUNT(*) FROM product  inner join price on product.id = price.id where  product.subcategoryid = subcategory.id AND product.categoryid = $categoria->id
+                                            AND product.photo not like 'minilogo.png'  AND product.name like '%$urlid%'  AND $consultaPrecios) as total"))
+                    ->where(DB::raw("(SELECT COUNT(*) FROM product inner join price on product.id = price.id where  product.subcategoryid = subcategory.id AND product.categoryid = $categoria->id
+                                            AND product.photo not like 'minilogo.png'  AND product.name like '%$urlid%'  AND $consultaPrecios)"), '>', 0)
+                    ->orderBy('name', 'asc')->get();
+                foreach ($subcategorias as $subcategoria)
+                    $subcategoria->id = base64_encode($subcategoria->id);
+                array_push($filtroCategorias, ['id' => base64_encode($categoria->id), 'name' => $categoria->name, 'total' => $categoria->total, 'subcategorias' => $subcategorias]);
+
+            }
+        } else {
+            /* Parte de los filtros */
+            $filtromarcas = DB::table('brand')
+                ->select('id', 'name',
+                    DB::raw("(select COUNT(*) from product  where brand.id = product.brandid and product.name like '%$urlid%' and product.photo not like 'minilogo.png') as total"))
+                ->where(DB::raw("(select COUNT(*) from product where brand.id = product.brandid and product.photo not like 'minilogo.png' and product.name like '%$urlid%' )"), '>', 0)
+                ->orderBy('name', 'asc')
+                ->get();
+            foreach ($filtromarcas as $item)
+                $item->id = base64_encode($item->id);
+            $todasCategorias = DB::table('category')
+                ->select('id',
+                    'name',
+                    DB::raw("(SELECT count(*) FROM product where product.categoryid = category.id AND product.photo not like 'minilogo.png' AND product.name like '%$urlid%' ) as total"))
+                ->where(DB::raw("(SELECT count(*) FROM product where product.categoryid = category.id AND product.photo not like 'minilogo.png'  AND product.name like '%$urlid%' )"), '>', 0)
+                ->orderBy('name', 'asc')
+                ->get();
+            //Filtro  de categorias y subcategorias
+            $filtroCategorias = [];
+            //dd( ($consulta != ""  )? 'AND '.$consulta :"falso bitch" );
+            foreach ($todasCategorias as $categoria) {
+                $subcategorias = DB::table('subcategory')
+                    ->select('id',
+                        'name',
+                        DB::raw("(SELECT COUNT(*) FROM product where product.subcategoryid = subcategory.id AND product.categoryid = $categoria->id
+                                            AND product.photo not like 'minilogo.png' AND product.name like '%$urlid%'  ) as total"))
+                    ->where(DB::raw("(SELECT COUNT(*) FROM product where product.subcategoryid = subcategory.id AND product.categoryid = $categoria->id
+                                            AND product.photo not like 'minilogo.png' AND product.name like '%$urlid%'  )"), '>', 0)
+                    ->orderBy('name', 'asc')->get();
+                foreach ($subcategorias as $subcategoria)
+                    $subcategoria->id = base64_encode($subcategoria->id);
+                array_push($filtroCategorias, ['id' => base64_encode($categoria->id), 'name' => $categoria->name, 'total' => $categoria->total, 'subcategorias' => $subcategorias]);
+            }
+
+
+        }
+        /* Aplicacion Recuperación de los productos con o sin filtros*/
+
+        if ($consultaCategorias != null) {
+            $filtrobusqueda->whereRaw($consultaCategorias);
+        }
+        if ($consultaSubcategorias != null) {
+            $filtrobusqueda->whereRaw($consultaSubcategorias);
+        }
+        if ($consultaMarcas != null) {
+            $filtrobusqueda->whereRaw($consultaMarcas);
+        }
+        $filtrobusqueda = $filtrobusqueda->paginate();
+
+
+        // Parte del menu
+        if ($request->cookie('cliente') != null) {
+            //Se tomará en cuenta si hay una session de cliente para el carrito
+        } else {
+            //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
             //Menu de marcas
             $marcas = DB::table('brand')->select('id', 'name')
                 ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
@@ -612,273 +878,25 @@ class UsersController extends Controller
             foreach ($categorias as $categoria)
                 $categoria->id = base64_encode($categoria->id);
             //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
+            $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
             //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
-        if($request->cookie('cliente') == null) {
-            return view('tienda.registro', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
-        }else{
-            return view('tienda.index', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
-        }
 
+
+            return view('tienda.buscaProductos', ['marcas' => $marcas,
+                'categorias' => $categorias,
+                'servicios' => $servicios,
+                'filtro' => $filtrobusqueda,
+                'f' => $urlid,
+                'filtroCategorias' => $filtroCategorias,
+                'filtroMarcas' => $filtromarcas]);
+        }
     }
-      public function searchProductos(Request $request){
-         $x = "%".base64_decode($request->filtro)."%";
-         //parte de los filtros
-         $url =base64_decode($request->filtro);
-         $request->filtro = base64_decode($request->filtro);
-         $precioUsuario = $this->precioUsuario($request);
-         $consultaPrecios= null;
-         $consultaCategorias = null;
-         $consultaSubcategorias = null;
-         $consultaMarcas = null;
-         $select=[
-             'product.code',
-             'product.name',
-             'product.stock',
-             'product.currency',
-             'product.photo',
-             'product.photo2',
-             'product.photo3',
-             'product.shortdescription',
-             'product.longdescription',
-             'product.quotation'
-         ];
-         if($precioUsuario!=""){
-             array_push($select,$precioUsuario);
-         }
-         if(strpos($url, "/")){ //Existe al menos un parametro a parte del id
-             $partes = explode("/",$url); //Separamos el id y los parametros
-             $urlid = $partes[0]; //ID en cuestion
-             $parametros = explode('&',$partes[1]); //Separamos los parametros con &
-             foreach ( $parametros as $parametro) { //Recorremos los parametros enviados ("precio", "categorias", "subcategorias")
-                 $filtro = explode('=',$parametro); //Separamos filtros[0] y valor[1]
-                 switch ($filtro[0]){
-                     case 'precio': //Revisamos los valores que podria tener
-                         $valores = explode(',',$filtro[1]); //Valores a filtrar
-                         $consultaPrecios= "(";
-                         if(sizeof($valores)>1){
-                            $i = 0;
-                             foreach ($valores as $valor){ //Recorremos los valores del filtro
-                                 if(strpos($valor,'-')){ //Existe un rango
-                                     $precios =explode('-', $valor);
-                                     if ( $i == 0){
-                                         $consultaPrecios .= "(".(( $precioUsuario == "" )? "price.price1": $precioUsuario )." between " . $precios[0] . " AND " . $precios[1] . ") ";
-                                     } else {
-                                         $consultaPrecios .= " OR (".(( $precioUsuario == "" )? "price.price1": $precioUsuario )." between " . $precios[0] . " AND " . $precios[1] . ") ";
-                                     }
-                                } else { //no existe el rango
-                                     if( $i == 0 ){
-                                        $consultaPrecios.= "( ".(( $precioUsuario == "" )? "price.price1": $precioUsuario )."> $valor )";
-                                     } else {
-                                         $consultaPrecios.= " OR ( ".(( $precioUsuario == "" )? "price.price1": $precioUsuario )."> $valor )";
-                                     }
-                                 }
-                                 $i++;
-                             }
-                         } else { //Solo hay un filtro
-                             if(strpos($valores[0],'-')){ //Existe un rango
-                                 $rango = explode('-',$valores[0]);
-                                 $consultaPrecios .= "(". (( $precioUsuario == "" )? "price.price1": $precioUsuario )." between " . $rango[0] . " AND " . $rango[1] . ") ";
-                             } else {
-                                 $consultaPrecios.= " ( ".(( $precioUsuario == "" )? "price.price1": $precioUsuario )."> $valores[0] )";
-                             }
-                         }
-                         $consultaPrecios .= ")";
-                         break;
-                     case 'categoria':
-                         $valores = explode(',',$filtro[1]); //Valores a filtrar
-                         $consultaCategorias="(";
-                         if(sizeof($valores)>1) {
- 
-                             $consultaCategorias .= " product.categoryid IN( ";
-                             $i=0;
-                             foreach ($valores as $valor){ //Recorremos los valores del filtro
-                                if($i == 0){
-                                     $consultaCategorias .= $valor ;
-                                     $i++;
-                                 }else{
-                                     $consultaCategorias .= ", $valor";
-                                 }
-                             }
-                             $consultaCategorias .= " ) ";
- 
-                         } else { //Solo hay un filtro
-                            $consultaCategorias .= "( product.categoryid = $valores[0] ) ";
-                         }
-                         $consultaCategorias .= ' )';
-                         break;
-                    case 'subcategoria':
-                         $valores = explode(',',$filtro[1]); //Valores a filtrar
-                         $consultaSubcategorias="(";
-                         if(sizeof($valores)>1) {
-                             $consultaSubcategorias .= " product.subcategoryid IN( ";
-                             $i=0;
-                             foreach ($valores as $valor){ //Recorremos los valores del filtro
-                                 if($i == 0){
-                                     $consultaSubcategorias .= $valor ;
-                                     $i++;
-                                 }else{
-                                     $consultaSubcategorias .= ", $valor";
-                                 }
-                             }
-                             $consultaSubcategorias .= " ) ";
- 
-                         } else { //Solo hay un filtro
-                             $consultaSubcategorias .= "( product.subcategoryid = $valores[0] ) ";
-                         }
-                         $consultaSubcategorias .= ' )';
-                         break;
-                     case 'marca':
-                         $valores = explode(',',$filtro[1]); //Valores a filtrar
-                         $consultaMarcas="(";
-                         if(sizeof($valores)>1) {
-                             $consultaMarcas .= " product.brandid IN( ";
-                             $i=0;
-                             foreach ($valores as $valor){ //Recorremos los valores del filtro
-                                 if($i == 0){
-                                     $consultaMarcas .= $valor ;
-                                     $i++;
-                                 }else{
-                                     $consultaMarcas .= ", $valor";
-                                 }
-                             }
-                             $consultaMarcas .= " ) ";
-                         } else { //Solo hay un filtro
-                             $consultaMarcas .= "( product.brandid = $valores[0] ) ";
-                         }
-                         $consultaMarcas .= ' )';
-                         break;
-                 }
-             }
-         }else{
-             $urlid= $url;
-         }
-         $filtromarcas = [];
-         $filtrobusqueda = DB::table('product')
-             ->select($select)
-             ->join('price', 'price.id', '=', 'product.priceid')
-             ->where('photo', 'not like', 'minilogo.png')
-             ->where('name','like','%'.$urlid.'%');
-         /*Aplicacion de los filtros con o sin precios ... */
-         if( $consultaPrecios != null ){
-             $filtrobusqueda->whereRaw($consultaPrecios);
-             /* Parte de los filtros con precios */
-             $todasCategorias = DB::table('category')
-                 ->select('category.id',
-                     'category.name',
-                     DB::raw("(SELECT count(*) FROM product  inner join price on product.id = price.id where  product.categoryid = category.id AND product.photo not like 'minilogo.png' AND product.name like '%$urlid%' AND $consultaPrecios) as total"))
-                 ->where(DB::raw("(SELECT count(*) FROM product inner join price on product.id = price.id where  product.categoryid = category.id AND product.photo not like 'minilogo.png'  AND product.name like '%$urlid%' AND $consultaPrecios)"), '>', 0)
-                 ->orderBy('name', 'asc')
-                 ->get();
-             //Filtro  de categorias y subcategorias
-             $filtroCategorias = [];
-             foreach ($todasCategorias as $categoria) {
-                 $subcategorias = DB::table('subcategory')
-                     ->select('subcategory.id',
-                         'subcategory.name',
-                         DB::raw("(SELECT COUNT(*) FROM product  inner join price on product.id = price.id where  product.subcategoryid = subcategory.id AND product.categoryid = $categoria->id
-                                            AND product.photo not like 'minilogo.png'  AND product.name like '%$urlid%'  AND $consultaPrecios) as total"))
-                     ->where(DB::raw("(SELECT COUNT(*) FROM product inner join price on product.id = price.id where  product.subcategoryid = subcategory.id AND product.categoryid = $categoria->id
-                                            AND product.photo not like 'minilogo.png'  AND product.name like '%$urlid%'  AND $consultaPrecios)"), '>', 0)
-                     ->orderBy('name', 'asc')->get();
-                 foreach ($subcategorias as $subcategoria)
-                     $subcategoria->id = base64_encode($subcategoria->id);
-                 array_push($filtroCategorias, ['id' => base64_encode($categoria->id), 'name' => $categoria->name, 'total' => $categoria->total, 'subcategorias' => $subcategorias]);
- 
-             }
-         }
-         else{
-             /* Parte de los filtros */
-             $filtromarcas = DB::table('brand')
-                 ->select('id', 'name',
-                     DB::raw("(select COUNT(*) from product  where brand.id = product.brandid and product.name like '%$urlid%' and product.photo not like 'minilogo.png') as total"))
-                 ->where(DB::raw("(select COUNT(*) from product where brand.id = product.brandid and product.photo not like 'minilogo.png' and product.name like '%$urlid%' )"), '>', 0)
-                 ->orderBy('name', 'asc')
-                 ->get();
-             foreach ($filtromarcas as $item)
-                 $item->id = base64_encode($item->id);
-             $todasCategorias = DB::table('category')
-                 ->select('id',
-                     'name',
-                     DB::raw("(SELECT count(*) FROM product where product.categoryid = category.id AND product.photo not like 'minilogo.png' AND product.name like '%$urlid%' ) as total"))
-                 ->where(DB::raw("(SELECT count(*) FROM product where product.categoryid = category.id AND product.photo not like 'minilogo.png'  AND product.name like '%$urlid%' )"), '>', 0)
-                 ->orderBy('name', 'asc')
-                 ->get();
-             //Filtro  de categorias y subcategorias
-             $filtroCategorias = [];
-             //dd( ($consulta != ""  )? 'AND '.$consulta :"falso bitch" );
-             foreach ($todasCategorias as $categoria) {
-                 $subcategorias = DB::table('subcategory')
-                     ->select('id',
-                         'name',
-                         DB::raw("(SELECT COUNT(*) FROM product where product.subcategoryid = subcategory.id AND product.categoryid = $categoria->id
-                                            AND product.photo not like 'minilogo.png' AND product.name like '%$urlid%'  ) as total"))
-                     ->where(DB::raw("(SELECT COUNT(*) FROM product where product.subcategoryid = subcategory.id AND product.categoryid = $categoria->id
-                                            AND product.photo not like 'minilogo.png' AND product.name like '%$urlid%'  )"), '>', 0)
-                     ->orderBy('name', 'asc')->get();
-                 foreach ($subcategorias as $subcategoria)
-                     $subcategoria->id = base64_encode($subcategoria->id);
-                 array_push($filtroCategorias, ['id' => base64_encode($categoria->id), 'name' => $categoria->name, 'total' => $categoria->total, 'subcategorias' => $subcategorias]);
-             }
- 
- 
-         }
-         /* Aplicacion Recuperación de los productos con o sin filtros*/
- 
-         if( $consultaCategorias != null ){
-             $filtrobusqueda->whereRaw($consultaCategorias);
-         }
-         if( $consultaSubcategorias != null ){
-             $filtrobusqueda->whereRaw($consultaSubcategorias);
-         }
-         if( $consultaMarcas != null ){
-             $filtrobusqueda->whereRaw($consultaMarcas);
-         }
-         $filtrobusqueda = $filtrobusqueda->paginate();
- 
- 
- 
-         // Parte del menu
-         if ($request->cookie('cliente') != null) {
-             //Se tomará en cuenta si hay una session de cliente para el carrito
-         } else {
-             //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
-             //Menu de marcas
-             $marcas = DB::table('brand')->select('id', 'name')
-                 ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                 ->take(40)->orderBy('name', 'asc')->get();
-             //Encriptamos los id
-             foreach ($marcas as $marca)
-                 $marca->id = base64_encode($marca->id);
-             //Menu de categorias
-             $categorias = DB::table('category')->select('id', 'name')->take(40)
-                 ->where('name', 'not like', 'Nota de credito')
-                 ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                 ->orderBy('name', 'asc')->get();
-             //Encriptar id de categorias
-             foreach ($categorias as $categoria)
-                 $categoria->id = base64_encode($categoria->id);
-             //menu de servicios
-             $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
-             //Encriptar id de servicios
-             foreach ($servicios as $servicio)
-                 $servicio->id = base64_encode($servicio->id);
- 
- 
- 
-             return view('tienda.buscaProductos', ['marcas' => $marcas,
-                                                         'categorias' => $categorias,
-                                                         'servicios' => $servicios,
-                                                         'filtro' => $filtrobusqueda,
-                                                         'f' => $urlid,
-                                                         'filtroCategorias' => $filtroCategorias,
-                                                         'filtroMarcas' => $filtromarcas]);
-         }
-    }
+
     /*Parte administratia de Herramientas Tepic */
-    public function getAreaIndex(Request $request){
+    public function getAreaIndex(Request $request)
+    {
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -906,7 +924,9 @@ class UsersController extends Controller
             return view('login');
         }
     }
-    public function getProductosForm(Request $request){
+
+    public function getProductosForm(Request $request)
+    {
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -939,7 +959,9 @@ class UsersController extends Controller
             'categorias' => $categorias
         ]);
     }
-    public function getMarcasForm(Request $request){
+
+    public function getMarcasForm(Request $request)
+    {
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -961,7 +983,9 @@ class UsersController extends Controller
             return view('login');
         }
     }
-    public function getCategoriasForm(Request $request){
+
+    public function getCategoriasForm(Request $request)
+    {
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -983,7 +1007,9 @@ class UsersController extends Controller
             return view('login');
         }
     }
-    public function getSubcategoriasform(Request $request){
+
+    public function getSubcategoriasform(Request $request)
+    {
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1006,7 +1032,9 @@ class UsersController extends Controller
             return view('login');
         }
     }
-    public function getUsuariosForm(Request $request){
+
+    public function getUsuariosForm(Request $request)
+    {
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1029,6 +1057,7 @@ class UsersController extends Controller
             return view('login');
         }
     }
+
     public function getPedidosForm(Request $request)
     {
         if ($request->cookie('admin') != null) {
@@ -1049,29 +1078,32 @@ class UsersController extends Controller
             }
         }
     }
-    public function getServiciosForm(Request $request){
-        if($request->cookie('admin') != null){
+
+    public function getServiciosForm(Request $request)
+    {
+        if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
-            if($cookie['rol'] == 2) { //es un administrador
-                $user = Usuarios::where('apikey',$cookie['apikey'])->first();
-                $fecha = explode("-",substr($user->signindate,0,10));
-                return view('forms.servicios',['usuario' => $user, 'datos'=>['name'=>$user->name. ' '. $user->lastname ,
-                    'ingreso' =>  Carbon::createFromDate($fecha[0],$fecha[1],$fecha[2])->formatLocalized('%B %d'),
+            if ($cookie['rol'] == 2) { //es un administrador
+                $user = Usuarios::where('apikey', $cookie['apikey'])->first();
+                $fecha = explode("-", substr($user->signindate, 0, 10));
+                return view('forms.servicios', ['usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
+                    'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador']
                 ]);
-            }elseif ($cookie['rol'] == 3){
+            } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
-                return view('sale.area',['nombre'=> 'Vendedor puñetas']);
+                return view('sale.area', ['nombre' => 'Vendedor puñetas']);
             }
-        }else{
+        } else {
             //no existe una session de administrador y lo manda al login
             return view('login');
 
         }
     }
+
     public function getBannerForm(Request $request)
     {
         if ($request->cookie('admin') != null) {
@@ -1095,7 +1127,9 @@ class UsersController extends Controller
             return view('login');
         }
     }
-    public function getSubcategorias(Request $request, $id){
+
+    public function getSubcategorias(Request $request, $id)
+    {
         $subcategorias = DB::table('subcategory')->where('categoryid', $id)->get();
         $respuesta = ['code' => 200,
             'msg' => json_encode($subcategorias),
@@ -1104,7 +1138,9 @@ class UsersController extends Controller
 
         return Response::json($respuesta);
     }
-    public function getProfile(Request $request){
+
+    public function getProfile(Request $request)
+    {
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1126,15 +1162,17 @@ class UsersController extends Controller
             return view('login');
         }
     }
-    public function showMovementForm(Request $request){
+
+    public function showMovementForm(Request $request)
+    {
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
             if ($cookie['rol'] == 2) { //es un administrador
                 $user = Usuarios::where('apikey', $cookie['apikey'])->first();
                 $fecha = explode("-", substr($user->signindate, 0, 10));
-                $productos = DB::table('product')->select('id','name')->get();
-                $proveedores =DB::table('proveedores')->select('id','nombre')->get();
+                $productos = DB::table('product')->select('id', 'name')->get();
+                $proveedores = DB::table('proveedores')->select('id', 'nombre')->get();
                 return view('forms.movement', [
                     'proveedores' => $proveedores,
                     'productos' => $productos,
@@ -1154,7 +1192,9 @@ class UsersController extends Controller
         }
 
     }
-    public function showProviderForm(Request $request){
+
+    public function showProviderForm(Request $request)
+    {
 
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
@@ -1181,8 +1221,10 @@ class UsersController extends Controller
         }
 
     }
+
     /*Parte de Login y logout (Sirve para ambas partes)*/
-    public function doLogin(Request $request){
+    public function doLogin(Request $request)
+    {
         try {
             $cookie = null;
             $users = Usuarios::where('email', $request->email)->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
@@ -1191,12 +1233,12 @@ class UsersController extends Controller
                     'apikey' => $users->apikey,
                     'rol' => $users->roleid,
                 ];
-                
-                if($users->roleid == "2" || $users->roleid == "3") {
-                   $cookie = Cookie::make('admin', $datos, 180);
-                }else{
-                 $datos['userprice']= $users->userprice;
-                 $datos['carrito'] = null;//En caso de no existir el carrito lo cual se agregará mas adelante
+
+                if ($users->roleid == "2" || $users->roleid == "3") {
+                    $cookie = Cookie::make('admin', $datos, 180);
+                } else {
+                    $datos['userprice'] = $users->userprice;
+                    $datos['carrito'] = null;//En caso de no existir el carrito lo cual se agregará mas adelante
                     //revisaremos que exista el carrito y lo agregamos a la cookie
                     $cookie = Cookie::make('cliente', $datos, 360);
                 }
@@ -1210,10 +1252,10 @@ class UsersController extends Controller
                 $respuesta = [
                     'code' => 500,
                     'msg' => "Las credenciales son incorrectas o el Usuario no está Activo",
-                    'detail' => 'Error'
+                    'detail' => 'error'
                 ];
             }
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
             $respuesta = [
                 'code' => 500,
                 'msg' => $exception->getMessage(),
@@ -1221,30 +1263,32 @@ class UsersController extends Controller
             ];
 
         }
-        if ( $cookie != null )
+        if ($cookie != null)
             return Response::json($respuesta)->withCookie($cookie);
         else
             return Response::json($respuesta);
     }
-    public function doCLogin(Request $request){
+
+    public function doCLogin(Request $request)
+    {
         try {
             $cookie = null;
             $users = Usuarios::where('email', $request->email)->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
-            if (Hash::check($request->password, $users->password)  && $users->status == "A") {
+            if (Hash::check($request->password, $users->password) && $users->status == "A") {
                 $datos = [
                     'apikey' => $users->apikey,
                     'rol' => $users->roleid,
                 ];
 
-                if($users->roleid == "2" || $users->roleid == "3") {
+                if ($users->roleid == "2" || $users->roleid == "3") {
                     $cookie = Cookie::make('admin', $datos, 180);
                     return Response::json([
                         'code' => 403,
                         'msg' => 'Para usar este usuario valla a la parte administrativa',
                         'detail' => 'warning'
                     ])->withCookie($cookie);
-                }else{
-                    $datos['userprice']= $users->userprice;
+                } else {
+                    $datos['userprice'] = $users->userprice;
                     $datos['carrito'] = null; //En caso de no existir el carrito lo cual se agregará mas adelante
                     //revisaremos que exista el carrito y lo agregamos a la cookie
                     $cookie = Cookie::make('cliente', $datos, 360);
@@ -1262,7 +1306,7 @@ class UsersController extends Controller
                     'detail' => 'Error'
                 ];
             }
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
             $respuesta = [
                 'code' => 500,
                 'msg' => $exception->getMessage(),
@@ -1270,31 +1314,37 @@ class UsersController extends Controller
             ];
 
         }
-        if ( $cookie != null )
+        if ($cookie != null)
             return Response::json($respuesta)->withCookie($cookie);
         else
             return Response::json($respuesta);
     }
-    public function doLogout(Request $request){
+
+    public function doLogout(Request $request)
+    {
         if ($request->cookie('admin') != null) {
             Cookie::forget('admin');
             return redirect()->route('area.index')->withCookie(Cookie::forget('admin'));
         }
-        if($request->cookie('cliente')!=null){
+        if ($request->cookie('cliente') != null) {
             Cookie::forget('cliente');
             return redirect()->route('tienda.index')->withCookie(Cookie::forget('cliente'));
         }
     }
-    public function precioUsuario (Request $request){
-        if( $request->cookie('cliente') != null ){
+
+    public function precioUsuario(Request $request)
+    {
+        if ($request->cookie('cliente') != null) {
             $cliente = $request->cookie('cliente');
-            return 'price.price'.$cliente['userprice'];
-        }else{
+            return 'price.price' . $cliente['userprice'];
+        } else {
             return '';
         }
     }
+
     //Seguirle
-    public function confirmEmail (Request $request, $id){
+    public function confirmEmail(Request $request, $id)
+    {
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
@@ -1310,28 +1360,30 @@ class UsersController extends Controller
         foreach ($categorias as $categoria)
             $categoria->id = base64_encode($categoria->id);
         //menu de servicios
-        $servicios = DB::table('services')->select('id', 'title','img','shortdescription','longdescription','selected')->take(10)->orderBy('title', 'asc')->get();
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
         //Encriptar id de servicios
         foreach ($servicios as $servicio)
             $servicio->id = base64_encode($servicio->id);
-     try {
-         //Aqui eliminamos el registro por el id de ambos
-         $params = base64_decode($id);
-         $solicitud = ActivateMail::findOrFail($params);
-         //Eliminamos la solicitud y se activa por trigger o manualmente!!
-         $solicitud->delete();
-         //regresamos la vista de confirmación por eso es GET
-         return view('tienda.confirmation', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
-     }catch(Exception $exception){
-         //Hubo un error y se manda la pantalla de alerta
-         return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios,'exception'=>$exception]);
-     }
+        try {
+            //Aqui eliminamos el registro por el id de ambos
+            $params = base64_decode($id);
+            $solicitud = ActivateMail::findOrFail($params);
+            //Eliminamos la solicitud y se activa por trigger o manualmente!!
+            $solicitud->delete();
+            //regresamos la vista de confirmación por eso es GET
+            return view('tienda.confirmation', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
+        } catch (Exception $exception) {
+            //Hubo un error y se manda la pantalla de alerta
+            return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $exception]);
+        }
         //Menu de marcas
 
 
     }
+
     //Error de Mail
-    public function errorMail(Request $request, $id){
+    public function errorMail(Request $request, $id)
+    {
         //Se envia un correo electronico con el id del usuario para su subida manual
         try {
             $id = base64_decode($id);
@@ -1341,9 +1393,112 @@ class UsersController extends Controller
                 $msg->to('soporte.herramientas.tepic@gmail.com');
             });
             return redirect()->route('tienda.index');
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return view("Hubo un problema contactenos en soporte.herramientas.tepic@gmail.com");
         }
     }
+
+    public function getUserProfile(Request $request)
+    {
+        try {
+            if ($request->cookie('cliente') != null) {
+                $cookie = Cookie::get('cliente');
+                $user = DB::table('users')
+                    ->select('users.name as uname',
+                        'users.id',
+                        'users.lastname as lastname',
+                        'users.photo as photo',
+                        'users.signindate',
+                        'users.username as user',
+                        'estados.nombre as esnombre',
+                        'address.city',
+                        'address.state',
+                        'address.country',
+                        'address.street',
+                        'address.street2',
+                        'address.street3',
+                        'address.zipcode',
+                        'address.reference',
+                        'address.streetnumber',
+                        'users.phone',
+                        'users.email',
+                        'municipios.nombre as muname',
+                        'localidades.nombre as loname')
+                    ->join('address', 'address.userid', '=', 'users.id')
+                    ->join('estados', 'estados.id_estado', '=', 'address.state')
+                    ->join('municipios', 'id_municipio', '=', 'address.country')
+                    ->join('localidades', 'id_localidad', '=', 'address.city')
+                    ->where('apikey', $cookie['apikey'])->first();
+
+                $estados = Estado::all();
+                $municipios = DB::table('municipios')->select('*')
+                    ->where('estado_id', '=', $user->state)->get();
+                $localidades = DB::table('localidades')->select('nombre', 'municipio_id', 'id_localidad')
+                    ->where('municipio_id', '=', $user->country)->get();
+                $user->id = base64_encode($user->id);
+                //Menu de marcas
+                $marcas = DB::table('brand')->select('id', 'name')
+                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                    ->take(40)->orderBy('name', 'asc')->get();
+                //Encriptamos los id
+                foreach ($marcas as $marca)
+                    $marca->id = base64_encode($marca->id);
+                //Menu de categorias
+                $categorias = DB::table('category')->select('id', 'name')->take(40)
+                    ->where('name', 'not like', 'Nota de credito')
+                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                    ->orderBy('name', 'asc')->get();
+                //Encriptar id de categorias
+                foreach ($categorias as $categoria)
+                    $categoria->id = base64_encode($categoria->id);
+                //menu de servicios
+                $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
+                foreach ($servicios as $servicio)
+                    $servicio->id = base64_encode($servicio->id);
+                //Marca actual (Migaja)
+
+                return view('tienda.profile', ['user' => $user, 'servicios' => $servicios,
+                    'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
+                    'localidades' => $localidades, 'municipios' => $municipios]);
+            } else {
+
+                route('tienda.index');
+            }
+        } catch (Exception $e) {
+            return Response::json($e);
+        }
+    }
+
+    //obtencion de datos
+    public function getMunicipios(Request $request, $estado)
+    {
+        $municipios = DB::table('municipios')->select('*')
+            ->where('estado_id', '=', $estado)->get();
+        return Response::json([
+            'code' => 200,
+            'msg' => json_encode($municipios),
+            'detail' => 'OK'
+        ]);
+    }
+
+    public function getLocalidades(Request $request, $municipio)
+    {
+        $localidades = DB::table('localidades')->select('*')
+            ->where('municipio_id', '=', $municipio)->get();
+        return Response::json([
+            'code' => 200,
+            'msg' => json_encode($localidades),
+            'detail' => 'OK'
+        ]);
+    }
+
+    //Actualizacion de datos personales del cliente
+
+
+
+
+
+
 }
+
 

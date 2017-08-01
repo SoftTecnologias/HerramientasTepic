@@ -28,7 +28,7 @@ $(function () {
                 swal("Error",response.msg,response.detail);
             }
       }).fail(function(){
-          swal("Error","No pudimos conectarnos al servidor","Error");
+          swal("Error","No pudimos conectarnos al servidor","error");
             console.log('ni conecto');
       });
   });
