@@ -53,8 +53,11 @@
     <header>
 
         <!-- *** TOP *** -->
-        @include('tienda.sessionmenu')
-
+        @if($logueado == null)
+            @include('tienda.sessionmenu')
+        @else
+            @include('tienda.session_active_menu',['user'=>$logueado])
+        @endif
 
         <!-- *** TOP END *** -->
 
