@@ -81,6 +81,11 @@ Route::post('/user/profile/{id}',[
     'as' => 'tienda.user.profile.update'
 ]);
 
+Route::post('/user/direccion',[
+   'uses' => 'DireccionesController@add',
+    'as' => 'user.direccion'
+]);
+
 Route::post('/user/profile/contact/{id}',[
     'uses' => 'DireccionesController@udateContactUser',
     'as' => 'tienda.user.profile.contact.update'
