@@ -1476,7 +1476,7 @@ class UsersController extends Controller
         try {
             if ($request->cookie('cliente') != null) {
                 $cookie = Cookie::get('cliente');
-                $users = Usuarios::where('apikey',$cookie[apikey])->firstOrFail();
+                $users = Usuarios::where('apikey',$cookie['apikey'])->firstOrFail();
                 $user = DB::table('users')
                     ->select('users.name as uname',
                         'users.id',
@@ -1536,7 +1536,7 @@ class UsersController extends Controller
                 $user->id = base64_encode($user->id);
                 return view('tienda.profile', ['user' => $user, 'servicios' => $servicios,
                     'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
-                    'localidades' => $localidades, 'municipios' => $municipios,'logueado' => $user]);
+                    'localidades' => $localidades, 'municipios' => $municipios,'logueado' => $users]);
             } else {
                 return redirect()->route('tienda.index');
             }
