@@ -241,33 +241,9 @@
         <div class="panel panel-default">
             <div class="menu_title">
                 <b>Compras</b>
-                <p>RSI Content Solutions India Pvt. Ltd</p>
+                <p>No tiene compras Realizadas</p>
             </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
-                            <label for="email">Name:</label>
-                            <p>Vijayan K. </p>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Emp ID:</label>
-                            <p>1020</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Data of Joining:</label>
-                            <p>09-05-2016</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Blood Group:</label>
-                            <p>O+ve</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">In Case of emergency please contact:</label>
-                            <p>9500028421</p>
-                        </div>
-                    </div>
-                </div>
+            
             </div>
         </div>
     </div>
