@@ -1476,7 +1476,7 @@ class UsersController extends Controller
         try {
             if ($request->cookie('cliente') != null) {
                 $cookie = Cookie::get('cliente');
-                $users = Usuarios::all();
+                $users = Usuarios::where('apikey',$cookie[apikey])->firstOrFail();
                 $user = DB::table('users')
                     ->select('users.name as uname',
                         'users.id',
