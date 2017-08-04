@@ -24,7 +24,8 @@ class DireccionesController extends Controller
                 'zipcode' => $request->cp,
                 'reference' => $request->ref,
                 'country' => $request->municipio,
-                'city' => $request->localidad]);
+                'city' => $request->localidad,
+                'streetnumber' => $request->numext]);
             $user->email = $request->email;
             $user->phone = $request->tel;
             $user->save();

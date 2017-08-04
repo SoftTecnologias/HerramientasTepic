@@ -526,10 +526,28 @@ class UsersController extends Controller
 
     public function getAllServices(Request $request)
     {
+        $marcas = DB::table('brand')->select('id', 'name')
+        ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+        ->take(40)->orderBy('name', 'asc')->get();
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+        foreach ($categorias as $c) {
+            $c->id = base64_encode($c->id);
+        }
+        foreach ($marcas as $m) {
+            $m->id = base64_encode($m->id);
+        }
+
         try {
-            if ($request->cookie('cliente') != null) {
-                //Se tomará en cuenta si hay una session de cliente para el carrito
-            } else {
+
                 //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
                 $productos = DB::table('product')
                     ->select('product.code',
@@ -552,43 +570,49 @@ class UsersController extends Controller
                     ->where('logo', 'not like', 'minilogo.png')
                     ->take(12)->get();
                 //Menu de marcas
-                $marcas = DB::table('brand')->select('id', 'name')
-                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                    ->take(40)->orderBy('name', 'asc')->get();
-                //Menu de categorias
-                $categorias = DB::table('category')->select('id', 'name')->take(40)
-                    ->where('name', 'not like', 'Nota de credito')
-                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                    ->orderBy('name', 'asc')->get();
-                //Menu de servicios
-                $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
-                //Encriptar id de servicios
-                foreach ($servicios as $servicio)
-                    $servicio->id = base64_encode($servicio->id);
-                foreach ($categorias as $c) {
-                    $c->id = base64_encode($c->id);
-                }
-                foreach ($marcas as $m) {
-                    $m->id = base64_encode($m->id);
-                }
                 foreach ($productos as $p) {
                     $p->code = base64_encode($p->code);
                 }
-                return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
-            }
-        } catch (Exception $e) {
 
+                if ($request->cookie('cliente') == null) {
+                    return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios,'logueado' => false]);
+                } else {
+                    $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                    return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios,'logueado' => $user]);
+                }
+        } catch (Exception $e) {
+            return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
         }
     }
 
     public function getServiceDetail(Request $request, $id)
     {
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Marca actual (Migaja)
+
+
+        foreach ($servicios as $servicio) {
+            $servicio->id = base64_encode($servicio->id);
+        }
+        foreach ($categorias as $c) {
+            $c->id = base64_encode($c->id);
+        }
+        foreach ($marcas as $m) {
+            $m->id = base64_encode($m->id);
+        }
+
         try {
             $id = base64_decode($id);
 
-            if ($request->cookie('cliente') != null) {
-                //Se tomará en cuenta si hay una session de cliente para el carrito
-            } else {
                 //obtenemos todos los productos de la marca
                 $productos = DB::table('product')
                     ->select('product.code',
@@ -607,37 +631,22 @@ class UsersController extends Controller
                     ->where('photo', 'not like', 'minilogo.png')
                     ->where('brandid', '=', $id)
                     ->paginate(12);
+            $actual = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img')
+                ->take(10)
+                ->orderBy('title', 'asc')
+                ->where('id', '=', $id)
+                ->get();
                 //Menu de marcas
-                $marcas = DB::table('brand')->select('id', 'name')
-                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                    ->take(40)->orderBy('name', 'asc')->get();
-                //Menu de categorias
-                $categorias = DB::table('category')->select('id', 'name')->take(40)
-                    ->where('name', 'not like', 'Nota de credito')
-                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                    ->orderBy('name', 'asc')->get();
-                //menu de servicios
-                $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
-                //Marca actual (Migaja)
-                $actual = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img')
-                    ->take(10)
-                    ->orderBy('title', 'asc')
-                    ->where('id', '=', $id)
-                    ->get();
-            }
-            foreach ($servicios as $servicio) {
-                $servicio->id = base64_encode($servicio->id);
-            }
-            foreach ($categorias as $c) {
-                $c->id = base64_encode($c->id);
-            }
-            foreach ($marcas as $m) {
-                $m->id = base64_encode($m->id);
-            }
             foreach ($productos as $p) {
                 $p->code = base64_encode($p->code);
             }
-            return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual]);
+            if ($request->cookie('cliente') == null) {
+                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'logueado' => false]);
+            } else {
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'logueado' => $user]);
+            }
+
         } catch (Exception $e) {
 
 
@@ -1463,6 +1472,7 @@ class UsersController extends Controller
         try {
             if ($request->cookie('cliente') != null) {
                 $cookie = Cookie::get('cliente');
+                $users = Usuarios::all();
                 $user = DB::table('users')
                     ->select('users.name as uname',
                         'users.id',
@@ -1513,7 +1523,7 @@ class UsersController extends Controller
                 //Marca actual (Migaja
                 if ($user == '') {
                     return view('tienda.direccion', ['servicios' => $servicios,
-                        'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados]);
+                        'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,'logueado' => $users]);
                 }
                 $municipios = DB::table('municipios')->select('*')
                     ->where('estado_id', '=', $user->state)->get();
@@ -1524,12 +1534,12 @@ class UsersController extends Controller
 
                 return view('tienda.profile', ['user' => $user, 'servicios' => $servicios,
                     'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
-                    'localidades' => $localidades, 'municipios' => $municipios]);
+                    'localidades' => $localidades, 'municipios' => $municipios,'logueado' => $user]);
             } else {
-                route('tienda.index');
+                return redirect()->route('tienda.index');
             }
         } catch (Exception $e) {
-            return Response::json($e);
+            return redirect()->route('tienda.problema',['error'=>$e]);
         }
     }
 

@@ -25,6 +25,7 @@ $(document).ready(function(e) {
         $("#selestado").prop('disabled',false);
         $("#selciudad").prop('disabled',false);
         $("#sellocalidad").prop('disabled',false);
+        $("#numext").prop('disabled',false);
     });
     $("#selestado").on('change',function () {
         var estadoseleccionado = $("#selestado option:selected").val();
@@ -107,7 +108,8 @@ $(document).ready(function(e) {
                     cp:$('#cp').val(),
                     tel:$('#tel').val(),
                     email:$('#mail').val(),
-                    ref:$('#ref').val()
+                    ref:$('#ref').val(),
+                    numext:$('#numext').val()
         };
         $.ajax({
             url:document.location.protocol+'//'+document.location.host  +'/user/profile/contact/'+id,

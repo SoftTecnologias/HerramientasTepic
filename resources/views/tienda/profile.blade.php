@@ -1,4 +1,4 @@
-@extends('layouts.usuario',['marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios])
+@extends('layouts.tienda',['marcas'=> $marcas,'categorias'=>$categorias,'servicios'=> $servicios])
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link rel="stylesheet" href="https://opensource.keycdn.com/fontawesome/4.6.3/font-awesome.min.css"
       integrity="sha384-Wrgq82RsEean5tP3NK3zWAemiNEXofJsTwTyHmNb/iL3dP/sZJ4+7sOld1uqYJtE" crossorigin="anonymous">
@@ -167,6 +167,10 @@
                                 <td>Calle 3</td>
                                 <td> <input type="text" value="{{$user->street3}}" disabled id="calle3" class="form-control input-md"></td>
                             </tr>
+                                <tr>
+                                    <td>Numero</td>
+                                    <td> <input type="text" value="{{$user->streetnumber}}" disabled id="numext" class="form-control input-md"></td>
+                                </tr>
                             <tr>
                                 <td>Codigo Postal</td>
                                 <td> <input type="text" value="{{$user->zipcode}}" disabled id="cp" class="form-control input-md"></td>
