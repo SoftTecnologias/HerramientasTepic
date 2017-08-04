@@ -1,4 +1,4 @@
-@extends('layouts.tienda',['marcas'=> $marcas,'categorias'=>$categorias,'servicios'=> $servicios])
+@extends('layouts.tienda')
 
 <!-- registro -->
 @section('styles')

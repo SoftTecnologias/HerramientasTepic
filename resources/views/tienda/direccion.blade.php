@@ -1,5 +1,6 @@
 @extends('layouts.tienda',['marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios])
 
+
 @section('content')
     <div id="cuerpo">
         <div class="container">

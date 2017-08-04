@@ -11,7 +11,7 @@
             <!-- Con el ingreso cambiaremos este menu-->
             <div class="user-block">
                 <a href="{{route('tienda.user.profile')}}"  >
-                    <span class="hidden-xs text-uppercase">Carlos Eduardo Hernández Velador </span></a>
+                    <span class="hidden-xs text-uppercase">{{$user->name." ".$user->lastname}} </span></a>
                 <a href="{{route('tienda.index')}}"><i class="fa fa-shopping-cart"></i> <span
                             class="hidden-xs text-uppercase">$ 0.00 (0 articulos)</span></a>
                 <a href="{{route('area.logout',['id'=>1])}}"><i class="fa fa-sign-out"></i> <span
