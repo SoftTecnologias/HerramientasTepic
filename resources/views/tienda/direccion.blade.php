@@ -1,4 +1,4 @@
-@extends('layouts.usuario',['marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios])
+@extends('layouts.usuario')
 
 @section('content')
     <form class="form-horizontal">

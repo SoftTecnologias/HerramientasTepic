@@ -1293,7 +1293,9 @@ class UsersController extends Controller
     {
         try {
             $cookie = null;
-            $users = Usuarios::where('email', $request->email)->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
+            $users = Usuarios::where('email', $request->email)
+                ->orWhere('username',$request->email)
+                ->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
             if (Hash::check($request->password, $users->password) && $users->status == "A") {
                 $datos = [
                     'apikey' => $users->apikey,
@@ -1339,7 +1341,9 @@ class UsersController extends Controller
     {
         try {
             $cookie = null;
-            $users = Usuarios::where('email', $request->email)->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
+            $users = Usuarios::where('email', $request->email)
+                     ->orWhere('username',$request->email)
+                     ->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
             if (Hash::check($request->password, $users->password) && $users->status == "A") {
                 $datos = [
                     'apikey' => $users->apikey,
@@ -1520,14 +1524,11 @@ class UsersController extends Controller
                 $localidades = DB::table('localidades')->select('nombre', 'municipio_id', 'id_localidad')
                     ->where('municipio_id', '=', $user->country)->get();
                 $user->id = base64_encode($user->id);
-
-
-                return view('tienda.profile', ['user' => $user, 'servicios' => $servicios,
-                    'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
-                    'localidades' => $localidades, 'municipios' => $municipios]);
             } else {
                 route('tienda.index');
             }
+
+
         } catch (Exception $e) {
             return Response::json($e);
         }
