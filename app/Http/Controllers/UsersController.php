@@ -101,6 +101,21 @@ class UsersController extends Controller
     }
 
     //Vistas con filtros
+
+    public function precioUsuario(Request $request)
+    {
+        try {
+            if ($request->cookie('cliente') != null) {
+                $cliente = $request->cookie('cliente');
+                return 'price.price' . $cliente['userprice'];
+            } else {
+                return '';
+            }
+        } catch (Exception $e) {
+
+        }
+    }
+
     public function getMarcaSearch(Request $request, $id)
     {
         try {
@@ -511,54 +526,58 @@ class UsersController extends Controller
 
     public function getAllServices(Request $request)
     {
-        if ($request->cookie('cliente') != null) {
-            //Se tomará en cuenta si hay una session de cliente para el carrito
-        } else {
-            //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
-            $productos = DB::table('product')
-                ->select('product.code',
-                    'product.name',
-                    'product.stock',
-                    'product.currency',
-                    'product.photo',
-                    'product.photo2',
-                    'product.photo3',
-                    'product.shortdescription',
-                    'product.longdescription',
-                    'product.quotation'
-                //         ,'price.price1'
-                )
-                ->join('price', 'price.id', '=', 'product.priceid')
-                ->where('photo', 'not like', 'minilogo.png')
-                ->take(12)->get();
-            $bMarcas = DB::table('brand')
-                ->select('logo')
-                ->where('logo', 'not like', 'minilogo.png')
-                ->take(12)->get();
-            //Menu de marcas
-            $marcas = DB::table('brand')->select('id', 'name')
-                ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                ->take(40)->orderBy('name', 'asc')->get();
-            //Menu de categorias
-            $categorias = DB::table('category')->select('id', 'name')->take(40)
-                ->where('name', 'not like', 'Nota de credito')
-                ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                ->orderBy('name', 'asc')->get();
-            //Menu de servicios
-            $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
-            //Encriptar id de servicios
-            foreach ($servicios as $servicio)
-                $servicio->id = base64_encode($servicio->id);
-            foreach ($categorias as $c) {
-                $c->id = base64_encode($c->id);
+        try {
+            if ($request->cookie('cliente') != null) {
+                //Se tomará en cuenta si hay una session de cliente para el carrito
+            } else {
+                //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
+                $productos = DB::table('product')
+                    ->select('product.code',
+                        'product.name',
+                        'product.stock',
+                        'product.currency',
+                        'product.photo',
+                        'product.photo2',
+                        'product.photo3',
+                        'product.shortdescription',
+                        'product.longdescription',
+                        'product.quotation'
+                    //         ,'price.price1'
+                    )
+                    ->join('price', 'price.id', '=', 'product.priceid')
+                    ->where('photo', 'not like', 'minilogo.png')
+                    ->take(12)->get();
+                $bMarcas = DB::table('brand')
+                    ->select('logo')
+                    ->where('logo', 'not like', 'minilogo.png')
+                    ->take(12)->get();
+                //Menu de marcas
+                $marcas = DB::table('brand')->select('id', 'name')
+                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                    ->take(40)->orderBy('name', 'asc')->get();
+                //Menu de categorias
+                $categorias = DB::table('category')->select('id', 'name')->take(40)
+                    ->where('name', 'not like', 'Nota de credito')
+                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                    ->orderBy('name', 'asc')->get();
+                //Menu de servicios
+                $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+                //Encriptar id de servicios
+                foreach ($servicios as $servicio)
+                    $servicio->id = base64_encode($servicio->id);
+                foreach ($categorias as $c) {
+                    $c->id = base64_encode($c->id);
+                }
+                foreach ($marcas as $m) {
+                    $m->id = base64_encode($m->id);
+                }
+                foreach ($productos as $p) {
+                    $p->code = base64_encode($p->code);
+                }
+                return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
             }
-            foreach ($marcas as $m) {
-                $m->id = base64_encode($m->id);
-            }
-            foreach ($productos as $p) {
-                $p->code = base64_encode($p->code);
-            }
-            return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
+        } catch (Exception $e) {
+
         }
     }
 
@@ -653,10 +672,12 @@ class UsersController extends Controller
             } else {
                 return view('tienda.index', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
         }
     }
+
+    /*Parte administratia de Herramientas Tepic */
 
     public function searchProductos(Request $request)
     {
@@ -682,7 +703,6 @@ class UsersController extends Controller
         //Encriptar id de servicios
         foreach ($servicios as $servicio)
             $servicio->id = base64_encode($servicio->id);
-
         try {
             $x = "%" . base64_decode($request->filtro) . "%";
             //parte de los filtros
@@ -882,7 +902,6 @@ class UsersController extends Controller
                 }
             }
             /* Aplicacion Recuperación de los productos con o sin filtros*/
-
             if ($consultaCategorias != null) {
                 $filtrobusqueda->whereRaw($consultaCategorias);
             }
@@ -893,31 +912,29 @@ class UsersController extends Controller
                 $filtrobusqueda->whereRaw($consultaMarcas);
             }
             $filtrobusqueda = $filtrobusqueda->paginate();
-
-
             // Parte del menu
-                //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
-                //Menu de marcas
-                $marcas = DB::table('brand')->select('id', 'name')
-                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                    ->take(40)->orderBy('name', 'asc')->get();
-                //Encriptamos los id
-                foreach ($marcas as $marca)
-                    $marca->id = base64_encode($marca->id);
-                //Menu de categorias
-                $categorias = DB::table('category')->select('id', 'name')->take(40)
-                    ->where('name', 'not like', 'Nota de credito')
-                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                    ->orderBy('name', 'asc')->get();
-                //Encriptar id de categorias
-                foreach ($categorias as $categoria)
-                    $categoria->id = base64_encode($categoria->id);
-                //menu de servicios
-                $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
-                //Encriptar id de servicios
-                foreach ($servicios as $servicio)
-                    $servicio->id = base64_encode($servicio->id);
 
+
+            //Menu de marcas
+            $marcas = DB::table('brand')->select('id', 'name')
+                ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                ->take(40)->orderBy('name', 'asc')->get();
+            //Encriptamos los id
+            foreach ($marcas as $marca)
+                $marca->id = base64_encode($marca->id);
+            //Menu de categorias
+            $categorias = DB::table('category')->select('id', 'name')->take(40)
+                ->where('name', 'not like', 'Nota de credito')
+                ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                ->orderBy('name', 'asc')->get();
+            //Encriptar id de categorias
+            foreach ($categorias as $categoria)
+                $categoria->id = base64_encode($categoria->id);
+            //menu de servicios
+            $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+            //Encriptar id de servicios
+            foreach ($servicios as $servicio)
+                $servicio->id = base64_encode($servicio->id);
             if ($request->cookie('cliente') == null) {
                 return view('tienda.buscaProductos', ['marcas' => $marcas,
                     'categorias' => $categorias,
@@ -943,7 +960,6 @@ class UsersController extends Controller
         }
     }
 
-    /*Parte administratia de Herramientas Tepic */
     public function getAreaIndex(Request $request)
     {
         if ($request->cookie('admin') != null) {
@@ -1242,6 +1258,8 @@ class UsersController extends Controller
 
     }
 
+    /*Parte de Login y logout (Sirve para ambas partes)*/
+
     public function showProviderForm(Request $request)
     {
 
@@ -1271,7 +1289,6 @@ class UsersController extends Controller
 
     }
 
-    /*Parte de Login y logout (Sirve para ambas partes)*/
     public function doLogin(Request $request)
     {
         try {
@@ -1384,17 +1401,8 @@ class UsersController extends Controller
         }
     }
 
-    public function precioUsuario(Request $request)
-    {
-        if ($request->cookie('cliente') != null) {
-            $cliente = $request->cookie('cliente');
-            return 'price.price' . $cliente['userprice'];
-        } else {
-            return '';
-        }
-    }
-
     //Seguirle
+
     public function confirmEmail(Request $request, $id)
     {
         $marcas = DB::table('brand')->select('id', 'name')
@@ -1482,13 +1490,8 @@ class UsersController extends Controller
                     ->join('localidades', 'id_localidad', '=', 'address.city')
                     ->where('apikey', $cookie['apikey'])->first();
 
+
                 $estados = Estado::all();
-                $municipios = DB::table('municipios')->select('*')
-                    ->where('estado_id', '=', $user->state)->get();
-                $localidades = DB::table('localidades')->select('nombre', 'municipio_id', 'id_localidad')
-                    ->where('municipio_id', '=', $user->country)->get();
-                $user->id = base64_encode($user->id);
-                //Menu de marcas
                 $marcas = DB::table('brand')->select('id', 'name')
                     ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
                     ->take(40)->orderBy('name', 'asc')->get();
@@ -1507,7 +1510,17 @@ class UsersController extends Controller
                 $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
                 foreach ($servicios as $servicio)
                     $servicio->id = base64_encode($servicio->id);
-                //Marca actual (Migaja)
+                //Marca actual (Migaja
+                if ($user == '') {
+                    return view('tienda.direccion', ['servicios' => $servicios,
+                        'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados]);
+                }
+                $municipios = DB::table('municipios')->select('*')
+                    ->where('estado_id', '=', $user->state)->get();
+                $localidades = DB::table('localidades')->select('nombre', 'municipio_id', 'id_localidad')
+                    ->where('municipio_id', '=', $user->country)->get();
+                $user->id = base64_encode($user->id);
+
 
                 return view('tienda.profile', ['user' => $user, 'servicios' => $servicios,
                     'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
@@ -1542,10 +1555,7 @@ class UsersController extends Controller
             'detail' => 'OK'
         ]);
     }
-
     //Actualizacion de datos personales del cliente
-
-
 }
 
 

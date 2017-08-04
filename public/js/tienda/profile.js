@@ -31,7 +31,7 @@ $(document).ready(function(e) {
         $("#sellocalidad").empty().append("<option value='000'>Seleccione una Localidad</option>");
             if(estadoseleccionado != '00'){
                 $.ajax({
-                    url:document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+'/getMunicipios/'+estadoseleccionado,
+                    url:document.location.protocol+'//'+document.location.host+'/getMunicipios/'+estadoseleccionado,
                     type:'GET'
                 }).done(function(response){
                     if(response.code == 200){
@@ -53,7 +53,7 @@ $(document).ready(function(e) {
         console.log(localidadseleccionada);
         if(localidadseleccionada != '000'){
             $.ajax({
-                url:document.location.protocol+'//'+document.location.host+'/HerramientasTepic/public'+'/getLocalidades/'+localidadseleccionada,
+                url:document.location.protocol+'//'+document.location.host+'/getLocalidades/'+localidadseleccionada,
                 type:'GET'
             }).done(function(response){
                 if(response.code == 200){
@@ -74,7 +74,7 @@ $(document).ready(function(e) {
         var id = $("#userid").val();
         var datos = {'nombre':$('#nombre').val(),apellido:$('#apellido').val()};
         $.ajax({
-            url:document.location.protocol+'//'+document.location.host+"/HerramientasTepic/public"  +'/user/profile/'+id,
+            url:document.location.protocol+'//'+document.location.host  +'/user/profile/'+id,
             type:"POST",
             data: datos,
             headers: {
@@ -110,7 +110,7 @@ $(document).ready(function(e) {
                     ref:$('#ref').val()
         };
         $.ajax({
-            url:document.location.protocol+'//'+document.location.host+"/HerramientasTepic/public"  +'/user/profile/contact/'+id,
+            url:document.location.protocol+'//'+document.location.host  +'/user/profile/contact/'+id,
             type:"POST",
             data: datos,
             headers: {
