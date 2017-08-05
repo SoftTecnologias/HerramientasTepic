@@ -96,7 +96,7 @@ class UsersController extends Controller
                 return view('tienda.index', ['banner' => $banner, 'productos' => $productos, 'bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
             }
         } catch (Exception $e) {
-            return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
+            abort(500);
         }
     }
 
@@ -118,6 +118,26 @@ class UsersController extends Controller
 
     public function getMarcaSearch(Request $request, $id)
     {
+        //Menu de marcas
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+
         try {
             $url = base64_decode($id);
             $precioUsuario = $this->precioUsuario($request);
@@ -294,25 +314,6 @@ class UsersController extends Controller
             $productos = $productos->paginate(12);
 
             /*----------------------  Parte del Menu --------------------------*/
-            //Menu de marcas
-            $marcas = DB::table('brand')->select('id', 'name')
-                ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                ->take(40)->orderBy('name', 'asc')->get();
-            //Encriptamos los id
-            foreach ($marcas as $marca)
-                $marca->id = base64_encode($marca->id);
-            //Menu de categorias
-            $categorias = DB::table('category')->select('id', 'name')->take(40)
-                ->where('name', 'not like', 'Nota de credito')
-                ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                ->orderBy('name', 'asc')->get();
-            //Encriptar id de categorias
-            foreach ($categorias as $categoria)
-                $categoria->id = base64_encode($categoria->id);
-            //menu de servicios
-            $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
-            foreach ($servicios as $servicio)
-                $servicio->id = base64_encode($servicio->id);
             //Marca actual (Migaja)
             $actual = Marca::find($urlid);
             if ($request->cookie('cliente') == null) {
@@ -323,7 +324,7 @@ class UsersController extends Controller
             }
         } catch (Exception $e) {
             //return redirect()->route('tienda.index')->with(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
-            return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
+           abort(500);
         }
     }
 
@@ -965,7 +966,7 @@ class UsersController extends Controller
                     'logueado' => $user]);
             }
         } catch (Exception $e) {
-            return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
+            abort(500);
         }
     }
 
@@ -1447,7 +1448,7 @@ class UsersController extends Controller
             return view('tienda.confirmation', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
         } catch (Exception $exception) {
             //Hubo un error y se manda la pantalla de alerta
-            return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $exception]);
+            abort(500);
         }
         //Menu de marcas
 
@@ -1467,7 +1468,7 @@ class UsersController extends Controller
             });
             return redirect()->route('tienda.index');
         } catch (Exception $e) {
-            return view("Hubo un problema contactenos en soporte.herramientas.tepic@gmail.com");
+            abort(500);
         }
     }
 
@@ -1543,7 +1544,7 @@ class UsersController extends Controller
 
 
         } catch (Exception $e) {
-            return redirect()->route('tienda.problema',['error'=>$e]);
+            abort(500);
         }
     }
 

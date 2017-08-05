@@ -304,6 +304,13 @@ Route::group(['prefix'=>'/api'],function(){
 
 });
 
+Route::get('pagenotfound',function(){
+    abort(404);
+});
+
+Route::get('servererror',function(){
+    abort(500);
+});
 
 
 
