@@ -63,6 +63,7 @@ class UsersController extends Controller
             $banner = DB::table('banner_principal')->get();
             $precioUsuario = $this->precioUsuario($request);
             $select = [
+                'product.id',
                 'product.code',
                 'product.name',
                 'product.stock',
@@ -89,6 +90,8 @@ class UsersController extends Controller
                 ->where('logo', 'not like', 'minilogo.png')
                 ->where('authorized', '=', 1)
                 ->take(12)->get();
+            foreach ($productos as $producto)
+                $producto->id = base64_encode($producto->id);
             if ($request->cookie('cliente') == null) {
                 return view('tienda.index', ['banner' => $banner, 'productos' => $productos, 'bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
@@ -145,6 +148,7 @@ class UsersController extends Controller
             $consultaCategorias = null;
             $consultaSubcategorias = null;
             $select = [
+                'product.id',
                 'product.code',
                 'product.name',
                 'product.stock',
@@ -312,6 +316,8 @@ class UsersController extends Controller
                 $productos->whereRaw($consultaSubcategorias);
             }
             $productos = $productos->paginate(12);
+            foreach ($productos as $producto)
+                $producto->id = base64_encode($producto->id);
 
             /*----------------------  Parte del Menu --------------------------*/
             //Marca actual (Migaja)
@@ -324,7 +330,8 @@ class UsersController extends Controller
             }
         } catch (Exception $e) {
             //return redirect()->route('tienda.index')->with(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
-           abort(500);
+           dd($e);
+            abort(500);
         }
     }
 
@@ -337,6 +344,7 @@ class UsersController extends Controller
             $consultaMarcas = null;
             $consultaSubcategorias = null;
             $select = [
+                'product.id',
                 'product.code',
                 'product.name',
                 'product.stock',
@@ -489,6 +497,8 @@ class UsersController extends Controller
                 $productos->whereRaw($consultaSubcategorias);
             }
             $productos = $productos->paginate(12);
+            foreach ($productos as $producto)
+                $producto->id = base64_encode($producto->id);
 
             /*----------------------  Parte del Menu --------------------------*/
             //Menu de marcas
@@ -724,6 +734,7 @@ class UsersController extends Controller
             $consultaSubcategorias = null;
             $consultaMarcas = null;
             $select = [
+                'product.id',
                 'product.code',
                 'product.name',
                 'product.stock',
@@ -921,7 +932,9 @@ class UsersController extends Controller
             if ($consultaMarcas != null) {
                 $filtrobusqueda->whereRaw($consultaMarcas);
             }
-            $filtrobusqueda = $filtrobusqueda->paginate();
+            $filtrobusqueda = $filtrobusqueda->paginate(12);
+            foreach ($filtrobusqueda as $producto)
+                $producto->id = base64_encode($producto->id);
             // Parte del menu
 
 

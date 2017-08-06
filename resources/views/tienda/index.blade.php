@@ -80,9 +80,7 @@ _________________________________________________________ -->
                                                 </div>
                                                 <div class="separator clear-left">
                                                     <p class="btn-add">
-                                                        <i class="fa fa-shopping-cart"></i><a href="#"
-                                                                                              class="hidden-sm">Agregar
-                                                            al carrito</a></p>
+                                                        <i class="fa fa-shopping-cart"></i><a href="#" onclick="agregarProducto({{$producto->id}})"> Agregar al carrito</a></p>
                                                     <p class="btn-details">
                                                         <i class="fa fa-list"></i><a href="#" class="hidden-sm"
                                                                                      data-toggle="modal"
@@ -226,12 +224,11 @@ _________________________________________________________ -->
                                 <h4>Codigo del producto: <span>{{$producto->code}}</span></h4>
 
                                 <p>{{$producto->longdescription}}.</p>
-                                <h3 class="cost"> {{isset($producto->price1)? '<span
-                                            class="glyphicon glyphicon-usd"></span> '.$producto->price1." ".$producto->currency : "Inicia sesión para verlos precios"}}
+                                <h3 class="cost"> {{isset($producto->price)? "$ $producto->price $producto->currency ": "Inicia sesión para verlos precios"}}
                                 </h3>
                                 <div class="space-ten"></div>
                                 <div class="btn-ground">
-                                    <button type="button" class="btn btn-primary"><span
+                                    <button type="button" class="btn btn-primary" onclick="agregarProducto({{$producto->id}})"><span
                                                 class="glyphicon glyphicon-shopping-cart"></span>
                                         Agregar al carrito
                                     </button>
