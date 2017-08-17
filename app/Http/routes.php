@@ -119,6 +119,31 @@ Route::group(['prefix' => 'area'],function(){
         'as' => 'area.perfil'
     ]);
 
+    Route::post('/pedidos/precioenvio',[
+        'uses' => 'PedidosController@guardarPrecioEnvio',
+        'as' => 'area.precio.envio'
+    ]);
+
+    Route::get('/getTrabajadores',[
+        'uses' => 'UsersController@getTrabajadores',
+        'as' => 'area.tra'
+    ]);
+
+    Route::get('/pedidos/detail/{id}',[
+        'uses' => 'PedidosController@pedidoDetail',
+        'as' => 'area.pedido.detail'
+    ]);
+
+    Route::post('/pedidos/regitra/{id}',[
+        'uses' => 'PedidosController@asignar',
+        'as' => 'area.asignar'
+    ]);
+    Route::post('/pedidos/accion/{id}',[
+        'uses' => 'PedidosController@accion',
+        'as' => 'area.desapchar'
+    ]);
+
+    Route::resource('/resource/pedidos','PedidosController');
     Route::resource('/resource/servicios','ServiciosController');
 
     Route::get('/servicios',[

@@ -145,7 +145,8 @@
                             <tr>
                                 <td>Localidad</td>
                                 <td> <select name="" id="sellocalidad" disabled class="col-md-12 btn btn-default">
-                                        <option value="">Seleccione una localidad<  @foreach($localidades as $localidad)
+                                        <option value="">Seleccione una localidad<
+                                        @foreach($localidades as $localidad)
                                             <?php
                                             if($localidad->nombre == $user->loname){
                                             ?>

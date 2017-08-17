@@ -9,6 +9,7 @@ use App\Localidad;
 use App\Marca;
 use App\Estado;
 use App\Municipio;
+use App\Pedido;
 use App\Roles;
 use App\Servicio;
 use App\Subcategoria;
@@ -677,7 +678,7 @@ class UsersController extends Controller
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             if ($request->cookie('cliente') == null) {
-                return view('tienda.registro', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
+                return view('tienda.registro', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 return view('tienda.index', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
             }
@@ -840,7 +841,8 @@ class UsersController extends Controller
                             break;
                     }
                 }
-            } else {
+            }
+            else {
                 $urlid = $url;
             }
             $filtromarcas = [];
@@ -964,7 +966,8 @@ class UsersController extends Controller
                     'filtroMarcas' => $filtromarcas,
                     'logueado' => $user]);
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
         }
     }
@@ -981,16 +984,21 @@ class UsersController extends Controller
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Administrador']
+                    'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 $user = Usuarios::where('apikey', $cookie['apikey'])->first();
                 $fecha = explode("-", substr($user->signindate, 0, 10));
+                $pedidos = DB::table('orders')->select('*')
+                    ->join('users','id','=','userid')
+                    ->get();
+                $totalpedidos = DB::table('orders')->select('*')->count();
                 return view('sale.area', ['usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Vendedor']
+                    'permiso' => 'Vendedor'],'pedidos'=>$pedidos,'totalpedidos'=>$totalpedidos
                 ]);
             }
         } else {
@@ -1016,7 +1024,8 @@ class UsersController extends Controller
                         'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                         'photo' => $user->photo,
                         'username' => $user->username,
-                        'permiso' => 'Administrador']
+                        'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1042,11 +1051,13 @@ class UsersController extends Controller
             if ($cookie['rol'] == 2) { //es un administrador
                 $user = Usuarios::where('apikey', $cookie['apikey'])->first();
                 $fecha = explode("-", substr($user->signindate, 0, 10));
+
                 return view('forms.marcas', ['usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Administrador']
+                    'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1066,11 +1077,13 @@ class UsersController extends Controller
             if ($cookie['rol'] == 2) { //es un administrador
                 $user = Usuarios::where('apikey', $cookie['apikey'])->first();
                 $fecha = explode("-", substr($user->signindate, 0, 10));
+
                 return view('forms.categorias', ['usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Administrador']
+                    'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1095,7 +1108,8 @@ class UsersController extends Controller
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Administrador']
+                    'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1116,11 +1130,13 @@ class UsersController extends Controller
                 $user = Usuarios::where('apikey', $cookie['apikey'])->first();
                 $roles = Roles::all();
                 $fecha = explode("-", substr($user->signindate, 0, 10));
+
                 return view('forms.usuarios', ['roles' => $roles, 'usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Administrador']
+                    'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1140,16 +1156,20 @@ class UsersController extends Controller
             if ($cookie['rol'] == 2) { //es un administrador
                 $user = Usuarios::where('apikey', $cookie['apikey'])->first();
                 $fecha = explode("-", substr($user->signindate, 0, 10));
+                $empleados = Usuarios::where('roleid',3)->get();
                 return view('forms.pedidos', ['usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Administrador']
+                    'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos(),'empleados'=>$empleados
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
                 return view('sale.area', ['nombre' => 'Vendedor puñetas']);
             }
+        }else{
+            return redirect()->route('area.index');
         }
     }
 
@@ -1165,7 +1185,8 @@ class UsersController extends Controller
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Administrador']
+                    'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1190,7 +1211,8 @@ class UsersController extends Controller
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Administrador']
+                    'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1225,7 +1247,8 @@ class UsersController extends Controller
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Administrador']
+                    'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1254,7 +1277,8 @@ class UsersController extends Controller
                         'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                         'photo' => $user->photo,
                         'username' => $user->username,
-                        'permiso' => 'Administrador']
+                        'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1285,7 +1309,8 @@ class UsersController extends Controller
                         'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                         'photo' => $user->photo,
                         'username' => $user->username,
-                        'permiso' => 'Administrador']
+                        'permiso' => 'Administrador'],
+                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1570,6 +1595,31 @@ class UsersController extends Controller
         ]);
     }
     //Actualizacion de datos personales del cliente
+
+    private function dbpedido(){
+        $pedidos = DB::select('select users.name, orderid,userid,orderdate,orders.status,userA,total,subtotal,taxes,
+                        (select [name] as nombre from users where userA = id) as nombre from orders
+                    inner join users on id = userid',[1]);
+        return $pedidos;
+    }
+    private function  dbtotalpedidos(){
+        return $totalpedidos = DB::table('orders')->select('*')->count();
+    }
+
+    public function getTrabajadores(){
+        $trabajadores = DB::select("Select name,id from users 
+              where not exists (select userA from orders where orders.userA = users.id AND (orders.status = 'D' or orders.status = 'T' or orders.status = 'N')) and
+              users.roleid = 3 ",[1]);
+        foreach ($trabajadores as $trabajador)
+            $trabajador->id = base64_encode($trabajador->id);
+
+        return Response::json([
+            'code' => 200,
+            'msg' => json_encode($trabajadores),
+            'detail' => 'OK'
+        ]);
+    }
+
 }
 
 

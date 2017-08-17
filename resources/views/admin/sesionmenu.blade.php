@@ -56,21 +56,23 @@
                     <!-- Menu toggle button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell-o"></i>
-                        <span class="label label-warning">0</span>
+                        <span class="label label-warning">{{$totalpedidos}}</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">You have 0 notifications</li>
+                        <li class="header">Tienes  {{$totalpedidos}} Notificaciones</li>
                         <li>
                             <!-- Inner Menu: contains the notifications -->
                             <ul class="menu">
+                                @foreach($pedidos as $pedido)
                                 <li><!-- start notification -->
                                     <a href="#">
-                                        <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                                        <i class="fa fa-cart-plus"></i>Nuevo pedido de: {{$pedido->name}}
                                     </a>
                                 </li><!-- end notification -->
+                                    @endforeach
                             </ul>
                         </li>
-                        <li class="footer"><a href="#">View all</a></li>
+                        <li class="footer"><a href="{{route('area.pedidos')}}">ver todas</a></li>
                     </ul>
                 </li>
                 <!-- Tasks Menu -->

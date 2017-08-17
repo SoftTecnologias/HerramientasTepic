@@ -11,6 +11,7 @@
             integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
             crossorigin="anonymous"></script>
     <!-- Bootstrap 3.3.7 -->
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
@@ -32,7 +33,8 @@
 <body class="skin-blue sidebar-mini sidebar-collapse">
 <div class="wrapper">
     <!-- En esta parte colocaré el menú donde aparecé la sesión -->
-    @include('admin.sesionmenu',['user_info',$user_info])
+
+    @include('admin.sesionmenu',['user_info',$user_info,'pedidos'=>$pedidos,'totalpedidos'=>$totalpedidos])
     <!-- aquí colocaré las operaciones del menu (administrador) -->
     @include('admin.menu',['user_photo'=>$user_info['photo'],
                               'user_name' => $user_info['username']

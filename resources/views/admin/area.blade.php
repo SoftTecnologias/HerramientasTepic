@@ -1,4 +1,4 @@
-@extends('layouts.administrador',['user_info' => $datos])
+@extends('layouts.administrador',['user_info' => $datos,'pedidos'=>$pedidos,'totalpedidos'=>$totalpedidos])
 <!-- Index -->
 @section('content')
     <div class="content-wrapper" >
