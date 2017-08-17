@@ -14,4 +14,8 @@ class Producto extends Model
         'longdescription', 'reorderpoint','photo','photo2','photo3','selected'
     ];
 
+    public function price(){
+        return $this->hasOne('App\Price','id','priceid');
+    }
+
 }

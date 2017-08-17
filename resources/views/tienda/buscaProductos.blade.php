@@ -27,13 +27,15 @@
             <div class="row">
                 <div class="col-sm-9">
                     <div class="row products">
+                        <?php $indice = 0; ?>
                         @foreach($filtro as $producto)
                             <div class="col-md-4 col-sm-6">
                                 <div class="product">
                                     <div class="image" style="height: 262px;">
                                         <p class="viewProduct">
-                                            <img src="{{asset('/img/productos/'.$producto->photo)}}" alt=""
-                                                 class="img-responsive image1">
+                                            <a data-toggle="modal"
+                                               data-target="#product_view{{$indice+1}}"><img src="{{asset('/img/productos/'.$producto->photo)}}" alt=""
+                                                                                             class="img-responsive image1"></a>
                                         </p>
                                     </div>
                                     <!-- /.image -->
@@ -45,11 +47,60 @@
                                 </div>
                                 <!-- /.product -->
                             </div>
+                                <?php $indice++; ?>
                         @endforeach
                     </div>
                     <!-- /.products -->
                 </div>
                 <!-- /.col-md-9 -->
+                <!-- Detalles de los productos -->
+            <?php $items=0;?>
+            @foreach($filtro as $producto)
+                <!-- Modal correspondiente al producto -->
+                    <div class="modal fade product_view " id="product_view{{$items+1}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" data-dismiss="modal" class="class pull-right"><span
+                                                class="glyphicon glyphicon-remove"></span></a>
+                                    <h3 class="modal-title">{{$producto->name}}</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-12 product_img">
+                                            <div class="preview-pic tab-content ">
+                                                <div class="tab-pane active" id="{{$items+1}}pic-1"><img src="{{asset('/img/productos/'.$producto->photo)}}" class="img-responsive" /></div>
+                                                <div class="tab-pane" id="{{$items+1}}pic-2"><img src="{{asset('/img/productos/'.$producto->photo2)}}" class="img-responsive"/></div>
+                                                <div class="tab-pane" id="{{$items+1}}pic-3"><img src="{{asset('/img/productos/'.$producto->photo3)}}"   class="img-responsive"/></div>
+                                            </div>
+                                            <ul class="preview-thumbnail nav nav-tabs">
+                                                <li class="active" ><a data-target="#{{$items+1}}pic-1" data-toggle="tab"><img src="{{asset('/img/productos/'.$producto->photo)}}" class="img-responsive"/></a></li>
+                                                <li ><a data-target="#{{$items+1}}pic-2" data-toggle="tab"><img src="{{asset('/img/productos/'.$producto->photo2)}}" /></a></li>
+                                                <li ><a data-target="#{{$items+1}}pic-3" data-toggle="tab"><img src="{{asset('/img/productos/'.$producto->photo3)}}" /></a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-12 product_content">
+                                            <h4>Codigo del producto: <span>{{$producto->code}}</span></h4>
+
+                                            <p>{{$producto->longdescription}}.</p>
+                                            <h3 class="cost"> {{isset($producto->price)? "$ $producto->price $producto->currency ": "Inicia sesión para verlos precios"}}
+                                            </h3>
+                                            <div class="space-ten"></div>
+                                            <div class="btn-ground">
+                                                <button type="button" class="btn btn-primary" onclick="agregarProducto('{{$producto->id}}')"><span
+                                                            class="glyphicon glyphicon-shopping-cart"></span>
+                                                    Agregar al carrito
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php $items++;?>
+            @endforeach
 
                 <!-- *** LEFT COLUMN END *** -->
                 <div class="col-sm-3">
@@ -134,7 +185,48 @@
 
         </div>
         <!-- /.container -->
+    <style>
+        .preview {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column; }
+        @media screen and (max-width: 996px) {
+            .preview {
+                margin-bottom: 20px; } }
+
+        .preview-pic {
+            -webkit-box-flex: 1;
+            -webkit-flex-grow: 1;
+            -ms-flex-positive: 1;
+            flex-grow: 1;
+
+        }
+
+        .preview-thumbnail.nav-tabs {
+            border: none;
+            margin-top: 15px; }
+        .preview-thumbnail.nav-tabs li {
+            width: 20%;
+            margin-right: 2.5%; }
+        .preview-thumbnail.nav-tabs li img {
+            max-width: 100%;
+            display: block; }
+        .preview-thumbnail.nav-tabs li a {
+            padding: 0;
+            margin: 0; }
+        .preview-thumbnail.nav-tabs li:last-of-type {
+            margin-right: 0; }
+
+
+    </style>
     </div>
+
 @endsection
 @section('scripts')
     <script src="{{asset('/js/tienda/marcas.js')}}"></script>
