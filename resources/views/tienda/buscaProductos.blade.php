@@ -87,7 +87,7 @@
                                             </h3>
                                             <div class="space-ten"></div>
                                             <div class="btn-ground">
-                                                <button type="button" class="btn btn-primary" onclick="agregarProducto({{$producto->id}})"><span
+                                                <button type="button" class="btn btn-primary" onclick="agregarProducto('{{$producto->id}}')"><span
                                                             class="glyphicon glyphicon-shopping-cart"></span>
                                                     Agregar al carrito
                                                 </button>

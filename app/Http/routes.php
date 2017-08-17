@@ -106,6 +106,16 @@ Route::get('/getMunicipios/{estado}',[
     'as' => 'getmuicipio.estado'
 ]);
 
+Route::get('/user/cart/',[
+    'uses'=>'UsersController@getCarritoView',
+    'as' => 'carrito.index'
+]);
+
+Route::post('/user/cart/add',[
+    'uses'=>"ShoppingCartController@addProduct",
+    'as' => 'carrito.add'
+]);
+
 Route::get('/getLocalidades/{municipio}',[
     'uses' => 'UsersController@getLocalidades',
     'as' => 'getlocalidades.municipio'
@@ -279,8 +289,6 @@ Route::group(['prefix' => 'area'],function(){
     ]);
 
 });
-
-
 
 Route::group(['prefix' => 'sale'],function (){
     Route::get('/',[

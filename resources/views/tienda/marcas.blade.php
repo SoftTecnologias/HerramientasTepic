@@ -11,7 +11,7 @@
                 </div>
                 <div class="col-md-5">
                     <ul class="breadcrumb">
-                        <li><a href="index.html">Inicio</a>
+                        <li><a href="{{route('tienda.index')}}">Inicio</a>
                         </li>
                         <li>marcas</li>
                         <li>{{$actual['name']}}</li>
@@ -107,7 +107,7 @@
                                             </h3>
                                             <div class="space-ten"></div>
                                             <div class="btn-ground">
-                                                <button type="button" class="btn btn-primary" onclick="agregarProducto({{$producto->id}})"><span
+                                                <button type="button" class="btn btn-primary" onclick="agregarProducto('{{$producto->id}}')"><span
                                                             class="glyphicon glyphicon-shopping-cart"></span>
                                                     Agregar al carrito
                                                 </button>

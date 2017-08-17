@@ -133,7 +133,7 @@ _________________________________________________________ -->
 <!-- owl carousel -->
 <script src="{{ asset('/js/tienda/owl.carousel.min.js') }}" type="text/javascript"></script>
 <script src="{{asset('js/loginC.js')}}" type="text/javascript"></script>
-
+<script src="{{asset('js/tienda/carrito.js')}}" type="text/javascript"></script>
 @yield('scripts')
 </body>
 

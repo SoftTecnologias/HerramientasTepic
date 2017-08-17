@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ActivateMail;
+use App\Cart;
 use App\Categoria;
 use App\Direccion;
 use App\Localidad;
@@ -531,7 +532,7 @@ class UsersController extends Controller
             }
         } catch (Exception $e) {
             //return redirect()->route('tienda.index')->with(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
-            return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
+            abort(500);
         }
     }
 
@@ -1382,7 +1383,7 @@ class UsersController extends Controller
                     ])->withCookie($cookie);
                 } else {
                     $datos['userprice'] = $users->userprice;
-                    $datos['carrito'] = null; //En caso de no existir el carrito lo cual se agregará mas adelante
+                    $datos['carrito'] = new Cart(); //En caso de no existir el carrito lo cual se agregará mas adelante
                     //revisaremos que exista el carrito y lo agregamos a la cookie
                     $cookie = Cookie::make('cliente', $datos, 360);
                 }
@@ -1584,6 +1585,7 @@ class UsersController extends Controller
         ]);
     }
     //Actualizacion de datos personales del cliente
+
 }
 
 

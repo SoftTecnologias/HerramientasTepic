@@ -116,7 +116,7 @@
                                     </div>
                                     <!-- /.image -->
                                     <div class="text">
-                                        <h3><a href="shop-detail.html">{{$producto->name}}</a></h3>
+                                        <h3><p class="verProducto">{{$producto->name}}</p></h3>
                                         <p class="price">{{isset($producto->price)? "$ $producto->price $producto->currency " : "Inicia sesión para verlos precios"}}</p>
                                         <p class="buttons">
                                             <a href="shop-detail.html" class="btn btn-default">Ver detalle</a>
@@ -185,7 +185,7 @@
                                             </h3>
                                             <div class="space-ten"></div>
                                             <div class="btn-ground">
-                                                <button type="button" class="btn btn-primary" onclick="agregarProducto({{$producto->id}})"><span
+                                                <button type="button" class="btn btn-primary" onclick="agregarProducto('{{$producto->id}}')"><span
                                                             class="glyphicon glyphicon-shopping-cart"></span>
                                                     Agregar al carrito
                                                 </button>

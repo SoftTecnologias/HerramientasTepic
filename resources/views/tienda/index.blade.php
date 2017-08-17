@@ -80,7 +80,7 @@ _________________________________________________________ -->
                                                 </div>
                                                 <div class="separator clear-left">
                                                     <p class="btn-add">
-                                                        <i class="fa fa-shopping-cart"></i><a href="#" onclick="agregarProducto({{$producto->id}})"> Agregar al carrito</a></p>
+                                                        <i class="fa fa-shopping-cart"></i><a href="#" onclick="agregarProducto('{{$producto->id}}')"> Agregar al carrito</a></p>
                                                     <p class="btn-details">
                                                         <i class="fa fa-list"></i><a href="#" class="hidden-sm"
                                                                                      data-toggle="modal"
