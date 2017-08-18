@@ -1,5 +1,7 @@
 @extends('layouts.tienda')
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://opensource.keycdn.com/fontawesome/4.6.3/font-awesome.min.css"
+      integrity="sha384-Wrgq82RsEean5tP3NK3zWAemiNEXofJsTwTyHmNb/iL3dP/sZJ4+7sOld1uqYJtE" crossorigin="anonymous">
 <!-- Index -->
 @section('content')
     <div id="heading-breadcrumbs">
@@ -185,6 +187,7 @@
 
         </div>
         <!-- /.container -->
+    </div>
     <style>
         .preview {
             display: -webkit-box;
@@ -225,8 +228,6 @@
 
 
     </style>
-    </div>
-
 @endsection
 @section('scripts')
     <script src="{{asset('/js/tienda/marcas.js')}}"></script>

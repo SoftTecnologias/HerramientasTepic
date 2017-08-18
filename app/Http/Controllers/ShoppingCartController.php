@@ -49,22 +49,28 @@ class ShoppingCartController extends Controller
         }
     }
     public function removeCart(Request $request){
-        if (!Session::has('carrito')){
+        try {
+            dd('algo');
+            if (!Session::has('carrito')) {
+                return Response::json([
+                    'code' => 404,
+                    'msg' => 'No tienes un carrito de compras disponible.',
+                    'detail' => 'Error'
+                ]);
+            }
+            $producto = Producto::where('codigo', '=', $request->input('codigo'))->first();
+            $oldCart = Session::has('carrito') ? Session::get('carrito') : null;
+            $cart = new Carrito($oldCart);
+            $cart->remove($producto->id);
+            $request->session()->put('carrito', $cart);
             return Response::json([
-                'code' => 404,
-                'msg' => 'No tienes un carrito de compras disponible.',
-                'detail' => 'Error'
+                'code' => 200,
+                'msg' => $cart,
+                'detail' => 'OK'
             ]);
+        }catch (Exception $e){
+            return $e;
         }
-        $producto = Producto::where('codigo','=',$request->input('codigo'))->first();
-        $oldCart=Session::has('carrito') ? Session::get('carrito') : null;
-        $cart = new Carrito($oldCart);
-        $cart->remove($producto->id);
-        $request->session()->put('carrito',$cart);
-        return Response::json([
-            'code' => 200,
-            'msg' => $cart,
-            'detail' => 'OK'
-        ]);
     }
+
 }

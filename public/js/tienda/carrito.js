@@ -15,6 +15,11 @@ function agregarProducto(id) {
         confirmButtonText: 'Agregar productos',
         showLoaderOnConfirm: true,
         preConfirm: function (cantidad) {
+            if(cantidad==null || cantidad==0){
+                swal('ups!! :(', "Es necesario seleccionar por lo menos un Articulo", 'warning');
+                return;
+            }
+
             return new Promise(function (resolve, reject) {
                 $.ajax({
                     url: document.location.protocol+'//'+document.location.host+ '/user/cart/add', /*quitar o agregar segun corresponda*/
@@ -31,6 +36,18 @@ function agregarProducto(id) {
                         swal('Producto Agregado al Carrito', "Se a añadido exitosamente", 'success');
                         $("#carrito span").text("$ "+response.msg['total'].toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+" ("+response.msg['cantidadProductos']+" articulos)");
                         ingresado = response.msg['productos'][Base64.decode(id)];
+                        $('#body-cart tr').remove();
+                        $('#body-cart td').remove();
+                        $.each(response.msg['productos'], function (i, row) {
+                            console.log(row);
+                            $('<tr id="'+row.item.id+'">').attr('role','row').appendTo('#body-cart');
+                            $('<td>', {text: row.item.name}).attr('style','text-align: center').appendTo('#'+row.item.id);
+                            $('<td>', {text: row.cantidad}).appendTo('#'+row.item.id);
+                            $('<td>', {text: row.item.precio}).appendTo('#'+row.item.id);
+                            $('<td>', {text: row.total}).appendTo('#'+row.item.id);
+                            $('#'+row.item.id).append('<td><a id="btnEliminar" onclick="removeToCart({{$producto["item"]["id"]}})"><i class="fa fa-trash-o"></i></a></td>');
+                        });
+                        console.log(response.msg['productos']);
                         //En el mensaje vendrá el carrito así que lo volveremos a agregar
                     } else { //Codigo diferente
                         swal('ups!! :(', response.msg, 'warning'); //Mensaje de error personalizado
@@ -45,6 +62,7 @@ function agregarProducto(id) {
 }
 
 function removeToCart(id, opciones, qty) {
+    console.log('alfo');
     $('#row' + index).remove();
     $.ajax({
         url: document.location.protocol + '//' + document.location.host + '/removeCart',

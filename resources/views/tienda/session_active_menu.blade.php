@@ -44,22 +44,25 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                                       <th></th>
                                   </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="body-cart">
+                                @if($cookie['carrito']->productos != null)
                                   @foreach($cookie['carrito']->productos as $producto)
                                     <tr>
-                                        <td style="font-size:.80em; ">{{$producto['item']['name']}}</td>                                        <td style="text-align: center;">{{$producto['cantidad']}}</td>
+                                        <td style="font-size:.80em; ">{{$producto['item']['name']}}</td>
+                                        <td style="text-align: center;">{{$producto['cantidad']}}</td>
                                         <td style="text-align: center;">$ {{number_format($producto['item']['precio'], 2,".",",")}}</td>
                                         <td style="text-align: center;">$ {{number_format($producto['total'], 2,".",",")}}</td>
-                                        <td style="text-align: center;"><a id='btnEliminar' onclick='removeDetail({{$producto['item']['id']}})'><i class='fa fa-trash-o'></i></a></td>
+                                        <td style="text-align: center;"><a id='btnEliminar' onclick='removeToCart({{$producto['item']['id']}})'><i class='fa fa-trash-o'></i></a></td>
                                     </tr>
                                   @endforeach
+                                @endif
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a href="#" id="btnCheckout" class="btn btn-block btn-primary" style="font-size: 1.20em;">Finalizar pedido ($ {{number_format($cookie['carrito']->total, 2,".",",")}}
-                            ) </a>
+                        <a href="#" id="btnCheckout" class="btn btn-block btn-primary" style="font-size: 1.20em;">
+                            Finalizar pedido ($ {{number_format($cookie['carrito']->total, 2,".",",")}}) </a>
                     </div>
                 </div>
             </div>
