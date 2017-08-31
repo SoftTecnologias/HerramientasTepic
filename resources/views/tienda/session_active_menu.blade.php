@@ -47,12 +47,12 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                                 <tbody id="body-cart">
                                 @if($cookie['carrito']->productos != null)
                                   @foreach($cookie['carrito']->productos as $producto)
-                                    <tr>
+                                    <tr id="row{{base64_decode($producto['item']['id'])}}">
                                         <td style="font-size:.80em; ">{{$producto['item']['name']}}</td>
                                         <td style="text-align: center;">{{$producto['cantidad']}}</td>
                                         <td style="text-align: center;">$ {{number_format($producto['item']['precio'], 2,".",",")}}</td>
                                         <td style="text-align: center;">$ {{number_format($producto['total'], 2,".",",")}}</td>
-                                        <td style="text-align: center;"><a id='btnEliminar' onclick='removeToCart({{$producto['item']['id']}})'><i class='fa fa-trash-o'></i></a></td>
+                                        <td style="text-align: center;"><a id='btnEliminar' onclick='removeToCart("{{$producto['item']['id']}}")' data-toggle="modal" data-target="#eliminar-modal"><i class='fa fa-trash-o'></i></a></td>
                                     </tr>
                                   @endforeach
                                 @endif
@@ -61,8 +61,38 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a href="#" id="btnCheckout" class="btn btn-block btn-primary" style="font-size: 1.20em;">
+                        <a href="{{route('carrito.checkout')}}" id="btnCheckout" class="btn btn-block btn-primary" style="font-size: 1.20em;">
                             Finalizar pedido ($ {{number_format($cookie['carrito']->total, 2,".",",")}}) </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="eliminar-modal" tabindex="-2" role="dialog" aria-labelledby="Eliminar"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>¿Cuantos productos eliminará?</h4>
+                    </div>
+                    <div class="modal-body">
+                            <form class="form-horizontal" id="removeForm">
+                                <input id="id" name="id" placeholder="" class="form-control hidden" min ="0">
+                                <div class="form-group ">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <input id="qty" name="qty" type="number" placeholder="" class="form-control" min ="0">
+                                        <span class="help-block">0 para seleccionar todos</span>
+                                    </div>
+                                </div>
+                                </fieldset>
+                            </form>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-md-6">
+                            <a href="#" data-dismiss="modal" class="btn btn-danger">Cerrar</a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="#" id="btnRemover" class="btn btn-default">Eliminar</a>
+                        </div>
                     </div>
                 </div>
             </div>

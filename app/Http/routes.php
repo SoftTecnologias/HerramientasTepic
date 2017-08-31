@@ -116,6 +116,15 @@ Route::post('/user/cart/add',[
     'as' => 'carrito.add'
 ]);
 
+Route::delete('/user/cart/removeToCart',[
+    'uses' => "ShoppingCartController@removePartial",
+    'as' => "carrito.removeCart"
+]);
+
+Route::post('/user/cart/checkout',[
+    'uses' => "ShoppingCartController@checkout",
+    'as' => "carrito.checkout"
+]);
 Route::get('/getLocalidades/{municipio}',[
     'uses' => 'UsersController@getLocalidades',
     'as' => 'getlocalidades.municipio'

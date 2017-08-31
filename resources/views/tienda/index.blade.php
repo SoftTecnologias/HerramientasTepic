@@ -75,7 +75,7 @@ _________________________________________________________ -->
                                                         </h5>
                                                         <p>{{$producto->shortdescription}}</p>
                                                         <h5 class="price-text-color">
-                                                            {{isset($producto->price)? "$".$producto->price." ".$producto->currency : "Inicia sesión para verlos precios"}}</h5>
+                                                            {{isset($producto->price)?  "$ ".number_format($producto->price, 2,".",",")." ".$producto->currency." " : "Inicia sesión para verlos precios"}}</h5>
                                                     </div>
                                                 </div>
                                                 <div class="separator clear-left">
@@ -224,7 +224,7 @@ _________________________________________________________ -->
                                 <h4>Codigo del producto: <span>{{$producto->code}}</span></h4>
 
                                 <p>{{$producto->longdescription}}.</p>
-                                <h3 class="cost"> {{isset($producto->price)? "$ $producto->price $producto->currency ": "Inicia sesión para verlos precios"}}
+                                <h3 class="cost"> {{isset($producto->price)?  "$ ".number_format($producto->price, 2,".",",")." ".$producto->currency." " : "Inicia sesión para verlos precios"}}
                                 </h3>
                                 <div class="space-ten"></div>
                                 <div class="btn-ground">

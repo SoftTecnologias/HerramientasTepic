@@ -53,7 +53,25 @@ class Cart{
     }
 
     public function removePartial($id, $cantidad){
-
+        if($this->productos){
+            if(array_key_exists($id,$this->productos)){
+                if(($this->productos[$id]['cantidad'] - $cantidad ) == 0 || $cantidad == 0){
+                    $this->remove($id);
+                }else {
+                    if ($cantidad <= $this->productos[$id]['cantidad']) {
+                        $this->cantidadProductos -= $cantidad;
+                        $this->productos[$id]['cantidad'] -= $cantidad;
+                        $this->productos[$id]['total'] = $this->productos[$id]['item']['precio'] * $this->productos[$id]['cantidad'];
+                        $this->total -= $this->productos[$id]['item']['precio'] * $cantidad;
+                        if ( $this->cantidadProductos == 0){
+                            unset($this->productos[$id]);
+                        }
+                    } else {
+                        unset($this->productos[$id]);
+                    }
+                }
+            }
+        }
     }
 
     public function setCantidad($id, $cantidad){
