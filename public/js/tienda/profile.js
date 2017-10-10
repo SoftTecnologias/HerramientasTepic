@@ -292,3 +292,27 @@ function cambiaPass(){
     });
 
 }
+function infocompra(id){
+    $.ajax({
+        url:document.location.protocol+'//'+document.location.host+'/user/infocompra/'+id,
+        type:'GET'
+    }).done(function(response){
+        if(response.code == 200){
+            $('#info tr').remove();
+            $.each($.parseJSON(response.msg),function(i, row){
+                var nuevaFila="<tr>";
+                nuevaFila+="<td>"+row['producto']+"</td>";
+                nuevaFila+="<td>"+row['marca']+"</td>";
+                nuevaFila+="<td>"+row['cantidad']+"</td>";
+                nuevaFila+="<td>"+row['preciounitario']+"</td>";
+                nuevaFila+="<td>"+(row['preciounitario']*row['cantidad'])+"</td>";
+                nuevaFila+="<td>"+row['divisa']+"</td>";
+                nuevaFila+="</tr>";
+                $("#info").append(nuevaFila);
+            });
+        }
+    }).fail(function(){
+
+    });
+ $('#modalinfo').modal('show');
+}

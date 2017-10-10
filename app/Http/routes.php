@@ -64,6 +64,10 @@ Route::post('/usuario/registro',[
     'uses' => 'UsuariosController@store'
 ]);
 
+Route::get('/user/infocompra/{id}',[
+    'uses' => 'UsersController@getinfocompra'
+]);
+
 Route::get('/usuario/{id}',[
     'uses' => 'UsersController@confirmEmail',
     'as' => 'tienda.confirmar'

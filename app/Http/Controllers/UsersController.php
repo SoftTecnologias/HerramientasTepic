@@ -1543,6 +1543,14 @@ class UsersController extends Controller
                     ->join('localidades', 'id_localidad', '=', 'address.city')
                     ->where('apikey', $cookie['apikey'])->first();
 
+                $compras = DB::table("sale")
+                    ->select('saleid','saledate','total','subtotal')
+                    ->where('userid','=',$users->id)
+                    -> get();
+                foreach ($compras as $compra) {
+                    $compra->saleid = base64_encode($compra->saleid);
+                    $compra->saledate = date($compra->saledate);
+                }
 
                 $estados = Estado::all();
                 $marcas = DB::table('brand')->select('id', 'name')
@@ -1575,7 +1583,7 @@ class UsersController extends Controller
                 $user->id = base64_encode($user->id);
                 return view('tienda.profile', ['user' => $user, 'servicios' => $servicios,
                     'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
-                    'localidades' => $localidades, 'municipios' => $municipios,'logueado' => $users]);
+                    'localidades' => $localidades, 'municipios' => $municipios,'logueado' => $users,'compras'=>$compras]);
             } else {
                 return redirect()->route('tienda.index');
             }
@@ -1631,6 +1639,27 @@ class UsersController extends Controller
             'msg' => json_encode($trabajadores),
             'detail' => 'OK'
         ]);
+    }
+
+    public function getinfocompra($id){
+        try{
+            $id = base64_decode($id);
+            $icompra = DB::table('sale as s')
+                ->select('p.name as producto','b.name as marca','sl.quantity as cantidad',
+                    'sl.saleprice as preciounitario','p.currency as divisa')
+                ->join('salesline as sl','sl.saleid','=','s.saleid')
+                ->join('product as p','p.id','=','sl.productid')
+                ->join('brand as b','b.id','=','p.brandid')
+                ->where('s.saleid','=',$id)
+                ->get();
+            return Response::json([
+                'code' => 200,
+                'msg' => json_encode($icompra),
+                'detail' => 'OK'
+            ]);
+        }catch (Exception $e){
+
+        }
     }
 
 }

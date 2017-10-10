@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link rel="stylesheet" href="https://opensource.keycdn.com/fontawesome/4.6.3/font-awesome.min.css"
       integrity="sha384-Wrgq82RsEean5tP3NK3zWAemiNEXofJsTwTyHmNb/iL3dP/sZJ4+7sOld1uqYJtE" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" type="text/css">
 <link rel="stylesheet" href="{{asset('css/tienda/profile.css')}}" type="text/css"/>
 
 @section('content')
@@ -241,15 +242,81 @@
     <div class="col-sm-4">
         <div class="panel panel-default">
             <div class="menu_title">
-                <b>Compras</b>
-                <p>No tiene compras Realizadas</p>
+                <h3>Compras</h3>
+                <table class="table">
+                    <thead>
+                        <trow>
+                        <th class="text-center">Codigo</th>
+                        <th class="text-center">Fecha</th>
+                        <th class="text-center">SubTotal</th>
+                        <th class="text-center">Total</th>
+                        </trow>
+                    </thead>
+                    <tbody>
+                    @foreach($compras as $compra)
+                    <tr>
+                        <td>{{$compra->saleid}}</td>
+                        <td>{{$compra->saledate}}</td>
+                        <td>{{$compra->subtotal}}</td>
+                        <td>{{$compra->total}}</td>
+                        <td>
+                            <a class="btn btn-warning" onclick="infocompra('{{$compra->saleid}}')" id="info{{$compra->saleid}}">Info</a>
+                        </td>
+                    </tr>
+                    @endforeach
+                    </tbody>
+
+                </table>
             </div>
             
             </div>
         </div>
     </div>
 </div>
+<!-- Modal para la info de la compra -->
+<div class = "modal" id="modalinfo">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xs-offset-0 col-sm-offset-0 col-md-offset-1 col-lg-offset-1 toppad" id="datos">
+
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <span>
+                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i
+                                         class="fa fa-times"></i></button>
+                            <h3 class="panel-title">Info Compra</h3>
+                        </span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class=" col-md-12 col-lg-12 ">
+                                <table class="table table-user-information">
+                                    <thead>
+                                    <tr class="active">
+                                        <th>Producto</th>
+                                        <th>Marca</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio</th>
+                                        <th>Total</th>
+                                        <th>Moneda</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="info">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('scripts')
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="{{asset('js/tienda/profile.js')}}"></script>
 @endsection
