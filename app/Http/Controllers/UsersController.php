@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Response;
 use \Exception;
 use Illuminate\Support\Facades\Storage;
 use File;
+use PhpParser\Node\Expr\Cast\Object_;
 
 
 class UsersController extends Controller
@@ -610,9 +611,23 @@ class UsersController extends Controller
             ->orderBy('name', 'asc')->get();
         //menu de servicios
         $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
-        //Marca actual (Migaja)
 
+        $servicio_detail = DB::table('services_detail')
+            ->select('encargado','horario','precio_base')
+            ->join('services','serviceid','=','id')
+            ->where('id','=',base64_decode($id))
+            ->first();
 
+        if($servicio_detail == null){
+            $servicio_detail = [
+              'encargado' => 'Sin Asignar',
+                'horario' => 'Sin Asignar',
+                'precio_base' => 'Sin Asignar'
+            ];
+            $servicio_detail = (Object) $servicio_detail;
+        }else{
+            $servicio_detail->precio_base = '$'.$servicio_detail->precio_base.' MXN';
+        }
         foreach ($servicios as $servicio) {
             $servicio->id = base64_encode($servicio->id);
         }
@@ -654,10 +669,14 @@ class UsersController extends Controller
                 $p->code = base64_encode($p->code);
             }
             if ($request->cookie('cliente') == null) {
-                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'logueado' => false]);
+                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas,
+                    'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual,
+                    'logueado' => false,'servicio_detail' => $servicio_detail]);
             } else {
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'logueado' => $user]);
+                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas,
+                    'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual,
+                    'logueado' => $user,'servicio_detail' => $servicio_detail]);
             }
 
         } catch (Exception $e) {
