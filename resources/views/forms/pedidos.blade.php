@@ -78,6 +78,10 @@
                                                     colspan="1" aria-label="Nombre del Cliente">
                                                     Cliente
                                                 </th>
+                                                <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                                    colspan="1" aria-label="Telefono del Cliente">
+                                                    Telefono
+                                                </th>
                                                 <th class="sorting" tabindex="1" aria-controls="example2" rowspan="1"
                                                     colspan="1" aria-label="Estado del Pedido">
                                                     Estado

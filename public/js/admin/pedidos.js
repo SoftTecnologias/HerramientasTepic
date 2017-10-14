@@ -8,14 +8,15 @@ $(document).ready(function(){
         "serverSide": true,
         "ajax": document.location.protocol+'//'+document.location.host  +'/area/resource/pedidos',
         "columnDefs": [
-            { width: "20%", "targets": [0,3,5]},
-            { width: "10%", "targets": [2]},
+            { width: "20%", "targets": [0,3,6]},
+            { width: "10%", "targets": [2,5]},
             { width: "10%", "targets": [1,4]},
             {searchable: false, targets:[2,3,4,5]},
             {"targets": 0,"orderable": false}
         ],
         columns: [
             {data:'name'},
+            {data:'phone'},
             {data: 'ostatus'},
             {data: function (row) {
                 str = "<div aling='center'>  <label id='orderid' hidden>"+row['orderid']+"</label>";
@@ -25,7 +26,9 @@ $(document).ready(function(){
                 return str;
             }},
             {data: 'orderdate'},
-            {data: 'total'},
+            {data: function (row) {
+                return '$ '+row['total']+' MXN';
+            }},
             {data: function (row) {
                 // console.log(row);
                 str = "<div align='center'>";
@@ -46,22 +49,22 @@ $(document).ready(function(){
             {
                 case 'No Asignado':
                     $('td',nRow).addClass('default');
-                    $('td:nth-child(2)',nRow,1).attr('style',"font-weight:bold");
+                    $('td:nth-child(3)',nRow,1).attr('style',"font-weight:bold");
                 break;
                 case 'Tomado': $('td',nRow).addClass('active');
-                    $('td:nth-child(2)',nRow,1).attr('style',"color:darkgray;font-weight:bold");
+                    $('td:nth-child(3)',nRow,1).attr('style',"color:darkgray;font-weight:bold");
                     break;
                 case 'Despachado': $('td',nRow).addClass('info');
-                    $('td:nth-child(2)',nRow,1).attr('style',"color:blue;font-weight:bold");
+                    $('td:nth-child(3)',nRow,1).attr('style',"color:blue;font-weight:bold");
                     break;
                 case 'Enviado': $('td',nRow).addClass('warning');
-                    $('td:nth-child(2)',nRow,1).attr('style',"color:orange;font-weight:bold");
+                    $('td:nth-child(3)',nRow,1).attr('style',"color:orange;font-weight:bold");
                     break;
                 case 'Recibido': $('td',nRow).addClass('success');
-                    $('td:nth-child(2)',nRow,1).attr('style',"color:green;font-weight:bold");
+                    $('td:nth-child(3)',nRow,1).attr('style',"color:green;font-weight:bold");
                     break;
                 case 'Cancelado': $('td',nRow).addClass('danger');
-                    $('td:nth-child(2)',nRow,1).attr('style',"color:red;font-weight:bold");
+                    $('td:nth-child(3)',nRow,1).attr('style',"color:red;font-weight:bold");
                     break;
             }
         },
