@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\service_detail;
 use App\Servicio;
 use Illuminate\Http\Request;
 
@@ -59,6 +60,16 @@ class ServiciosController extends Controller
                 "img"      => "servicios.png"   ,
                 "selected"     => "0"
             ]);
+
+            $detail = new service_detail;
+
+            $detail->serviceid = $serviceid;
+                $detail->encargado = $request->input('encargado');
+                $detail->horario = $request->input('horario');
+                $detail->precio_base = $request->input('precio');
+
+
+            $detail->save();
 
             if($imgu1==null){
                 if($img1!=null){
@@ -131,6 +142,22 @@ class ServiciosController extends Controller
                 "longdescription"   => $request->input('longdesc')   ,
             ]);
 
+
+            $details = service_detail::where('serviceid', '=', $id)
+                ->update(['encargado' => $request->input('encargado'),
+                            'horario'=>$request->input('horario'),
+                            'precio_base' => $request->input('precio')]);
+            if($details == null){
+                $detail = new service_detail;
+
+                $detail->serviceid = $id;
+                $detail->encargado = $request->input('encargado');
+                $detail->horario = $request->input('horario');
+                $detail->precio_base = $request->input('precio');
+
+
+                $detail->save();
+            }
 
             if($imgu1==null){
                 if($img1!=null){
