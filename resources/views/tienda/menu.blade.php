@@ -22,10 +22,9 @@
 
         <div class="container">
             <div class="navbar-header">
-
                 <a class="navbar-brand home" href="{{route('tienda.index')}}">
-                    <img src="{{asset('/img/minilogo.png')}}" alt="Universal logo" class="hidden-xs hidden-sm">
-                    <img src="{{asset('/img/minilogo50.png')}}" alt="Universal logo" class="visible-xs visible-sm"><span
+                    <img src="{{asset('/img/image.png')}}" alt="Herramientas de Tepic logo" class="hidden-xs hidden-sm img-responsive" />
+                    <img src="{{asset('/img/minilogo50.png')}}" alt="Herramientas de Tepic logo" class="visible-xs visible-sm"><span
                             class="sr-only">Herramientas y Servicios de Tepic</span>
                 </a>
                 <div class="navbar-buttons">
@@ -121,7 +120,6 @@
             </div>
             <!--/.nav-collapse -->
 
-
             <div class="collapse clearfix" id="search">
 
                 <form class="navbar-form" role="search">
@@ -137,6 +135,8 @@
 
             </div>
             <!--/.nav-collapse -->
+            <br>
+            <br>
 
         </div>
 

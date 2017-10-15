@@ -22,9 +22,9 @@ class PedidosController extends Controller
      */
     public function index()
     {
-        $pedidos = DB::select("select users.name, orderid,userid,orderdate,orders.[status] as ostatus,userA,total,subtotal,taxes,
+        $pedidos = DB::select("select users.name, orders.id as orderid,userid,orders.status as ostatus,orders.created_at ,userA,subtotal,
                         (select [name] as nombre from users where userA = id) as nombre from orders
-                    inner join users on id = userid order by orderdate,ostatus",[1]);
+                    inner join users on users.id = userid where orders.status != 'A' order by orders.created_at,ostatus",[1]);
         foreach ($pedidos as $pedido) {
             $pedido->orderid = base64_encode($pedido->orderid);
             switch ($pedido->ostatus){
@@ -142,9 +142,9 @@ class PedidosController extends Controller
         $id = base64_decode($id);
         $detalle = DB::table('order_detail as od')
             ->select('product.name as producto','users.userprice as up','price.price1 as up1','price.price5 as up5',
-                'price.price2 as up2','price.price3 as up3','price.price4 as up4','total')
-            ->join('orders','od.orderid','=','orders.orderid')
-            ->join('product', 'id','=','productid')
+                'price.price2 as up2','price.price3 as up3','price.price4 as up4','subtotal')
+            ->join('orders','od.orderid','=','orders.id')
+            ->join('product', 'product.id','=','productid')
             ->join('price','price.id','=','priceid')
             ->join('users','users.id','=','userid')
             ->where('od.orderid','=',$id)

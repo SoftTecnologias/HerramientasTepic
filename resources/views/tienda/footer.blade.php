@@ -5,9 +5,9 @@ _________________________________________________________ -->
 <footer id="footer">
     <div class="container">
         <div class="col-md-3 col-sm-6">
-            <h4>Acerca de nosotros</h4>
+            <h4>Manten contacto con nosotros</h4>
 
-            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
+            <p>Si quieres enterarte de promociones, tips o video turoriales pulsa <a href="#">aquí</a> </p>
 
             <hr>
 

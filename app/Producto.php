@@ -18,4 +18,7 @@ class Producto extends Model
         return $this->hasOne('App\Price','id','priceid');
     }
 
+
+
+
 }

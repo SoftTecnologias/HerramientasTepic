@@ -13,15 +13,13 @@ class CrearTablaOrderDetail extends Migration
     public function up()
     {
         Schema::create('order_detail', function (Blueprint $table) {
-            $table->increments('detailid');
-            $table->integer('lineid')->nullable();
+            $table->increments('id');
             $table->integer('qty')->nullable();
             $table->float('price')->nullable();
             $table->integer('productid');
-            $table->integer('orderid')->nullable();
-
+            $table->integer('orderid');
             $table->foreign('productid')->references('id')->on('product');
-            $table->foreign('orderid')->references('orderid')->on('orders');
+            $table->foreign('orderid')->references('id')->on('orders');
             $table->timestamps();
         });
     }

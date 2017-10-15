@@ -3,7 +3,7 @@ $(document).ready(function(e) {
         var estadoseleccionado = $("#estado option:selected").val();
         if (estadoseleccionado != '00') {
             $.ajax({
-                url: document.location.protocol + '//' + document.location.host + '/getMunicipios/' + estadoseleccionado,
+                url: document.location.protocol + '//' + document.location.host  + '/getMunicipios/' + estadoseleccionado,
                 type: 'GET'
             }).done(function (response) {
                 if (response.code == 200) {
@@ -24,7 +24,7 @@ $(document).ready(function(e) {
         var localidadseleccionada = $("#municipio option:selected").val();
         if (localidadseleccionada != '00') {
             $.ajax({
-                url: document.location.protocol + '//' + document.location.host + '/getLocalidades/' + localidadseleccionada,
+                url: document.location.protocol + '//' + document.location.host  + '/getLocalidades/' + localidadseleccionada,
                 type: 'GET'
             }).done(function (response) {
                 if (response.code == 200) {

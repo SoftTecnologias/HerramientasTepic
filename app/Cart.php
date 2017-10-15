@@ -41,6 +41,21 @@ class Cart{
         $this->cantidadProductos+=$cantidad;
         $this->total += $producto['total'];
     }
+    public function update($item, $id,$cantidad){
+        $producto =['cantidad' => 0,'total'=>0,  'item' => $item];
+        if($this->productos){
+            if(array_key_exists($id, $this->productos)){
+                $producto = $this->productos[$id];
+            }
+        }
+        $this->cantidadProductos-=$producto['cantidad'];
+        $this->total -= $producto['total'];
+        $producto['cantidad']=$cantidad;
+        $producto['total'] = $item['precio'] * $producto['cantidad'];
+        $this->productos[$id] = $producto;
+        $this->cantidadProductos+=$cantidad;
+        $this->total += $producto['total'];
+    }
 
     public function remove($id){
         if($this->productos){

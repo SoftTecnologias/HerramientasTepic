@@ -75,7 +75,7 @@ $(document).ready(function(e) {
         var id = $("#userid").val();
         var datos = {'nombre':$('#nombre').val(),apellido:$('#apellido').val()};
         $.ajax({
-            url:document.location.protocol+'//'+document.location.host  +'/user/profile/'+id,
+            url:document.location.protocol+'//'+document.location.host+'/user/profile/'+id,
             type:"POST",
             data: datos,
             headers: {
@@ -112,7 +112,7 @@ $(document).ready(function(e) {
                     numext:$('#numext').val()
         };
         $.ajax({
-            url:document.location.protocol+'//'+document.location.host  +'/user/profile/contact/'+id,
+            url:document.location.protocol+'//'+document.location.host+'/user/profile/contact/'+id,
             type:"POST",
             data: datos,
             headers: {
@@ -153,7 +153,7 @@ $(document).ready(function(e) {
         var id = $("#userid").val();
          data = new FormData(document.getElementById("passform"));
         $.ajax({
-            url:document.location.protocol+'//'+document.location.host  +'/user/profile/imagen/'+id,
+            url:document.location.protocol+'//'+document.location.host+'/user/profile/imagen/'+id,
             type:"POST",
             data: data,
             headers: {
@@ -269,7 +269,7 @@ function cambiaPass(){
             confirm:$('#confirmpass').val()
         };
         $.ajax({
-            url:document.location.protocol+'//'+document.location.host  +'/user/profile/pass/'+id,
+            url:document.location.protocol+'//'+document.location.host+'/user/profile/pass/'+id,
             type:"POST",
             data: datos,
             headers: {

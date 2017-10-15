@@ -61,7 +61,7 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a href="{{route('carrito.checkout')}}" id="btnCheckout" class="btn btn-block btn-primary" style="font-size: 1.20em;">
+                        <a href="{{route('carrito.getCheckout')}}" id="btnCheckout" class="btn btn-block btn-primary" style="font-size: 1.20em;">
                             Finalizar pedido ($ {{number_format($cookie['carrito']->total, 2,".",",")}}) </a>
                     </div>
                 </div>

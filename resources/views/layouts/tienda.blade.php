@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -53,19 +54,24 @@
     <header>
 
         <!-- *** TOP *** -->
-        @if($logueado == null)
+    @if(isset($logueado))
+        @if($logueado == null )
             @include('tienda.sessionmenu')
         @else
             @include('tienda.session_active_menu',['user'=>$logueado])
         @endif
-
-        <!-- *** TOP END *** -->
+    @else
+        @include('tienda.sessionmenu')
+    @endif
+    <!-- *** TOP END *** -->
 
         <!-- *** NAVBAR ***
 _________________________________________________________ -->
+    @if(isset($marcas))
         @include('tienda.menu',['marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios])
+    @endif
 
-        <!-- *** NAVBAR END *** -->
+    <!-- *** NAVBAR END *** -->
 
     </header>
 
@@ -108,7 +114,9 @@ _________________________________________________________ -->
     <!-- *** LOGIN MODAL END *** -->
 
 @yield('content')
-@include('tienda.footer',['servicios'=>$servicios])
+    @if(isset($servicios))
+        @include('tienda.footer',['servicios'=>$servicios])
+    @endif
 
 </div>
 <!-- /#all -->

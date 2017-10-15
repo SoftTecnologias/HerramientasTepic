@@ -121,10 +121,71 @@ Route::delete('/user/cart/removeToCart',[
     'as' => "carrito.removeCart"
 ]);
 
-Route::post('/user/cart/checkout',[
-    'uses' => "ShoppingCartController@checkout",
-    'as' => "carrito.checkout"
+Route::get('/user/cart/checkout',[
+    'uses' => "UsersController@getCheckout",
+    'as' => "carrito.getCheckout"
 ]);
+//Parte del checkout
+Route::get('/user/cart/makeCheckout',[
+    'uses' => "ShoppingCartController@makeOrder",
+    'as' => "carrito.makeOrder"
+]);
+
+Route::get('/user/cart/finishOrder',[
+    'uses' => "UsersController@finishOrder",
+    'as' => "carrito.finishOrder"
+]);
+
+Route::get('/user/cart/CancelCheckout',[
+    'uses' => "ShoppingCartController@destroyOrder",
+    'as' => "carrito.destroy.Order"
+]);
+Route::post('/user/cart/updateCart',[
+    'uses' => "ShoppingCartController@updateCart",
+    'as' => "carrito.updateCart"
+]);
+
+Route::get('/user/cart/payment',[
+    'uses' => "ShoppingCartController@payment",
+    'as' => 'carrito.payment'
+]);
+
+Route::get('/user/cart/delivery',[
+    'uses' => "UsersController@showDelivery",
+    'as' => 'carrito.delivery'
+]);
+
+Route::post('/user/cart/delivery',[
+    'uses' => "UsersController@makeDelivery",
+    'as' => 'carrito.make.delivery'
+]);
+
+Route::get('/user/cart/destroyOrder',[
+    'uses' => "ShoppingCartController@destroyOrder",
+    'as' => 'carrito.destroy.Order'
+]);
+
+Route::get('/user/cart/addresses',[
+    'uses' => "UsersController@addresses",
+    'as' => 'carrito.addresses'
+]);
+
+Route::post('/user/cart/addresses',[
+    'uses' => "UsersController@deliveryAddresses",
+    'as' => 'carrito.delivery.addresses'
+]);
+Route::get('/user/cart/destroyAddresses',[
+    'uses' => "UsersController@destroyAddresses",
+    'as' => 'carrito.destroy.addresses'
+]);
+
+Route::get('/user/cart/summary',[
+    'uses' => "UsersController@summary",
+    'as' => 'carrito.summary'
+]);
+
+
+
 Route::get('/getLocalidades/{municipio}',[
     'uses' => 'UsersController@getLocalidades',
     'as' => 'getlocalidades.municipio'
