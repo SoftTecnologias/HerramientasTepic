@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Response;
 use \Exception;
 use Illuminate\Support\Facades\Storage;
 use File;
+use PhpParser\Node\Expr\Cast\Object_;
 
 
 class UsersController extends Controller
@@ -612,9 +613,23 @@ class UsersController extends Controller
             ->orderBy('name', 'asc')->get();
         //menu de servicios
         $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
-        //Marca actual (Migaja)
 
+        $servicio_detail = DB::table('services_detail')
+            ->select('encargado','horario','precio_base')
+            ->join('services','serviceid','=','id')
+            ->where('id','=',base64_decode($id))
+            ->first();
 
+        if($servicio_detail == null){
+            $servicio_detail = [
+              'encargado' => 'Sin Asignar',
+                'horario' => 'Sin Asignar',
+                'precio_base' => 'Sin Asignar'
+            ];
+            $servicio_detail = (Object) $servicio_detail;
+        }else{
+            $servicio_detail->precio_base = '$'.$servicio_detail->precio_base.' MXN';
+        }
         foreach ($servicios as $servicio) {
             $servicio->id = base64_encode($servicio->id);
         }
@@ -656,10 +671,14 @@ class UsersController extends Controller
                 $p->code = base64_encode($p->code);
             }
             if ($request->cookie('cliente') == null) {
-                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'logueado' => false]);
+                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas,
+                    'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual,
+                    'logueado' => false,'servicio_detail' => $servicio_detail]);
             } else {
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'logueado' => $user]);
+                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas,
+                    'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual,
+                    'logueado' => $user,'servicio_detail' => $servicio_detail]);
             }
 
         } catch (Exception $e) {
@@ -1563,6 +1582,14 @@ class UsersController extends Controller
                     ->join('localidades', 'id_localidad', '=', 'address.city')
                     ->where('apikey', $cookie['apikey'])->first();
 
+                $compras = DB::table("sale")
+                    ->select('saleid','saledate','total','subtotal')
+                    ->where('userid','=',$users->id)
+                    -> get();
+                foreach ($compras as $compra) {
+                    $compra->saleid = base64_encode($compra->saleid);
+                    $compra->saledate = date($compra->saledate);
+                }
 
                 $estados = Estado::all();
                 $marcas = DB::table('brand')->select('id', 'name')
@@ -1595,7 +1622,7 @@ class UsersController extends Controller
                 $user->id = base64_encode($user->id);
                 return view('tienda.profile', ['user' => $user, 'servicios' => $servicios,
                     'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
-                    'localidades' => $localidades, 'municipios' => $municipios, 'logueado' => $users]);
+                    'localidades' => $localidades, 'municipios' => $municipios,'logueado' => $users,'compras'=>$compras]);
             } else {
                 return redirect()->route('tienda.index');
             }
@@ -1644,7 +1671,6 @@ class UsersController extends Controller
             'detail' => 'OK'
         ]);
     }
-
 
     /*Manejo de vistas de carrito de compra */
     public function getCheckout(Request $request)
@@ -2053,6 +2079,29 @@ class UsersController extends Controller
             abort(500);
         }
     }
+
+    public function getinfocompra($id){
+        try{
+            $id = base64_decode($id);
+            $icompra = DB::table('sale as s')
+                ->select('p.name as producto','b.name as marca','sl.quantity as cantidad',
+                    'sl.saleprice as preciounitario','p.currency as divisa')
+                ->join('salesline as sl','sl.saleid','=','s.saleid')
+                ->join('product as p','p.id','=','sl.productid')
+                ->join('brand as b','b.id','=','p.brandid')
+                ->where('s.saleid','=',$id)
+                ->get();
+            return Response::json([
+                'code' => 200,
+                'msg' => json_encode($icompra),
+                'detail' => 'OK'
+            ]);
+        }catch (Exception $e){
+
+        }
+    }
+
+
 }
 
 

@@ -22,7 +22,8 @@ class PedidosController extends Controller
      */
     public function index()
     {
-        $pedidos = DB::select("select users.name, orders.id as orderid,userid,orders.status as ostatus,orders.created_at ,userA,subtotal,
+
+        $pedidos = DB::select("select users.name,users.phone as phone, orderid,userid,orderdate,orders.[status] as ostatus,userA,total,subtotal,taxes,
                         (select [name] as nombre from users where userA = id) as nombre from orders
                     inner join users on users.id = userid where orders.status != 'A' order by orders.created_at,ostatus",[1]);
         foreach ($pedidos as $pedido) {

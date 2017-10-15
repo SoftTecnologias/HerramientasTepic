@@ -138,6 +138,25 @@
                                     <input id="img1" name="img1" class="input-file" type="file">
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label for="" class="col-md-4 control-label">Encargado</label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" id="encargado" name="encargado">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-md-4 control-label">Precio</label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" id="precio" name="precio">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-md-4 control-label">Horario</label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" id="horario" name="horario">
+                                </div>
+                            </div>
                         </fieldset>
                     </form>
                 </div>

@@ -54,13 +54,11 @@
                     <div class="col-sm-4">
                         <div class="project-more">
                             <h4>Encargado</h4>
-                            <p>Juan Perez</p>
+                            <p>{{$servicio_detail->encargado}}</p>
                             <h4>Precio</h4>
-                            <p>$400</p>
-                            <h4>Duracion</h4>
-                            <p>1:30 hrs Aproximadamente</p>
+                            <p>{{$servicio_detail->precio_base}}</p>
                             <h4>Horario</h4>
-                            <p>8:00 - 19:00</p>
+                            <p>{{$servicio_detail->horario}}</p>
                         </div>
                     </div>
 
