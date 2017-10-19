@@ -52,19 +52,19 @@
 <div id="all">
     <header>
 
-        <!-- *** TOP *** -->
-        @if($logueado == null)
-            @include('tienda.sessionmenu')
-        @else
-            @include('tienda.session_active_menu',['user'=>$logueado])
-        @endif
-
-        <!-- *** TOP END *** -->
+        
+          @if($logueado == null )
+              @include('tienda.sessionmenu')
+          @else
+              @include('tienda.session_active_menu',['user'=>$logueado])
+          @endif
+                <!-- *** TOP END *** -->
 
         <!-- *** NAVBAR ***
 _________________________________________________________ -->
-        @include('tienda.menu',['marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios])
-
+       
+            @include('tienda.menu',['marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios])
+       
         <!-- *** NAVBAR END *** -->
 
     </header>
@@ -108,8 +108,8 @@ _________________________________________________________ -->
     <!-- *** LOGIN MODAL END *** -->
 
 @yield('content')
-@include('tienda.footer',['servicios'=>$servicios])
 
+    @include('tienda.footer',['servicios'=>$servicios])
 </div>
 <!-- /#all -->
 
