@@ -34,9 +34,9 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                         <form method="post" action="{{route('carrito.delivery.addresses')}}">
                             {{ csrf_field() }}
                             <ul class="nav nav-pills nav-justified">
-                                <li><a href="#"><i class="fa fa-truck"></i><br>Metodo de entrega</a>
+                                <li><a href="{{route('carrito.goStep',['step'=>1])}}"><i class="fa fa-truck"></i><br>Metodo de entrega</a>
                                 </li>
-                                <li class="active"><a href=""><i class="fa fa-map-marker"></i><br>Direccion de
+                                <li class="active"><a href="{{route('carrito.goStep',['step'=>2])}}"><i class="fa fa-map-marker"></i><br>Direccion de
                                         entrega</a>
                                 </li>
                                 <li class="disabled"><a href="#"><i class="fa fa-eye"></i><br>Resumen de venta</a>
@@ -155,7 +155,7 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
 
                             <div class="box-footer">
                                 <div class="pull-left">
-                                    <a href="{{route("carrito.destroy.addresses")}}" class="btn btn-default"><i
+                                    <a href="{{route("carrito.back")}}" class="btn btn-default"><i
                                                 class="fa fa-chevron-left"></i>Regresar</a>
                                 </div>
                                 <div class="pull-right">

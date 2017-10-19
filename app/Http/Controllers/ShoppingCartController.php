@@ -167,8 +167,7 @@ class ShoppingCartController extends Controller
         }
     }
 
-    public function makeOrder(Request $request)
-    {
+    public function makeCheckout(Request $request){ //Crear la orden
         //Menu de marcas
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
@@ -192,8 +191,8 @@ class ShoppingCartController extends Controller
         /* ------------------------------------------------------------------------------------- */
         $checkpoint="Checkpoint 0";
         try {
-            if ($request->cookie('cliente') == null) {
-                return view('error.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            if (Cookie::get('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 $cookie = Cookie::get("cliente");
                 $user = Usuarios::where('apikey', $cookie['apikey'])->firstOrFail();
@@ -211,6 +210,8 @@ class ShoppingCartController extends Controller
                 $order->save();
                 $checkpoint="Checkpoint 2";
                 $cookie['orderid'] = $order->id;
+                $cookie['actual']=1;
+                $cookie['anterior']=0;
                 /*Agregamos los detalles */
                 foreach ($cookie['carrito']->productos as $item) {
                     $checkpoint="Checkpoint 3";
@@ -233,31 +234,152 @@ class ShoppingCartController extends Controller
         }
     }
 
+    public function setDeliveryType(Request $request){
+        //Menu de marcas
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+        try {
+
+            if (Cookie::get('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                $cookie = Cookie::get("cliente");
+                $order = Order::find($cookie['orderid']);
+                $order->delivery_type = $request->delivery;
+                if ($request->delivery > 2) { //envio
+                    $order->step = 2;
+                } else { //recoger
+                    $order->step = 3;
+                }
+                $order->save();
+
+                if ($order->step > 2) {
+                    $cookie['anterior'] = $cookie['actual'];
+                    $cookie['actual'] = 3;
+                    return redirect()->route('carrito.summary')->withCookie('cliente', $cookie);
+                } else {
+                    $cookie['anterior'] = $cookie['actual'];
+                    $cookie['actual'] = 2;
+                    return redirect()->route('carrito.addresses')->withCookie('cliente', $cookie);
+                }
+            }
+        } catch (Exception $e) {
+            abort(500);
+        }
+    }
+
+    public function setAddress(Request $request){
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+        try {
+            if ($request->cookie('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                $cookie = Cookie::get("cliente");
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                if ($cookie['actual'] == 2) {
+                    #dd($cookie);
+                    $cookie['anterior']=$cookie['actual'];
+                    $cookie['actual']= 3;
+                    #return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
+                    return redirect()->route('carrito.summary')->withCookie('cliente',$cookie);
+                } else {
+                    return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                }
+            }
+        } catch (Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
+    public function finishOrder(Request $request){
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+        try {
+            if ($request->cookie('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                $cookie = Cookie::get("cliente");
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                $orden = Order::find($cookie['orderid']);
+                $orden->status = 'N';
+                $orden->finished=1;
+                $orden->save();
+                #$summary= $cookie['orderid'];
+                #return view('tienda.finish', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'summary'=>$summary]);
+                $cookie['actual']=0;
+                $cookie['anterior']=0;
+                #$cookie['orderid']=0;
+                return redirect()->route('carrito.finish.Order')->withCookie('cliente', $cookie);
+            }
+        } catch (Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
+
+    public function  backStep(Request $request){
+
+    }
+
     public function destroyOrder(Request $request)
     {
         try {
-            if ($request->cookie('cliente') == null) {
-                //Menu de marcas
-                $marcas = DB::table('brand')->select('id', 'name')
-                    ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                    ->take(40)->orderBy('name', 'asc')->get();
-                //Encriptamos los id
-                foreach ($marcas as $marca)
-                    $marca->id = base64_encode($marca->id);
-                //Menu de categorias
-                $categorias = DB::table('category')->select('id', 'name')->take(40)
-                    ->where('name', 'not like', 'Nota de credito')
-                    ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
-                    ->orderBy('name', 'asc')->get();
-                //Encriptar id de categorias
-                foreach ($categorias as $categoria)
-                    $categoria->id = base64_encode($categoria->id);
-                //menu de servicios
-                $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
-                //Encriptar id de servicios
-                foreach ($servicios as $servicio)
-                    $servicio->id = base64_encode($servicio->id);
-                return view('error.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            if (Cookie::get('cliente') == null) {
+                return redirect()->route("tienda.index");
             } else {
                 $cookie = Cookie::get("cliente");
                 $order = Order::findOrFail($cookie['orderid']);

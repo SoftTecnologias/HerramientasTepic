@@ -25,7 +25,8 @@
             <hr>
             <p> Tu pedido ha sido registrado con el numero de orden: <b>{{$summary}}</b> </p>
             <p> En breve uno de nuestros operadores se comunicará con usted para continuar con el proceso </p>
-            <p> La llama se realizará entre las 8:00 - 19:00 de hoy </p>
+            <p> La llama se realizará entre las 8:00 - 19:00  </p>
+
         </div>
         <!-- /.container -->
     </div>

@@ -1700,15 +1700,17 @@ class UsersController extends Controller
             if ($request->cookie('cliente') == null) {
                 return view('carrito.checkout', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
+                #dd($request->cookie('cliente'));
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
                 return view('tienda.checkout', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
             }
         } catch (Exception $e) {
+            dd($e);
             abort(500);
         }
     }
 
-    public function showDelivery(Request $request)
+    public function getDelivery(Request $request)
     {
         // ------------------------------------------ MENU ----------------------------------------------------------------------------------------------------
         $marcas = DB::table('brand')->select('id', 'name')
@@ -1740,10 +1742,10 @@ class UsersController extends Controller
             } else {
                 $checkpoint="Checkpoint 2";
                 $cookie = Cookie::get("cliente");
-                //dd($cookie);
+                #dd($cookie);
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
 
-                if ($cookie['actual'] == 0) { //despues del primer paso
+                if ($cookie['actual'] == 1) { //despues del primer paso
                     $checkpoint="Checkpoint 3";
                     $order = Order::find( $cookie['orderid'] );
                     $detalles = DB::table('order_detail')->where('orderid',$order->id)->get();
@@ -1754,7 +1756,7 @@ class UsersController extends Controller
                         'taxes' => $order->taxes,
                         'detalles' => $detalles
                     ];
-                    $cookie['actual'] =1;
+
                     return view('tienda.entrega', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user, 'details'=>$orderdetails]);
                 } else {
                     $checkpoint="Checkpoint 4";
@@ -1762,9 +1764,13 @@ class UsersController extends Controller
                 }
             }
         } catch (Exception $e) {
-            dd( $checkpoint);
+            dd($checkpoint);
             abort(500);
         }
+    }
+
+    public function getSummaty(Request $request){
+
     }
 
     public function makeDelivery(Request $request)
@@ -1790,8 +1796,8 @@ class UsersController extends Controller
         foreach ($servicios as $servicio)
             $servicio->id = base64_encode($servicio->id);
         try {
-            if ($request->cookie('cliente') == null) {
-                return view('error.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            if (Cookie::get('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 $cookie = Cookie::get("cliente");
                 $cookie['anterior'] = $cookie['actual'];
@@ -1851,10 +1857,11 @@ class UsersController extends Controller
             //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
-            if ($request->cookie('cliente') == null) {
-                return view('error.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            if (Cookie::get('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 $cookie = Cookie::get("cliente");
+                #dd($cookie);
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
                 /*Buscamos direccion del usuario*/
                 $address = DB::table('users')
@@ -1895,7 +1902,7 @@ class UsersController extends Controller
                     ];
                     return view('tienda.envio', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,"address"=>$address, "estado"=> $estado,"municipio"=>$municipio, "localidad"=>$localidad, 'details'=>$orderdetails  ]);
                 } else {
-                    return view('error.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                    return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
                 }
             }
         } catch (Exception $e) {
@@ -1925,11 +1932,12 @@ class UsersController extends Controller
             $servicio->id = base64_encode($servicio->id);
         try {
             if ($request->cookie('cliente') == null) {
-                return view('error.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 $cookie = Cookie::get("cliente");
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
                 if ($cookie['actual'] == 2) {
+                    dd($cookie);
                     $order = Order::find( $cookie['orderid'] );
                     #$detalles = DB::table('order_detail')->where('orderid',$order->id)->get();
                     $detalles = OrderDetail::where('orderid',$order->id)->get();
@@ -1941,11 +1949,10 @@ class UsersController extends Controller
                         'detalles' => $detalles
                     ];
                     #dd($detalles[0]->product()->first()->id);
-                    $cookie['anterior'] = $cookie['actual'];
-                    $cookie['actual'] = 3;
+
                     return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
                 } else {
-                    return view('error.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                    return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
                 }
             }
         } catch (Exception $e) {
@@ -1976,14 +1983,14 @@ class UsersController extends Controller
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             if ($request->cookie('cliente') == null) {
-                return view('error.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             }else{
                 $cookie = Cookie::get("cliente");
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
                 if($cookie['actual'] == 1){
                     return view('tienda.envio',['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios,'logueado' => $user]);
                 } else {
-                    return view('error.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                    return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
                 }
             }
         }catch(Exception $e){
@@ -2014,25 +2021,22 @@ class UsersController extends Controller
             $servicio->id = base64_encode($servicio->id);
         try {
             if ($request->cookie('cliente') == null) {
-                return view('error.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 $cookie = Cookie::get("cliente");
+                #dd($cookie);
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                    $order = Order::find( $cookie['orderid'] );
-                    #$detalles = DB::table('order_detail')->where('orderid',$order->id)->get();
-                    $detalles = OrderDetail::where('orderid',$order->id)->get();
-                    $orderdetails = [
-                        'subtotal' => $order->subtotal,
-                        'delivery_cost' => $order->delivery_cost,
-                        'total' => $order->total,
-                        'taxes' => $order->taxes,
-                        'detalles' => $detalles
-                    ];
-                    #dd($detalles[0]->product()->first()->id);
-                    $cookie['anterior'] = $cookie['actual'];
-                    $cookie['actual'] = 0;
-                    return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
-
+                $order = Order::find( $cookie['orderid'] );
+                #$detalles = DB::table('order_detail')->where('orderid',$order->id)->get();
+                $detalles = OrderDetail::where('orderid',$order->id)->get();
+                $orderdetails = [
+                  'subtotal' => $order->subtotal,
+                  'delivery_cost' => $order->delivery_cost,
+                  'total' => $order->total,
+                  'taxes' => $order->taxes,
+                  'detalles' => $detalles
+                ];
+                return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
             }
         } catch (Exception $e) {
             dd($e);
@@ -2040,7 +2044,7 @@ class UsersController extends Controller
         }
     }
 
-    public function finishOrder(Request $request){
+    public function getFinish(Request $request){
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
@@ -2066,14 +2070,13 @@ class UsersController extends Controller
             } else {
                 $cookie = Cookie::get("cliente");
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-
-                    $orden = Order::find($cookie['orderid']);
-                    $orden->status = 'N';
-                    $orden->save();
-                    $summary= $cookie['orderid'];
-                    $cookie['actual'] = 0 ;
-                    return view('tienda.finish', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'summary'=>$summary]);
-            }
+                $orden = Order::find($cookie['orderid']);
+                $orden->status = 'N';
+                $orden->finished=1;
+                $orden->save();
+                $summary= $cookie['orderid'];
+                return view('tienda.finish', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'summary'=>$summary]);
+        }
         } catch (Exception $e) {
             dd($e);
             abort(500);
@@ -2101,6 +2104,47 @@ class UsersController extends Controller
         }
     }
 
+    public function stepBack(Request $request ){
+        try{
+            if (Cookie::get('cliente') == null) {
+                return redirect()->route("tienda.index");
+            }else{ //en caso que si esté todo bien
+                $cookie = Cookie::get('cliente');
+                $cookie['actual'] = $cookie['anterior'];
+                if($cookie['anterior'] == 1 ){ //Se dirije a tipo de envio
+                    $cookie['anterior']= 0;
+                    return redirect()->route('carrito.delivery')->withCookie('cliente',$cookie);
+                }else{  //Se debe dirigir a address 
+                    $cookie['anterior']= 1;
+                    return redirect()->route('carrito.addresses')->withCookie('cliente',$cookie);
+                }
+            }
+        }catch(Exception $e){
+            dd($e);
+            abort(500);
+        }
+    }
+
+    public function goStep(Request $request, $step){
+        try {
+            if (Cookie::get('cliente') == null) {
+                return redirect()->route("tienda.index");
+            } else { //en caso que si esté todo bien
+                $cookie = Cookie::get('cliente');
+                if ($step == 1) {
+                    $cookie['anterior']=0;
+                    $cookie['actual']=$step;
+                    return redirect()->route('carrito.delivery')->withCookie('cliente',$cookie);
+                } else if ($step == 2) {
+                    $cookie['anterior']=1;
+                    $cookie['actual']=$step;
+                    return redirect()->route('carrito.addresses')->withCookie('cliente',$cookie);
+                }
+            }
+        }catch(Exception $e){
+
+        }
+    }
 
 }
 

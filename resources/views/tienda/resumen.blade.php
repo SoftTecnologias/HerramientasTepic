@@ -30,9 +30,9 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                 <div class="col-md-9 clearfix" id="basket">
                     <div class="box">
                         <ul class="nav nav-pills nav-justified">
-                            <li><a href="#"><i class="fa fa-truck"></i><br>Metodo de entrega</a>
+                            <li><a href="{{route('carrito.goStep',['step'=>1])}}"><i class="fa fa-truck"></i><br>Metodo de entrega</a>
                             </li>
-                            <li class="disabled"><a href=""><i class="fa fa-map-marker"></i><br>Direccion de
+                            <li class="{{($cookie['anterior'] == 2) ? "" : "disabled" }}"><a href="{{route('carrito.goStep',['step'=>2])}}"><i class="fa fa-map-marker"></i><br>Direccion de
                                     entrega</a>
                             </li>
                             <!-- <li class="disabled"><a href="#"><i class="fa fa-money"></i><br>Pago</a>
@@ -83,7 +83,7 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
 
                             <div class="box-footer">
                                 <div class="pull-left">
-                                    <a href="{{ url()->previous()}}" class="btn btn-default"><i class="fa fa-chevron-left"></i> Regresar</a>
+                                    <a href="{{ route("carrito.back")}}" class="btn btn-default"><i class="fa fa-chevron-left"></i> Regresar</a>
                                 </div>
                                 <div class="pull-right">
                                     <a href="{{route('carrito.finishOrder')}}" class="btn btn-template-main" id="next">Finalizar pedido <i class="fa fa-chevron-right"></i>

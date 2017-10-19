@@ -23,7 +23,7 @@ class PedidosController extends Controller
     public function index()
     {
 
-        $pedidos = DB::select("select users.name,users.phone as phone, orderid,userid,orderdate,orders.[status] as ostatus,userA,total,subtotal,taxes,
+        $pedidos = DB::select("select users.name,users.phone as phone, orders.id as orderid,userid,orders.created_at as orderdate,orders.[status] as ostatus,userA,total,subtotal,taxes,
                         (select [name] as nombre from users where userA = id) as nombre from orders
                     inner join users on users.id = userid where orders.status != 'A' order by orders.created_at,ostatus",[1]);
         foreach ($pedidos as $pedido) {
@@ -115,7 +115,7 @@ class PedidosController extends Controller
         try{
             $id = base64_decode($id);
             DB::table('orders')
-                ->where('orderid', $id)
+                ->where('id', $id)
                 ->update(['userA' => base64_decode($request->trabajador),'status' => 'T']);
 
             $respuesta = ["code"=>200, "msg"=>"Usuario Asignado","detail"=>"success"];
@@ -129,7 +129,7 @@ class PedidosController extends Controller
         try{
             $id = base64_decode($id);
             DB::table('orders')
-                ->where('orderid', $id)
+                ->where('id', $id)
                 ->update(['status' => $request->estado]);
 
             $respuesta = ["code"=>200, "msg"=>"El Pedido Cambio a Despachado","detail"=>"success"];

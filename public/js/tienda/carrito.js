@@ -23,6 +23,10 @@ $(function () {
                 $("#carrito-modal").modal("hide");
                 $("#carrito span").text("$ "+json.msg['total'].toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+" ("+json.msg['cantidadProductos']+" articulos)");
                 $("#btnCheckout").text("Finalizar pedido ("+"$ "+json.msg['total'].toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+")");
+                if(json.msg['total']==0)
+                    $("#btnCheckout").prop("disabled",true);
+                else
+                    $("#btnCheckout").prop("disabled",false);
                 $('#body-cart tr').remove();
                 $('#body-cart td').remove();
                 $.each(json.msg['productos'], function (i, row) {
@@ -85,7 +89,8 @@ function agregarProducto(id) {
                         swal('Producto Agregado al Carrito', "Se a añadido exitosamente", 'success');
                         $("#carrito").find("span").text("$ "+response.msg['total'].toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+" ("+response.msg['cantidadProductos']+" articulos)");
                         $("#body-cart").find("tr").remove();
-                        $("#btnCheckout").text("Finalizar pedido ("+"$ "+response.msg['total'].toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+")");
+                        $("#btnCheckout").prop("disabled",false);
+                        $("#btnCheckout").text("Finalizar pedido ("+"$ "+response.msg['total'].toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+" MXN)");
                         $.each(response.msg['productos'], function (i, row) {
                             console.log(row);
                             precio = parseFloat(row.item.precio);
