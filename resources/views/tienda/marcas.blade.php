@@ -45,7 +45,7 @@
                                     <!-- /.image -->
                                     <div class="text">
                                         <h3><p class="verProducto">{{$producto->name}}</p></h3>
-                                        <p class="price"> {{isset($producto->price)?  "$ ".number_format($producto->price, 2,".",",")." ".$producto->currency." " : "Inicia sesión para verlos precios"}}</p>
+                                        <p class="price"> {{isset($producto->price)?  "$ ".number_format($producto->price, 2,".",",")." ".$producto->currency." " : "Inicia sesión para ver los precios"}}</p>
                                     </div>
                                     <!-- /.text -->
                                 </div>
@@ -105,7 +105,7 @@
                                             <h4>Codigo del producto: <span>{{$producto->code}}</span></h4>
 
                                             <p>{{$producto->longdescription}}.</p>
-                                            <h3 class="cost">{{isset($producto->price)?  "$ ".number_format($producto->price, 2,".",",")." ".$producto->currency." " : "Inicia sesión para verlos precios"}}
+                                            <h3 class="cost">{{isset($producto->price)?  "$ ".number_format($producto->price, 2,".",",")." ".$producto->currency." " : "Inicia sesión para ver los precios"}}
                                             </h3>
                                             <div class="space-ten"></div>
                                             <div class="btn-ground">

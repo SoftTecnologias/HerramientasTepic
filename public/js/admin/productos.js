@@ -2,9 +2,6 @@
  * Created by fenix on 20/03/2017.
  */
 $(function(){
-
-
-
     $('#btnNew').on('click', function () {
         $('#titulo-modal').text("Nuevo Producto");
         reset();

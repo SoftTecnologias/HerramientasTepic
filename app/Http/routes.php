@@ -12,129 +12,208 @@
 */
 /* Se carga y redirecciona a la pagina que sea (si existe el apikey guardada!)*/
 //Sección de la tienda (index)
-Route::get('/', [
-    'uses' => 'UsersController@getIndex',
-    'as' => 'tienda.index'
-]);
+
+/*Area de tienda */
+Route::group(['middleware' => 'web'],function(){
+    Route::get('/', [
+        'uses' => 'UsersController@getIndex',
+        'as' => 'tienda.index'
+    ]);
 //Marcas
-Route::get('/brand/{id}',[
-    'uses' => 'UsersController@getMarcaSearch',
-    'as' => 'tienda.marcas'
-]);
+    Route::get('/brand/{id}',[
+        'uses' => 'UsersController@getMarcaSearch',
+        'as' => 'tienda.marcas'
+    ]);
 //Categorias
-Route::get('/category/{id}',[
-    'uses' => 'UsersController@getCategoriaSearch',
-    'as' => 'tienda.categorias'
-]);
+    Route::get('/category/{id}',[
+        'uses' => 'UsersController@getCategoriaSearch',
+        'as' => 'tienda.categorias'
+    ]);
 
 //Servicios
-Route::get('/servicios',[
-   'uses' => 'UsersController@getAllServices',
-    'as' => 'tienda.servicios'
-]);
+    Route::get('/servicios',[
+        'uses' => 'UsersController@getAllServices',
+        'as' => 'tienda.servicios'
+    ]);
 
-Route::get('/servicios/detalle/{id}',[
-   'uses' => 'UsersController@getServiceDetail',
-    'as' => 'tienda.detalleServicio'
-]);
+    Route::get('/servicios/detalle/{id}',[
+        'uses' => 'UsersController@getServiceDetail',
+        'as' => 'tienda.detalleServicio'
+    ]);
 //Productos
-Route::get('/productos/search/{filtro}',[
-    'uses' => 'UsersController@searchProductos',
-    'as' => 'tienda.search.productos'
-]);
-/* Obtener formulario y hacer login */
+    Route::get('/productos/search/{filtro}',[
+        'uses' => 'UsersController@searchProductos',
+        'as' => 'tienda.search.productos'
+    ]);
+    /* Obtener formulario y hacer login */
 
-Route::post('/login',[
-    'uses' => 'UsersController@doLogin',
-    'as' => 'panel.dologin'
-]);
-Route::post('/usuario/login',[
-    'uses' => 'UsersController@doCLogin',
-    'as' => 'panel.doclogin'
-]);
+    Route::post('/login',[
+        'uses' => 'UsersController@doLogin',
+        'as' => 'panel.dologin'
+    ]);
+    Route::post('/usuario/login',[
+        'uses' => 'UsersController@doCLogin',
+        'as' => 'panel.doclogin'
+    ]);
 
 //Registro de clientes!!
-Route::get('/usuario/registro',[
-    'as' => 'tienda.registro',
-    'uses' => 'UsersController@getRegisterForm'
-]);
+    Route::get('/usuario/registro',[
+        'as' => 'tienda.registro',
+        'uses' => 'UsersController@getRegisterForm'
+    ]);
 
-Route::post('/usuario/registro',[
-    'as' => 'tienda.registro',
-    'uses' => 'UsuariosController@store'
-]);
+    Route::post('/usuario/registro',[
+        'as' => 'tienda.registro',
+        'uses' => 'UsuariosController@store'
+    ]);
 
-Route::get('/user/infocompra/{id}',[
-    'uses' => 'UsersController@getinfocompra'
-]);
+    Route::get('/user/infocompra/{id}',[
+        'uses' => 'UsersController@getinfocompra'
+    ]);
 
-Route::get('/usuario/{id}',[
-    'uses' => 'UsersController@confirmEmail',
-    'as' => 'tienda.confirmar'
-]);
-Route::get('/usuario/situacion/{id}',[
-    'uses' => 'UsersController@errorMail',
-    'as' => 'tienda.problema'
-]);
-Route::get('/user/profile',[
-    'uses' => 'UsersController@getUserProfile',
-    'as' => 'tienda.user.profile'
-]);
-Route::post('/user/profile/{id}',[
-    'uses' => 'UsuariosController@udateUser',
-    'as' => 'tienda.user.profile.update'
-]);
+    Route::get('/usuario/{id}',[
+        'uses' => 'UsersController@confirmEmail',
+        'as' => 'tienda.confirmar'
+    ]);
+    Route::get('/usuario/situacion/{id}',[
+        'uses' => 'UsersController@errorMail',
+        'as' => 'tienda.problema'
+    ]);
+    Route::get('/user/profile',[
+        'uses' => 'UsersController@getUserProfile',
+        'as' => 'tienda.user.profile'
+    ]);
+    Route::post('/user/profile/{id}',[
+        'uses' => 'UsuariosController@udateUser',
+        'as' => 'tienda.user.profile.update'
+    ]);
 
-Route::post('/user/direccion',[
-   'uses' => 'DireccionesController@add',
-    'as' => 'user.direccion'
-]);
+    Route::post('/user/direccion',[
+        'uses' => 'DireccionesController@add',
+        'as' => 'user.direccion'
+    ]);
 
-Route::post('/user/profile/contact/{id}',[
-    'uses' => 'DireccionesController@udateContactUser',
-    'as' => 'tienda.user.profile.contact.update'
-]);
+    Route::post('/user/profile/contact/{id}',[
+        'uses' => 'DireccionesController@udateContactUser',
+        'as' => 'tienda.user.profile.contact.update'
+    ]);
 
-Route::post('/user/profile/pass/{id}',[
-    'uses' => 'UsuariosController@updatePassword',
-    'as' => 'tienda.user.profile.pass.update'
-]);
+    Route::post('/user/profile/pass/{id}',[
+        'uses' => 'UsuariosController@updatePassword',
+        'as' => 'tienda.user.profile.pass.update'
+    ]);
 
-Route::post('/user/profile/imagen/{id}',[
-    'uses' => 'UsuariosController@updateImage',
-    'as' => 'tienda.user.profile.image.update'
-]);
+    Route::post('/user/profile/imagen/{id}',[
+        'uses' => 'UsuariosController@updateImage',
+        'as' => 'tienda.user.profile.image.update'
+    ]);
 
-Route::get('/getMunicipios/{estado}',[
-    'uses' => 'UsersController@getMunicipios',
-    'as' => 'getmuicipio.estado'
-]);
+    Route::get('/getMunicipios/{estado}',[
+        'uses' => 'UsersController@getMunicipios',
+        'as' => 'getmuicipio.estado'
+    ]);
 
-Route::get('/user/cart/',[
-    'uses'=>'UsersController@getCarritoView',
-    'as' => 'carrito.index'
-]);
+    Route::get('/user/cart/',[
+        'uses'=>'UsersController@getCarritoView',
+        'as' => 'carrito.index'
+    ]);
 
-Route::post('/user/cart/add',[
-    'uses'=>"ShoppingCartController@addProduct",
-    'as' => 'carrito.add'
-]);
+    Route::post('/user/cart/add',[
+        'uses'=>"ShoppingCartController@addProduct",
+        'as' => 'carrito.add'
+    ]);
 
-Route::delete('/user/cart/removeToCart',[
-    'uses' => "ShoppingCartController@removePartial",
-    'as' => "carrito.removeCart"
-]);
+    Route::delete('/user/cart/removeToCart',[
+        'uses' => "ShoppingCartController@removePartial",
+        'as' => "carrito.removeCart"
+    ]);
 
-Route::post('/user/cart/checkout',[
-    'uses' => "ShoppingCartController@checkout",
-    'as' => "carrito.checkout"
-]);
-Route::get('/getLocalidades/{municipio}',[
-    'uses' => 'UsersController@getLocalidades',
-    'as' => 'getlocalidades.municipio'
-]);
+    Route::get('/user/cart/checkout',[
+        'uses' => "UsersController@getCheckout",
+        'as' => "carrito.getCheckout"
+    ]);
+//Parte del checkout
+    Route::get('/user/cart/makeCheckout',[
+        'uses' => "ShoppingCartController@makeCheckout",
+        'as' => "carrito.makeOrder"
+    ]);
+
+    Route::get('/user/cart/finishOrder',[
+        'uses' => "ShoppingCartController@finishOrder",
+        'as' => "carrito.finishOrder"
+    ]);
+    Route::get('/user/cart/complete',[
+        'uses' => "UsersController@getFinish",
+        'as' => "carrito.finish.Order"
+    ]);
+
+    Route::get('/user/cart/CancelCheckout',[
+        'uses' => "ShoppingCartController@destroyOrder",
+        'as' => "carrito.destroy.Order"
+    ]);
+
+    Route::post('/user/cart/updateCart',[
+        'uses' => "ShoppingCartController@updateCart",
+        'as' => "carrito.updateCart"
+    ]);
+
+    Route::get('/user/cart/payment',[
+        'uses' => "ShoppingCartController@payment",
+        'as' => 'carrito.payment'
+    ]);
+
+    Route::get('/user/cart/delivery',[
+        'uses' => "UsersController@getDelivery",
+        'as' => 'carrito.delivery'
+    ]);
+
+    Route::post('/user/cart/delivery',[
+        'uses' => "ShoppingCartController@setDeliveryType",
+        'as' => 'carrito.make.delivery'
+    ]);
+
+    Route::get('/user/cart/destroyOrder',[
+        'uses' => "ShoppingCartController@destroyOrder",
+        'as' => 'carrito.destroy.Order'
+    ]);
+
+    Route::get('/user/cart/addresses',[
+        'uses' => "UsersController@addresses",
+        'as' => 'carrito.addresses'
+    ]);
+
+    Route::post('/user/cart/addresses',[
+        'uses' => "ShoppingCartController@setAddress",
+        'as' => 'carrito.delivery.addresses'
+    ]);
+    Route::get('/user/cart/destroyAddresses',[
+        'uses' => "UsersController@destroyAddresses",
+        'as' => 'carrito.destroy.addresses'
+    ]);
+
+    Route::get('/user/cart/summary',[
+        'uses' => "UsersController@summary",
+        'as' => 'carrito.summary'
+    ]);
+
+    Route::get('/getLocalidades/{municipio}',[
+        'uses' => 'UsersController@getLocalidades',
+        'as' => 'getlocalidades.municipio'
+    ]);
+
+    Route::get('/user/cart/back',[
+        'uses' => "UsersController@stepBack",
+        'as' => 'carrito.back'
+    ]);
+
+    Route::get('/user/cart/step/{step}',[
+        'uses' => "UsersController@goStep",
+        'as' => 'carrito.goStep'
+    ]);
+});
+
 /* Area de administracion */
-Route::group(['prefix' => 'area'],function(){
+Route::group(['prefix' => 'area','middleware' => 'web'],function(){
     /*Obtenemos los formularios ... */
 
     Route::get('/perfil',[
@@ -338,7 +417,7 @@ Route::group(['prefix' => 'sale'],function (){
 });
 
 /* Rutas para Ajax*/
-Route::group(['prefix'=>'/api'],function(){
+Route::group(['prefix'=>'/api','middleware' => 'web'],function(){
     Route::get('/getsubcategoria/{id}',[
        'uses' => 'UsersController@getSubcategorias',
        'as' => 'api.subcategorias'

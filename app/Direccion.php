@@ -21,4 +21,5 @@ class Direccion extends Model
         ,'region'
         ,'reference'
         ,'userid'];
+    public $timestamps = false;
 }
