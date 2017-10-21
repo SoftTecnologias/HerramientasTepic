@@ -12,7 +12,7 @@ $(function(){
     //*
     $('#providerTable').DataTable({
         stateSave: true,
-        'ajax':document.location.protocol+'//'+document.location.host  +'/area/resource/proveedores',
+        'ajax':document.location.protocol+'//'+document.location.host+'/area/resource/proveedores',
         'createdRow':function(row,data,index){
             console.log("tipo: ",data.tipo, "status: ", data.status);
             if(data.status==1){
@@ -133,7 +133,7 @@ $("select#estados").on('change',function(){
     console.log(value);
     $('#municipio option').remove();
     $.ajax({
-        url: document.location.protocol+'//'+document.location.host  +'/area/resource/proveedores/municipios/' + $(this).val(),
+        url: document.location.protocol+'//'+document.location.host+'/area/resource/proveedores/municipios/' + $(this).val(),
         type: 'GET'
     }).done(function(json){
         if(json.code===200){
@@ -159,7 +159,7 @@ function providerAction(){
 function newProvider(){
     var data = new FormData(document.getElementById("providerForm"));
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host  +"/area/resource/proveedores",
+        url:document.location.protocol+'//'+document.location.host+"/area/resource/proveedores",
         type:"POST",
         data: data,
         contentType:false,
@@ -185,7 +185,7 @@ function updateProvider(id){
     $("#id").val(id);
     var datos = new FormData(document.getElementById("providerForm"));
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host  +'/area/resource/proveedores/update/'+id,
+        url:document.location.protocol+'//'+document.location.host+'/area/resource/proveedores/update/'+id,
         type:"POST",
         data: datos,
         contentType:false,
@@ -219,7 +219,7 @@ function deleteProvider(id){
         confirmButtonText: 'Si, deseo eliminarlo!',
         cancelButtonText: "Lo pensaré"
     }).then(function () {
-        ruta =document.location.protocol+'//'+document.location.host  +'/area/resource/proveedores/'+id;
+        ruta =document.location.protocol+'//'+document.location.host+'/area/resource/proveedores/'+id;
         $.ajax({
             url:ruta,
             type:'delete',
@@ -241,7 +241,7 @@ function deleteProvider(id){
 //
 function showProvider(id){
     $.ajax({
-        url: document.location.protocol+'//'+document.location.host  +'/area/resource/proveedores/'+id,
+        url: document.location.protocol+'//'+document.location.host+'/area/resource/proveedores/'+id,
         type: 'GET'
     }).done(function(json){
         if(json.code==200){

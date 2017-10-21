@@ -27,6 +27,7 @@ class CrearTablaUsers extends Migration
             $table->string('username',16)->unique();
             $table->integer('roleid');
             $table->foreign('roleid')->references('id')->on('roles');
+            $table->string('stripe_carge_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

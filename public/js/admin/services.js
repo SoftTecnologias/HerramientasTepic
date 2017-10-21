@@ -11,7 +11,7 @@ $(function(){
         'scrollY':'600px',
         "processing": true,
         "serverSide": true,
-        "ajax": document.location.protocol+'//'+document.location.host  +'/area/resource/servicios',
+        "ajax": document.location.protocol+'//'+document.location.host+'/area/resource/servicios',
         "columnDefs": [
             { "width": "24%", "targets": [0,4,2,3]}
         ],
@@ -120,13 +120,12 @@ $(function(){
     });
 
     //Abrir Modal
-    $(function(){
-        $('#btnNew').on('click',function(){
+    $('#btnNew').on('click',function(){
             $('#titulo-modal').text("Nuevo Servicio");
             reset();
             $('#modalServices').modal('show');
         });
-    });
+
     /* Inputs con url*/
     $("#img").on("change",function(){
         if($(this).val()!==""){

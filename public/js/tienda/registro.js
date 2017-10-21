@@ -123,7 +123,7 @@ function newClient(){
     console.log("nuevo usuario");
     data = new FormData(document.getElementById("clientForm"));
     $.ajax({
-        url: document.location.protocol + '//' + document.location.host +"/usuario/registro",
+        url: document.location.protocol + '//' + document.location.host  +"/usuario/registro",
         type: "POST",
         data: data,
         contentType: false,
@@ -141,7 +141,7 @@ function newClient(){
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'Entendido!'
             }).then(function () {
-                location.href =document.location.protocol + '//' + document.location.host   + "/";
+                location.href =document.location.protocol + '//' + document.location.host  + "/";
             })
         } else {
             swal("Error", json.msg, json.detail);

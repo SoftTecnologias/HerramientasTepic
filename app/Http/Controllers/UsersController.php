@@ -10,6 +10,8 @@ use App\Localidad;
 use App\Marca;
 use App\Estado;
 use App\Municipio;
+use App\Order;
+use App\OrderDetail;
 use App\Pedido;
 use App\Roles;
 use App\Servicio;
@@ -333,7 +335,7 @@ class UsersController extends Controller
             }
         } catch (Exception $e) {
             //return redirect()->route('tienda.index')->with(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
-           dd($e);
+
             abort(500);
         }
     }
@@ -541,8 +543,8 @@ class UsersController extends Controller
     public function getAllServices(Request $request)
     {
         $marcas = DB::table('brand')->select('id', 'name')
-        ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
-        ->take(40)->orderBy('name', 'asc')->get();
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
         //Menu de categorias
         $categorias = DB::table('category')->select('id', 'name')->take(40)
             ->where('name', 'not like', 'Nota de credito')
@@ -562,38 +564,38 @@ class UsersController extends Controller
 
         try {
 
-                //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
-                $productos = DB::table('product')
-                    ->select('product.code',
-                        'product.name',
-                        'product.stock',
-                        'product.currency',
-                        'product.photo',
-                        'product.photo2',
-                        'product.photo3',
-                        'product.shortdescription',
-                        'product.longdescription',
-                        'product.quotation'
-                    //         ,'price.price1'
-                    )
-                    ->join('price', 'price.id', '=', 'product.priceid')
-                    ->where('photo', 'not like', 'minilogo.png')
-                    ->take(12)->get();
-                $bMarcas = DB::table('brand')
-                    ->select('logo')
-                    ->where('logo', 'not like', 'minilogo.png')
-                    ->take(12)->get();
-                //Menu de marcas
-                foreach ($productos as $p) {
-                    $p->code = base64_encode($p->code);
-                }
+            //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
+            $productos = DB::table('product')
+                ->select('product.code',
+                    'product.name',
+                    'product.stock',
+                    'product.currency',
+                    'product.photo',
+                    'product.photo2',
+                    'product.photo3',
+                    'product.shortdescription',
+                    'product.longdescription',
+                    'product.quotation'
+                //         ,'price.price1'
+                )
+                ->join('price', 'price.id', '=', 'product.priceid')
+                ->where('photo', 'not like', 'minilogo.png')
+                ->take(12)->get();
+            $bMarcas = DB::table('brand')
+                ->select('logo')
+                ->where('logo', 'not like', 'minilogo.png')
+                ->take(12)->get();
+            //Menu de marcas
+            foreach ($productos as $p) {
+                $p->code = base64_encode($p->code);
+            }
 
-                if ($request->cookie('cliente') == null) {
-                    return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios,'logueado' => false]);
-                } else {
-                    $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                    return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios,'logueado' => $user]);
-                }
+            if ($request->cookie('cliente') == null) {
+                return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+            }
         } catch (Exception $e) {
             return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
         }
@@ -641,30 +643,30 @@ class UsersController extends Controller
         try {
             $id = base64_decode($id);
 
-                //obtenemos todos los productos de la marca
-                $productos = DB::table('product')
-                    ->select('product.code',
-                        'product.name',
-                        'product.stock',
-                        'product.currency',
-                        'product.photo',
-                        'product.photo2',
-                        'product.photo3',
-                        'product.shortdescription',
-                        'product.longdescription',
-                        'product.quotation'
-                    //         ,'price.price1'
-                    )
-                    ->join('price', 'price.id', '=', 'product.priceid')
-                    ->where('photo', 'not like', 'minilogo.png')
-                    ->where('brandid', '=', $id)
-                    ->paginate(12);
+            //obtenemos todos los productos de la marca
+            $productos = DB::table('product')
+                ->select('product.code',
+                    'product.name',
+                    'product.stock',
+                    'product.currency',
+                    'product.photo',
+                    'product.photo2',
+                    'product.photo3',
+                    'product.shortdescription',
+                    'product.longdescription',
+                    'product.quotation'
+                //         ,'price.price1'
+                )
+                ->join('price', 'price.id', '=', 'product.priceid')
+                ->where('photo', 'not like', 'minilogo.png')
+                ->where('brandid', '=', $id)
+                ->paginate(12);
             $actual = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img')
                 ->take(10)
                 ->orderBy('title', 'asc')
                 ->where('id', '=', $id)
                 ->get();
-                //Menu de marcas
+            //Menu de marcas
             foreach ($productos as $p) {
                 $p->code = base64_encode($p->code);
             }
@@ -873,8 +875,7 @@ class UsersController extends Controller
                             break;
                     }
                 }
-            }
-            else {
+            } else {
                 $urlid = $url;
             }
             $filtromarcas = [];
@@ -1018,26 +1019,39 @@ class UsersController extends Controller
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 $user = Usuarios::where('apikey', $cookie['apikey'])->first();
                 $fecha = explode("-", substr($user->signindate, 0, 10));
                 $pedidos = DB::table('orders')->select('*')
-                    ->join('users','id','=','userid')
+                    ->join('users', 'id', '=', 'userid')
                     ->get();
                 $totalpedidos = DB::table('orders')->select('*')->count();
                 return view('sale.area', ['usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
-                    'permiso' => 'Vendedor'],'pedidos'=>$pedidos,'totalpedidos'=>$totalpedidos
+                    'permiso' => 'Vendedor'], 'pedidos' => $pedidos, 'totalpedidos' => $totalpedidos
                 ]);
             }
         } else {
             //no existe una session de administrador y lo manda al login
             return view('login');
         }
+    }
+
+    private function dbpedido()
+    {
+        $pedidos = DB::select('select users.name, orders.id as orderid,userid,orders.status,userA,subtotal,
+                        (select [name] as nombre from users where userA = users.id) as nombre from orders
+                    inner join users on users.id = userid', [1]);
+        return $pedidos;
+    }
+
+    private function dbtotalpedidos()
+    {
+        return $totalpedidos = DB::table('orders')->select('*')->count();
     }
 
     public function getProductosForm(Request $request)
@@ -1058,7 +1072,7 @@ class UsersController extends Controller
                         'photo' => $user->photo,
                         'username' => $user->username,
                         'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1090,7 +1104,7 @@ class UsersController extends Controller
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1116,7 +1130,7 @@ class UsersController extends Controller
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1142,7 +1156,7 @@ class UsersController extends Controller
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1169,7 +1183,7 @@ class UsersController extends Controller
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1189,19 +1203,19 @@ class UsersController extends Controller
             if ($cookie['rol'] == 2) { //es un administrador
                 $user = Usuarios::where('apikey', $cookie['apikey'])->first();
                 $fecha = explode("-", substr($user->signindate, 0, 10));
-                $empleados = Usuarios::where('roleid',3)->get();
+                $empleados = Usuarios::where('roleid', 3)->get();
                 return view('forms.pedidos', ['usuario' => $user, 'datos' => ['name' => $user->name . ' ' . $user->lastname,
                     'ingreso' => Carbon::createFromDate($fecha[0], $fecha[1], $fecha[2])->formatLocalized('%B %d'),
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos(),'empleados'=>$empleados
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos(), 'empleados' => $empleados
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
                 return view('sale.area', ['nombre' => 'Vendedor puñetas']);
             }
-        }else{
+        } else {
             return redirect()->route('area.index');
         }
     }
@@ -1219,7 +1233,7 @@ class UsersController extends Controller
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1245,7 +1259,7 @@ class UsersController extends Controller
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1268,6 +1282,8 @@ class UsersController extends Controller
         return Response::json($respuesta);
     }
 
+    /*Parte de Login y logout (Sirve para ambas partes)*/
+
     public function getProfile(Request $request)
     {
         if ($request->cookie('admin') != null) {
@@ -1281,7 +1297,7 @@ class UsersController extends Controller
                     'photo' => $user->photo,
                     'username' => $user->username,
                     'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1311,7 +1327,7 @@ class UsersController extends Controller
                         'photo' => $user->photo,
                         'username' => $user->username,
                         'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1323,8 +1339,6 @@ class UsersController extends Controller
         }
 
     }
-
-    /*Parte de Login y logout (Sirve para ambas partes)*/
 
     public function showProviderForm(Request $request)
     {
@@ -1343,7 +1357,7 @@ class UsersController extends Controller
                         'photo' => $user->photo,
                         'username' => $user->username,
                         'permiso' => 'Administrador'],
-                    'pedidos'=>$this->dbpedido(),'totalpedidos'=>$this->dbtotalpedidos()
+                    'pedidos' => $this->dbpedido(), 'totalpedidos' => $this->dbtotalpedidos()
                 ]);
             } elseif ($cookie['rol'] == 3) {
                 //vendedor solo que tenga el id 3
@@ -1361,7 +1375,7 @@ class UsersController extends Controller
         try {
             $cookie = null;
             $users = Usuarios::where('email', $request->email)
-                ->orWhere('username',$request->email)
+                ->orWhere('username', $request->email)
                 ->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
             if (Hash::check($request->password, $users->password) && $users->status == "A") {
                 $datos = [
@@ -1404,17 +1418,22 @@ class UsersController extends Controller
             return Response::json($respuesta);
     }
 
+    //Seguirle
+
     public function doCLogin(Request $request)
     {
         try {
             $cookie = null;
             $users = Usuarios::where('email', $request->email)
-                     ->orWhere('username',$request->email)
-                     ->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
+                ->orWhere('username', $request->email)
+                ->firstOrFail(); //buscamos con el email si es vacio entonces mensaje de error
             if (Hash::check($request->password, $users->password) && $users->status == "A") {
                 $datos = [
                     'apikey' => $users->apikey,
                     'rol' => $users->roleid,
+                    'orderid' => 0,
+                    'actual' => 0,
+                    'anterior' => 0
                 ];
 
                 if ($users->roleid == "2" || $users->roleid == "3") {
@@ -1457,6 +1476,8 @@ class UsersController extends Controller
             return Response::json($respuesta);
     }
 
+    //Error de Mail
+
     public function doLogout(Request $request)
     {
         if ($request->query('id') != null) {
@@ -1471,8 +1492,6 @@ class UsersController extends Controller
             }
         }
     }
-
-    //Seguirle
 
     public function confirmEmail(Request $request, $id)
     {
@@ -1512,7 +1531,8 @@ class UsersController extends Controller
 
     }
 
-    //Error de Mail
+    //obtencion de datos
+
     public function errorMail(Request $request, $id)
     {
         //Se envia un correo electronico con el id del usuario para su subida manual
@@ -1534,7 +1554,7 @@ class UsersController extends Controller
         try {
             if ($request->cookie('cliente') != null) {
                 $cookie = Cookie::get('cliente');
-                $users = Usuarios::where('apikey',$cookie['apikey'])->firstOrFail();
+                $users = Usuarios::where('apikey', $cookie['apikey'])->firstOrFail();
                 $user = DB::table('users')
                     ->select('users.name as uname',
                         'users.id',
@@ -1609,7 +1629,7 @@ class UsersController extends Controller
                 //Marca actual (Migaja
                 if ($user == '') {
                     return view('tienda.direccion', ['servicios' => $servicios,
-                        'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,'logueado' => $users]);
+                        'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados, 'logueado' => $users]);
                 }
                 $municipios = DB::table('municipios')->select('*')
                     ->where('estado_id', '=', $user->state)->get();
@@ -1629,7 +1649,8 @@ class UsersController extends Controller
         }
     }
 
-    //obtencion de datos
+    //Actualizacion de datos personales del cliente
+
     public function getMunicipios(Request $request, $estado)
     {
         $municipios = DB::table('municipios')->select('*')
@@ -1651,21 +1672,12 @@ class UsersController extends Controller
             'detail' => 'OK'
         ]);
     }
-    //Actualizacion de datos personales del cliente
-    private function dbpedido(){
-        $pedidos = DB::select('select users.name, orderid,userid,orderdate,orders.status,userA,total,subtotal,taxes,
-                        (select [name] as nombre from users where userA = id) as nombre from orders
-                    inner join users on id = userid',[1]);
-        return $pedidos;
-    }
-    private function  dbtotalpedidos(){
-        return $totalpedidos = DB::table('orders')->select('*')->count();
-    }
 
-    public function getTrabajadores(){
+    public function getTrabajadores()
+    {
         $trabajadores = DB::select("Select name,id from users 
               where not exists (select userA from orders where orders.userA = users.id AND (orders.status = 'D' or orders.status = 'T' or orders.status = 'N')) and
-              users.roleid = 3 ",[1]);
+              users.roleid = 3 ", [1]);
         foreach ($trabajadores as $trabajador)
             $trabajador->id = base64_encode($trabajador->id);
 
@@ -1674,6 +1686,417 @@ class UsersController extends Controller
             'msg' => json_encode($trabajadores),
             'detail' => 'OK'
         ]);
+    }
+
+    /*Manejo de vistas de carrito de compra */
+    public function getCheckout(Request $request)
+    {
+        try {
+            //Menu de marcas
+            $marcas = DB::table('brand')->select('id', 'name')
+                ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                ->take(40)->orderBy('name', 'asc')->get();
+            //Encriptamos los id
+            foreach ($marcas as $marca)
+                $marca->id = base64_encode($marca->id);
+            //Menu de categorias
+            $categorias = DB::table('category')->select('id', 'name')->take(40)
+                ->where('name', 'not like', 'Nota de credito')
+                ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                ->orderBy('name', 'asc')->get();
+            //Encriptar id de categorias
+            foreach ($categorias as $categoria)
+                $categoria->id = base64_encode($categoria->id);
+            //menu de servicios
+            $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+            //Encriptar id de servicios
+            foreach ($servicios as $servicio)
+                $servicio->id = base64_encode($servicio->id);
+            //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
+            if ($request->cookie('cliente') == null) {
+                return view('carrito.checkout', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                #dd($request->cookie('cliente'));
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                return view('tienda.checkout', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+            }
+        } catch (Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
+    public function getDelivery(Request $request)
+    {
+        // ------------------------------------------ MENU ----------------------------------------------------------------------------------------------------
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+        //----------------------------------------------------------- MENU ---------------------------------------------------------------------------------------------
+        $checkpoint="Checkpoint 0";
+        try {
+            if ($request->cookie('cliente') == null) {
+                //dd( ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+                $checkpoint="Checkpoint 1";
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                $checkpoint="Checkpoint 2";
+                $cookie = Cookie::get("cliente");
+                #dd($cookie);
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+
+                if ($cookie['actual'] == 1) { //despues del primer paso
+                    $checkpoint="Checkpoint 3";
+                    $order = Order::find( $cookie['orderid'] );
+                    $detalles = DB::table('order_detail')->where('orderid',$order->id)->get();
+                    $orderdetails = [
+                        'subtotal' => $order->subtotal,
+                        'delivery_cost' => $order->delivery_cost,
+                        'total' => $order->total,
+                        'taxes' => $order->taxes,
+                        'detalles' => $detalles
+                    ];
+
+                    return view('tienda.entrega', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user, 'details'=>$orderdetails]);
+                } else {
+                    $checkpoint="Checkpoint 4";
+                    return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'exception'=>"El paso no es el indicado"]);
+                }
+            }
+        } catch (Exception $e) {
+            dd($checkpoint);
+            abort(500);
+        }
+    }
+
+    public function getSummaty(Request $request){
+
+    }
+
+    public function makeDelivery(Request $request)
+    {
+        //Menu de marcas
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+        try {
+            if (Cookie::get('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                $cookie = Cookie::get("cliente");
+                $cookie['anterior'] = $cookie['actual'];
+                $cookie['actual'] = 1;
+                $order = Order::find($cookie['orderid']);
+                $order->delivery_type = $request->delivery;
+                if ($request->delivery > 2) { //envio
+                    $order->step = 2;
+                } else { //recoger
+                    $order->step = 3;
+                }
+                $order->save();
+
+                if ($order->step > 2) {
+                    $cookie['anterior'] = $cookie['actual'];
+                    $cookie['actual'] = 3;
+                    return redirect()->route('carrito.summary')->withCookie('cliente', $cookie);
+                } else {
+                    $cookie['anterior'] = $cookie['actual'];
+                    $cookie['actual'] = 2;
+                    return redirect()->route('carrito.addresses')->withCookie('cliente', $cookie);
+                }
+            }
+        } catch (Exception $e) {
+            abort(500);
+        }
+    }
+
+    public function destroyDelivery(Request $request)
+    {
+        try {
+
+        } catch (Exception $e) {
+            abort(500);
+        }
+    }
+
+    public function addresses(Request $request)
+    {
+        try {
+            $marcas = DB::table('brand')->select('id', 'name')
+                ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                ->take(40)->orderBy('name', 'asc')->get();
+            //Encriptamos los id
+            foreach ($marcas as $marca)
+                $marca->id = base64_encode($marca->id);
+            //Menu de categorias
+            $categorias = DB::table('category')->select('id', 'name')->take(40)
+                ->where('name', 'not like', 'Nota de credito')
+                ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                ->orderBy('name', 'asc')->get();
+            //Encriptar id de categorias
+            foreach ($categorias as $categoria)
+                $categoria->id = base64_encode($categoria->id);
+            //menu de servicios
+            $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+            //Encriptar id de servicios
+            foreach ($servicios as $servicio)
+                $servicio->id = base64_encode($servicio->id);
+            if (Cookie::get('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                $cookie = Cookie::get("cliente");
+                #dd($cookie);
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                /*Buscamos direccion del usuario*/
+                $address = DB::table('users')
+                    ->select('users.name as name',
+                        'users.lastname as lastname',
+                        'address.city',
+                        'address.state',
+                        'address.country',
+                        'address.street',
+                        'address.street2',
+                        'address.street3',
+                        'address.zipcode',
+                        'address.reference',
+                        'address.streetnumber',
+                        'users.phone')
+                    ->join('address', 'address.userid', '=', 'users.id')
+                    ->join('estados', 'estados.id_estado', '=', 'address.state')
+                    ->join('municipios', 'id_municipio', '=', 'address.country')
+                    ->join('localidades', 'id_localidad', '=', 'address.city')
+                    ->where('apikey', $cookie['apikey'])->first();
+                $estado = Estado::all();
+                //dd("municipio => $address->country , localidad => $address->city");
+                $municipio = Municipio::where("estado_id", $address->state)->get();
+                //dd($municipio);
+                $localidad = Localidad::where("municipio_id", $address->country)->get();
+                //dd($localidad);
+                if ($cookie['actual'] == 2) {
+                    $cookie['anterior'] = $cookie['actual'];
+                    $cookie['actual'] = 3;
+                    $order = Order::find( $cookie['orderid'] );
+                    $detalles = DB::table('order_detail')->where('orderid',$order->id)->get();
+                    $orderdetails = [
+                        'subtotal' => $order->subtotal,
+                        'delivery_cost' => $order->delivery_cost,
+                        'total' => $order->total,
+                        'taxes' => $order->taxes,
+                        'detalles' => $detalles
+                    ];
+                    return view('tienda.envio', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,"address"=>$address, "estado"=> $estado,"municipio"=>$municipio, "localidad"=>$localidad, 'details'=>$orderdetails  ]);
+                } else {
+                    return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                }
+            }
+        } catch (Exception $e) {
+            abort(500);
+        }
+    }
+
+    public function deliveryAddresses(Request $request)
+    {    $marcas = DB::table('brand')->select('id', 'name')
+        ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+        ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+        try {
+            if ($request->cookie('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                $cookie = Cookie::get("cliente");
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                if ($cookie['actual'] == 2) {
+                    dd($cookie);
+                    $order = Order::find( $cookie['orderid'] );
+                    #$detalles = DB::table('order_detail')->where('orderid',$order->id)->get();
+                    $detalles = OrderDetail::where('orderid',$order->id)->get();
+                    $orderdetails = [
+                        'subtotal' => $order->subtotal,
+                        'delivery_cost' => $order->delivery_cost,
+                        'total' => $order->total,
+                        'taxes' => $order->taxes,
+                        'detalles' => $detalles
+                    ];
+                    #dd($detalles[0]->product()->first()->id);
+
+                    return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
+                } else {
+                    return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                }
+            }
+        } catch (Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
+    public function destroyAddresses(Request $request){
+        try{
+            $marcas = DB::table('brand')->select('id', 'name')
+                ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                ->take(40)->orderBy('name', 'asc')->get();
+            //Encriptamos los id
+            foreach ($marcas as $marca)
+                $marca->id = base64_encode($marca->id);
+            //Menu de categorias
+            $categorias = DB::table('category')->select('id', 'name')->take(40)
+                ->where('name', 'not like', 'Nota de credito')
+                ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+                ->orderBy('name', 'asc')->get();
+            //Encriptar id de categorias
+            foreach ($categorias as $categoria)
+                $categoria->id = base64_encode($categoria->id);
+            //menu de servicios
+            $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+            //Encriptar id de servicios
+            foreach ($servicios as $servicio)
+                $servicio->id = base64_encode($servicio->id);
+            if ($request->cookie('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            }else{
+                $cookie = Cookie::get("cliente");
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                if($cookie['actual'] == 1){
+                    return view('tienda.envio',['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios,'logueado' => $user]);
+                } else {
+                    return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                }
+            }
+        }catch(Exception $e){
+            abort(500);
+        }
+    }
+
+    public function summary(Request $request)
+    {
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+        try {
+            if ($request->cookie('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                $cookie = Cookie::get("cliente");
+                #dd($cookie);
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                $order = Order::find( $cookie['orderid'] );
+                #$detalles = DB::table('order_detail')->where('orderid',$order->id)->get();
+                $detalles = OrderDetail::where('orderid',$order->id)->get();
+                $orderdetails = [
+                  'subtotal' => $order->subtotal,
+                  'delivery_cost' => $order->delivery_cost,
+                  'total' => $order->total,
+                  'taxes' => $order->taxes,
+                  'detalles' => $detalles
+                ];
+                return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
+            }
+        } catch (Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
+    public function getFinish(Request $request){
+        $marcas = DB::table('brand')->select('id', 'name')
+            ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->take(40)->orderBy('name', 'asc')->get();
+        //Encriptamos los id
+        foreach ($marcas as $marca)
+            $marca->id = base64_encode($marca->id);
+        //Menu de categorias
+        $categorias = DB::table('category')->select('id', 'name')->take(40)
+            ->where('name', 'not like', 'Nota de credito')
+            ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
+            ->orderBy('name', 'asc')->get();
+        //Encriptar id de categorias
+        foreach ($categorias as $categoria)
+            $categoria->id = base64_encode($categoria->id);
+        //menu de servicios
+        $servicios = DB::table('services')->select('id', 'title', 'img', 'shortdescription', 'longdescription', 'selected')->take(10)->orderBy('title', 'asc')->get();
+        //Encriptar id de servicios
+        foreach ($servicios as $servicio)
+            $servicio->id = base64_encode($servicio->id);
+        try {
+            if ($request->cookie('cliente') == null) {
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+            } else {
+                $cookie = Cookie::get("cliente");
+                $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                $orden = Order::find($cookie['orderid']);
+                $orden->status = 'N';
+                $orden->finished=1;
+                $orden->save();
+                $summary= $cookie['orderid'];
+                return view('tienda.finish', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'summary'=>$summary]);
+        }
+        } catch (Exception $e) {
+            dd($e);
+            abort(500);
+        }
     }
 
     public function getinfocompra($id){
@@ -1693,6 +2116,48 @@ class UsersController extends Controller
                 'detail' => 'OK'
             ]);
         }catch (Exception $e){
+
+        }
+    }
+
+    public function stepBack(Request $request ){
+        try{
+            if (Cookie::get('cliente') == null) {
+                return redirect()->route("tienda.index");
+            }else{ //en caso que si esté todo bien
+                $cookie = Cookie::get('cliente');
+                $cookie['actual'] = $cookie['anterior'];
+                if($cookie['anterior'] == 1 ){ //Se dirije a tipo de envio
+                    $cookie['anterior']= 0;
+                    return redirect()->route('carrito.delivery')->withCookie('cliente',$cookie);
+                }else{  //Se debe dirigir a address 
+                    $cookie['anterior']= 1;
+                    return redirect()->route('carrito.addresses')->withCookie('cliente',$cookie);
+                }
+            }
+        }catch(Exception $e){
+            dd($e);
+            abort(500);
+        }
+    }
+
+    public function goStep(Request $request, $step){
+        try {
+            if (Cookie::get('cliente') == null) {
+                return redirect()->route("tienda.index");
+            } else { //en caso que si esté todo bien
+                $cookie = Cookie::get('cliente');
+                if ($step == 1) {
+                    $cookie['anterior']=0;
+                    $cookie['actual']=$step;
+                    return redirect()->route('carrito.delivery')->withCookie('cliente',$cookie);
+                } else if ($step == 2) {
+                    $cookie['anterior']=1;
+                    $cookie['actual']=$step;
+                    return redirect()->route('carrito.addresses')->withCookie('cliente',$cookie);
+                }
+            }
+        }catch(Exception $e){
 
         }
     }

@@ -4,10 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Pedido extends Model
+class Order extends Model
 {
     protected $table = "orders";
-    public $timestamps = false;
     protected $fillable = [
         'status',
         'userA',

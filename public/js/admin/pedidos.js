@@ -6,7 +6,7 @@ $(document).ready(function(){
         'scrollY':'600px',
         "processing": true,
         "serverSide": true,
-        "ajax": document.location.protocol+'//'+document.location.host  +'/area/resource/pedidos',
+        "ajax": document.location.protocol+'//'+document.location.host+'/area/resource/pedidos',
         "columnDefs": [
             { width: "20%", "targets": [0,3,6]},
             { width: "10%", "targets": [2,5]},
@@ -254,7 +254,7 @@ function AgregarCosto() {
 
 function Asignar(id){
     $.ajax({
-        url: document.location.protocol + '//' + document.location.host+"/HerramientasTepic/public/area/getTrabajadores",
+        url: document.location.protocol + '//' + document.location.host+"/area/getTrabajadores",
         type: 'GET'
     }).done(function (response) {
         if (response.code == 200) {
@@ -443,7 +443,7 @@ function Cancelar(id) {
 function showDetail(id){
     var $total;
     $.ajax({
-        url: document.location.protocol + '//' + document.location.host+"/HerramientasTepic/public/area"+"/pedidos/detail/"+id,
+        url: document.location.protocol + '//' + document.location.host+"/area/pedidos/detail/"+id,
         type: 'GET'
     }).done(function (response) {
         if (response.code == 200) {
@@ -466,7 +466,7 @@ function showDetail(id){
                     $('<tr>').attr('role','row').appendTo('#cuerpodetalles');
                 $('<td>', {text: row.producto}).attr('class','info').appendTo('#cuerpodetalles');
                 $('<td>', {text: precio}).attr('class','info').appendTo('#cuerpodetalles');
-                $total = row.total;
+                $total = row.subtotal;
             });
             $('#celtotal').append('$'+$total);
             $('#moddetalle').modal('show');

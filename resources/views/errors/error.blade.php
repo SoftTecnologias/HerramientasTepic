@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -42,8 +41,8 @@
     <link rel="apple-touch-icon" sizes="144x144" href="img/apple-touch-icon-144x144.png"/>
     <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icon-152x152.png"/>
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
-    @yield('styles')
-    <!-- owl carousel css -->
+@yield('styles')
+<!-- owl carousel css -->
     {{ Html::style('css/tienda/owl.carousel.css')}}
     {{ Html::style('css/tienda/owl.theme.css')}}
 
@@ -63,13 +62,12 @@
     @else
         @include('tienda.sessionmenu')
     @endif
+
     <!-- *** TOP END *** -->
 
         <!-- *** NAVBAR ***
 _________________________________________________________ -->
-    @if(isset($marcas))
-        @include('tienda.menu',['marcas'=>$marcas,'categorias'=>$categorias,'servicios'=>$servicios])
-    @endif
+
 
     <!-- *** NAVBAR END *** -->
 
@@ -78,45 +76,10 @@ _________________________________________________________ -->
     <!-- *** LOGIN MODAL ***
 _________________________________________________________ -->
 
-    <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
 
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="Login">Inicio de Sesión</h4>
-                </div>
-                <div class="modal-body">
-                    <form >
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="email" placeholder="Correo Electronico">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" class="form-control" id="password" placeholder="Contraseña">
-                        </div>
 
-                        <p class="text-center">
-                            <a class="btn btn-template-main" id="btnLogin"><i class="fa fa-sign-in"></i> Iniciar Sesión</a>
-                        </p>
+    @yield('content')
 
-                    </form>
-
-                    <p class="text-center text-muted">¿Aun no estás registrado?</p>
-                    <p class="text-center text-muted"><a href="{{route('tienda.registro')}}"><strong>Registrarse ahora</strong></a>!
-                        Con un registro rapido, puedes iniciar a comprar de inmediato!
-                    </p>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- *** LOGIN MODAL END *** -->
-
-@yield('content')
-    @if(isset($servicios))
-        @include('tienda.footer',['servicios'=>$servicios])
-    @endif
 
 </div>
 <!-- /#all -->

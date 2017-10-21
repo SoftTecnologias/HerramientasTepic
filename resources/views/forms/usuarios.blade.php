@@ -109,6 +109,7 @@
                         <form class="form-horizontal" enctype="multipart/form-data" id="userForm">
                             <fieldset>
                                 {{csrf_field()}}
+                                {{ method_field('POST') }}
                                 <input type="hidden" name="userid" id="userid">
                                 <!-- Text input-->
                                 <div class="form-group">

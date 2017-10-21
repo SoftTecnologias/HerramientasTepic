@@ -34,7 +34,7 @@ _________________________________________________________ -->
         <!-- *** HOMEPAGE CAROUSEL END *** -->
     </section>
 
-    <section class="bar background-white">
+    <section class="bar background-white" >
         <div class="container">
             <div class="col-md-12">
                 <div class="heading text-center">
@@ -44,7 +44,7 @@ _________________________________________________________ -->
             <div class="row">
                 <div class="col-md-3 col-md-offset-9">
                     <!-- Controls -->
-                    <div class="controls pull-right hidden-xs">
+                    <div class="controls pull-right ">
                         <a class="left fa fa-chevron-left btn btn-primary" href="#carousel-productos"
                            data-slide="prev"></a><a class="right fa fa-chevron-right btn btn-primary"
                                                     href="#carousel-productos"
@@ -52,7 +52,7 @@ _________________________________________________________ -->
                     </div>
                 </div>
             </div>
-            <div id="carousel-productos" class="carousel slide hidden-xs" data-ride="carousel">
+            <div id="carousel-productos" class="carousel slide " data-ride="carousel">
                 <!-- Wrapper for slides -->
                 <div class="carousel-inner">
                     <?php $items = 0; $indice = 0?>
@@ -75,7 +75,7 @@ _________________________________________________________ -->
                                                         </h5>
                                                         <p>{{$producto->shortdescription}}</p>
                                                         <h5 class="price-text-color">
-                                                            {{isset($producto->price)?  "$ ".number_format($producto->price, 2,".",",")." ".$producto->currency." " : "Inicia sesión para verlos precios"}}</h5>
+                                                            {{isset($producto->price)?  "$ ".number_format($producto->price, 2,".",",")." ".$producto->currency." " : "Inicia sesión para ver los precios"}}</h5>
                                                     </div>
                                                 </div>
                                                 <div class="separator clear-left">

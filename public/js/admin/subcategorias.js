@@ -11,7 +11,7 @@ $(function(){
     $('#subcategoryTable').DataTable({
         "processing": true,
         "serverSide": true,
-        'ajax': document.location.protocol+'//'+document.location.host  +'/area/resource/subcategorias',
+        'ajax': document.location.protocol+'//'+document.location.host+'/area/resource/subcategorias',
         'columns':[
             {
                 data:'name'
@@ -84,7 +84,7 @@ function newSubcategory(){
  var nombre = $('#name').val();
  var catid = $('#categoryid').val()
     $.ajax({
-     url:document.location.protocol+'//'+document.location.host  +'/area/resource/subcategorias',
+     url:document.location.protocol+'//'+document.location.host+'/area/resource/subcategorias',
      type:'POST',
      data:{name:nombre,categoryid:catid},
      headers: {
@@ -107,7 +107,7 @@ function newSubcategory(){
 function updateSubcategory(id){
     $('#subcategoryid').val(id)
     $.ajax({
-        url:document.location.protocol+'//'+document.location.host  +"/area/resource/subcategorias/"+id,
+        url:document.location.protocol+'//'+document.location.host+"/area/resource/subcategorias/"+id,
         type:"PUT",
         data:{
             name: $("#name").val(),
@@ -142,7 +142,7 @@ function deleteSubcategory(id){
         confirmButtonText: 'Si, deseo eliminarlo!',
         cancelButtonText: "Lo pensaré"
     }).then(function () {
-        ruta =document.location.protocol+'//'+document.location.host +'/area/resource/subcategorias/'+id;
+        ruta =document.location.protocol+'//'+document.location.host+'/area/resource/subcategorias/'+id;
         $.ajax({
             url:ruta,
             type:'delete',
