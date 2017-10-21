@@ -395,28 +395,48 @@ function Cancelar(id) {
         confirmButtonText: 'Deseo Continuar',
         cancelButtonText: "Lo pensaré"
     }).then(function(){
-        console.log(pedidoid);
-        $.ajax({
-            url:document.location.protocol+'//'+document.location.host+'/area/pedidos/accion/'+id,
-            type:"POST",
-            data: {'estado':'C'},
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        }).done(function(json){
-            if(json.code == 200) {
-                swal("Realizado", json.msg, json.detail).then(function () {
-                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
-                });
-            }else{
+        swal({
+            title: 'Motivo de Cancelacion',
+            input: 'text',
+            showCancelButton: true,
+            confirmButtonText: 'Enviar',
+            showLoaderOnConfirm: true,
+            preConfirm: function (motivo) {
+                return new Promise(function (resolve, reject) {
+                    setTimeout(function() {
+                        if (motivo === '') {
+                            reject('Escriba un Motivo')
+                        } else {
+                            resolve()
+                        }
+                    }, 2000)
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (motivo) {
+            $.ajax({
+                url:document.location.protocol+'//'+document.location.host+'/area/pedidos/accion/'+id,
+                type:"POST",
+                data: {'estado':'C', 'motivo':motivo},
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            }).done(function(json){
+                if(json.code == 200) {
+                    swal("Realizado", json.msg, json.detail).then(function () {
+                        $('#tblPedidos').dataTable().api().ajax.reload(null,false);
+                    });
+                }else{
 
-                swal("Error",json.msg,json.detail).then(function () {
-                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
-                });
-            }
-        }).fail(function(){
-            swal("Error","Tuvimos un problema de conexion","error");
-        });
+                    swal("Error",json.msg,json.detail).then(function () {
+                        $('#tblPedidos').dataTable().api().ajax.reload(null,false);
+                    });
+                }
+            }).fail(function(){
+                swal("Error","Tuvimos un problema de conexion","error");
+            });
+        })
+
     });
 }
 
