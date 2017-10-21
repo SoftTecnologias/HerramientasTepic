@@ -195,8 +195,7 @@ function updateBanner(id){
         if(json.code == 200) {
             swal("Realizado", json.msg, json.detail);
             $('#modalbanner').modal("hide");
-            location.reload(3);
-            //$('#tblservicios').dataTable().api().ajax.reload(null,false);
+            $('#tblBanner').dataTable().api().ajax.reload(null,false);
             reset();
         }else{
 

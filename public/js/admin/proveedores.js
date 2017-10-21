@@ -197,8 +197,7 @@ function updateProvider(id){
         if(json.code == 200) {
             swal("Realizado", json.msg, json.detail);
             $('#modalServices').modal("hide");
-            location.reload(3);
-            //$('#tblservicios').dataTable().api().ajax.reload(null,false);
+            $('#providerTable').dataTable().api().ajax.reload(null,false);
             reset();
         }else{
 
@@ -230,7 +229,7 @@ function deleteProvider(id){
         }).done(function(json){
             if(json.code==200) {
                 swal("Realizado", json.msg, json.detail);
-                $('#tblServicios').dataTable().api().ajax.reload(null,false);
+                $('#providerTable').dataTable().api().ajax.reload(null,false);
             }else{
                 swal("Error", json.msg, json.detail);
             }

@@ -150,12 +150,12 @@ $(document).ready(function(){
             }).done(function(json){
                 if(json.code == 200) {
                     swal("Realizado", json.msg, json.detail).then(function () {
-                        location.reload();
-                    });
+                        $('#tblPedidos').dataTable().api().ajax.reload(null,false);
+                        });
                 }else{
 
                     swal("Error",json.msg,json.detail).then(function () {
-                        location.reload();
+                        $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                     });
                 }
             }).fail(function(){
@@ -298,12 +298,12 @@ function Despachar(id) {
         }).done(function(json){
             if(json.code == 200) {
                 swal("Realizado", json.msg, json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }else{
 
                 swal("Error",json.msg,json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }
         }).fail(function(){
@@ -334,12 +334,12 @@ function Enviado(id) {
         }).done(function(json){
             if(json.code == 200) {
                 swal("Realizado", json.msg, json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }else{
 
                 swal("Error",json.msg,json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }
         }).fail(function(){
@@ -370,12 +370,12 @@ function recibido(id) {
         }).done(function(json){
             if(json.code == 200) {
                 swal("Realizado", json.msg, json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }else{
 
                 swal("Error",json.msg,json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }
         }).fail(function(){
@@ -406,12 +406,12 @@ function Cancelar(id) {
         }).done(function(json){
             if(json.code == 200) {
                 swal("Realizado", json.msg, json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }else{
 
                 swal("Error",json.msg,json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }
         }).fail(function(){
