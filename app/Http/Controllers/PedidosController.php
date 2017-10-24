@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\canceldetail;
 use App\PrecioEnvio;
 use Illuminate\Http\Request;
 
@@ -131,6 +132,14 @@ class PedidosController extends Controller
             DB::table('orders')
                 ->where('id', $id)
                 ->update(['status' => $request->estado]);
+            if($request->estado == 'C'){
+                $canceldetail = new canceldetail();
+
+                $canceldetail->ordeird = $id;
+                $canceldetail->detalle = $request->motivo;
+
+                $canceldetail->save();
+            }
 
             $respuesta = ["code"=>200, "msg"=>"El Pedido Cambio a Despachado","detail"=>"success"];
         }catch(Exception $e){

@@ -250,17 +250,19 @@
                         <th class="text-center">Fecha</th>
                         <th class="text-center">SubTotal</th>
                         <th class="text-center">Total</th>
+                            <th class="text-center">Estado</th>
                         </trow>
                     </thead>
                     <tbody>
                     @foreach($compras as $compra)
                     <tr>
-                        <td>{{$compra->saleid}}</td>
-                        <td>{{$compra->saledate}}</td>
+                        <td>{{$compra->orderid}}</td>
+                        <td>{{$compra->orderdate}}</td>
                         <td>{{$compra->subtotal}}</td>
                         <td>{{$compra->total}}</td>
+                        <td>{{$compra->status}}</td>
                         <td>
-                            <a class="btn btn-warning" onclick="infocompra('{{$compra->saleid}}')" id="info{{$compra->saleid}}">Info</a>
+                            <a class="btn btn-warning" onclick="infocompra('{{$compra->orderid}}')" id="info{{$compra->orderid}}">Info</a>
                         </td>
                     </tr>
                     @endforeach

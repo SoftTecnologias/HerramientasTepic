@@ -1582,13 +1582,29 @@ class UsersController extends Controller
                     ->join('localidades', 'id_localidad', '=', 'address.city')
                     ->where('apikey', $cookie['apikey'])->first();
 
-                $compras = DB::table("sale")
-                    ->select('saleid','saledate','total','subtotal')
+                $compras = DB::table("orders")
+                    ->select('orderid','orderdate','total','subtotal','status')
                     ->where('userid','=',$users->id)
                     -> get();
+
                 foreach ($compras as $compra) {
-                    $compra->saleid = base64_encode($compra->saleid);
-                    $compra->saledate = date($compra->saledate);
+                    $compra->orderid = base64_encode($compra->orderid);
+                    $compra->orderdate = date($compra->orderdate);
+                    switch ($compra->status){
+                        case 'R': $compra->status = 'Recibido';
+                            break;
+                        case 'T': $compra->status = 'Tomado';
+                            break;
+                        case 'D': $compra->status = 'Despachado';
+                            break;
+                        case 'E': $compra->status = 'Enviado';
+                            break;
+                        case 'N': $compra->status = 'No Asignado';
+                            break;
+                        case 'C': $compra->status = 'Cancelado';
+                            break;
+                    }
+
                 }
 
                 $estados = Estado::all();
@@ -2086,13 +2102,13 @@ class UsersController extends Controller
     public function getinfocompra($id){
         try{
             $id = base64_decode($id);
-            $icompra = DB::table('sale as s')
-                ->select('p.name as producto','b.name as marca','sl.quantity as cantidad',
-                    'sl.saleprice as preciounitario','p.currency as divisa')
-                ->join('salesline as sl','sl.saleid','=','s.saleid')
+            $icompra = DB::table('orders as s')
+                ->select('p.name as producto','b.name as marca','sl.qty as cantidad',
+                    'sl.price as preciounitario','p.currency as divisa')
+                ->join('order_detail as sl','sl.orderid','=','s.orderid')
                 ->join('product as p','p.id','=','sl.productid')
                 ->join('brand as b','b.id','=','p.brandid')
-                ->where('s.saleid','=',$id)
+                ->where('s.orderid','=',$id)
                 ->get();
             return Response::json([
                 'code' => 200,
