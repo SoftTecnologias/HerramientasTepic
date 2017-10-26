@@ -1583,10 +1583,9 @@ class UsersController extends Controller
                     ->where('apikey', $cookie['apikey'])->first();
 
                 $compras = DB::table("orders")
-                    ->select('orderid','orderdate','total','subtotal','status')
+                    ->select('id','total','subtotal','status')
                     ->where('userid','=',$users->id)
                     -> get();
-
                 foreach ($compras as $compra) {
                     $compra->orderid = base64_encode($compra->orderid);
                     $compra->orderdate = date($compra->orderdate);
@@ -1626,13 +1625,14 @@ class UsersController extends Controller
                 $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
                 foreach ($servicios as $servicio)
                     $servicio->id = base64_encode($servicio->id);
-                //Marca actual (Migaja
-                if ($user == '') {
+                if ($user == null) {
                     return view('tienda.direccion', ['servicios' => $servicios,
                         'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados, 'logueado' => $users]);
                 }
+                //Marca actual (Migaja
                 $municipios = DB::table('municipios')->select('*')
                     ->where('estado_id', '=', $user->state)->get();
+
                 $localidades = DB::table('localidades')->select('nombre', 'municipio_id', 'id_localidad')
                     ->where('municipio_id', '=', $user->country)->get();
                 $user->id = base64_encode($user->id);

@@ -16,7 +16,7 @@ class TableDetalleCancelacion extends Migration
             $table->integer('orderid');
             $table->longText('detalle');
 
-            $table->foreign('orderid')->references('orderid')->on('orders');
+            $table->foreign('orderid')->references('id')->on('orders');
         });
     }
 

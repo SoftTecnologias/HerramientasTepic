@@ -183,10 +183,10 @@
                                         <tbody id="cuerpodetalles">
 
                                         </tbody>
-                                        <tfoot>
-                                            <tr class="success">
+                                        <tfoot class="success" id="celtotal">
+                                            <tr class="success"  >
                                                 <td style="font-weight: bold">Total</td>
-                                                <td style="font-weight: bold" id="celtotal"></td>
+                                                <td style="font-weight: bold"></td>
                                             </tr>
                                         </tfoot>
                                     </table>

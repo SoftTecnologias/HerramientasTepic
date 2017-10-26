@@ -465,10 +465,14 @@ function showDetail(id){
                     }
                     $('<tr>').attr('role','row').appendTo('#cuerpodetalles');
                 $('<td>', {text: row.producto}).attr('class','info').appendTo('#cuerpodetalles');
-                $('<td>', {text: precio}).attr('class','info').appendTo('#cuerpodetalles');
+                $('<td>', {text: '$'+precio}).attr('class','info').appendTo('#cuerpodetalles');
                 $total = row.subtotal;
             });
-            $('#celtotal').append('$'+$total);
+            $('#celtotal td').remove();
+            $('#celtotal tr').remove();
+            $('<tr>').attr('role','row').appendTo('#celtotal');
+            $('<td>', {text:'algo'}).attr('class','success').appendTo('#celtotal');
+            $('<td>', {text:'sk'}).attr('class','success').appendTo('#celtotal');
             $('#moddetalle').modal('show');
         }
     }).fail(function () {
