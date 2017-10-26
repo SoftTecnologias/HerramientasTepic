@@ -1760,7 +1760,6 @@ class UsersController extends Controller
                 $cookie = Cookie::get("cliente");
                 #dd($cookie);
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-
                 if ($cookie['actual'] == 1) { //despues del primer paso
                     $checkpoint="Checkpoint 3";
                     $order = Order::find( $cookie['orderid'] );
@@ -1853,8 +1852,7 @@ class UsersController extends Controller
 
     public function addresses(Request $request)
     {
-        try {
-            $marcas = DB::table('brand')->select('id', 'name')
+        $marcas = DB::table('brand')->select('id', 'name')
                 ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
                 ->take(40)->orderBy('name', 'asc')->get();
             //Encriptamos los id
@@ -1873,7 +1871,11 @@ class UsersController extends Controller
             //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
-            if (Cookie::get('cliente') == null) {
+        try {
+            
+            #dd($request->cookie('cliente'));
+            if ($request->cookie('cliente') == null) {
+                dd("no quedo");
                 return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 $cookie = Cookie::get("cliente");
@@ -1898,6 +1900,7 @@ class UsersController extends Controller
                     ->join('municipios', 'id_municipio', '=', 'address.country')
                     ->join('localidades', 'id_localidad', '=', 'address.city')
                     ->where('apikey', $cookie['apikey'])->first();
+                    #dd($address);
                 $estado = Estado::all();
                 //dd("municipio => $address->country , localidad => $address->city");
                 $municipio = Municipio::where("estado_id", $address->state)->get();
@@ -1918,10 +1921,12 @@ class UsersController extends Controller
                     ];
                     return view('tienda.envio', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,"address"=>$address, "estado"=> $estado,"municipio"=>$municipio, "localidad"=>$localidad, 'details'=>$orderdetails  ]);
                 } else {
+                    dd($cookie);
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
                 }
             }
         } catch (Exception $e) {
+            dd($e);
             abort(500);
         }
     }
@@ -1968,6 +1973,7 @@ class UsersController extends Controller
 
                     return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
                 } else {
+                    dd($cookie);
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
                 }
             }

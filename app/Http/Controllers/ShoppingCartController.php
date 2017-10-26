@@ -257,7 +257,7 @@ class ShoppingCartController extends Controller
             $servicio->id = base64_encode($servicio->id);
         try {
 
-            if (Cookie::get('cliente') == null) {
+            if ($request->cookie('cliente') == null) {
                 return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 $cookie = Cookie::get("cliente");
@@ -269,9 +269,10 @@ class ShoppingCartController extends Controller
                     $order->step = 3;
                 }
                 $order->save();
-
                 if ($order->step > 2) {
+                    dd($cookie);
                     $cookie['anterior'] = $cookie['actual'];
+                    dd($cookie);
                     $cookie['actual'] = 3;
                     return redirect()->route('carrito.summary')->withCookie('cliente', $cookie);
                 } else {
@@ -281,6 +282,7 @@ class ShoppingCartController extends Controller
                 }
             }
         } catch (Exception $e) {
+            dd($e);
             abort(500);
         }
     }
