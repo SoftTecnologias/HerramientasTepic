@@ -1583,12 +1583,12 @@ class UsersController extends Controller
                     ->where('apikey', $cookie['apikey'])->first();
 
                 $compras = DB::table("orders")
-                    ->select('id','total','subtotal','status')
+                    ->select('id','total','subtotal','status','created_at')
                     ->where('userid','=',$users->id)
                     -> get();
+
                 foreach ($compras as $compra) {
-                    $compra->orderid = base64_encode($compra->orderid);
-                    $compra->orderdate = date($compra->orderdate);
+                    $compra->id = base64_encode($compra->id);
                     switch ($compra->status){
                         case 'R': $compra->status = 'Recibido';
                             break;
@@ -1607,6 +1607,7 @@ class UsersController extends Controller
                 }
 
                 $estados = Estado::all();
+
                 $marcas = DB::table('brand')->select('id', 'name')
                     ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
                     ->take(40)->orderBy('name', 'asc')->get();
@@ -1625,7 +1626,9 @@ class UsersController extends Controller
                 $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
                 foreach ($servicios as $servicio)
                     $servicio->id = base64_encode($servicio->id);
+
                 if ($user == null) {
+
                     return view('tienda.direccion', ['servicios' => $servicios,
                         'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados, 'logueado' => $users]);
                 }
@@ -1635,6 +1638,7 @@ class UsersController extends Controller
 
                 $localidades = DB::table('localidades')->select('nombre', 'municipio_id', 'id_localidad')
                     ->where('municipio_id', '=', $user->country)->get();
+
                 $user->id = base64_encode($user->id);
                 return view('tienda.profile', ['user' => $user, 'servicios' => $servicios,
                     'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
