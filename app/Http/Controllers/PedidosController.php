@@ -135,7 +135,7 @@ class PedidosController extends Controller
             if($request->estado == 'C'){
                 $canceldetail = new canceldetail();
 
-                $canceldetail->ordeird = $id;
+                $canceldetail->orderid = $id;
                 $canceldetail->detalle = $request->motivo;
 
                 $canceldetail->save();
