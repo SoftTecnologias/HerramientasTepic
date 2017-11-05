@@ -1587,7 +1587,7 @@ class UsersController extends Controller
                     ->where('userid','=',$users->id)
                     -> get();
                 foreach ($compras as $compra) {
-                    $compra->orderid = base64_encode($compra->orderid);
+                    $compra->id = base64_encode($compra->id);
                     $compra->orderdate = date($compra->orderdate);
                     switch ($compra->status){
                         case 'R': $compra->status = 'Recibido';
@@ -2105,10 +2105,10 @@ class UsersController extends Controller
             $icompra = DB::table('orders as s')
                 ->select('p.name as producto','b.name as marca','sl.qty as cantidad',
                     'sl.price as preciounitario','p.currency as divisa')
-                ->join('order_detail as sl','sl.orderid','=','s.orderid')
+                ->join('order_detail as sl','sl.orderid','=','s.id')
                 ->join('product as p','p.id','=','sl.productid')
                 ->join('brand as b','b.id','=','p.brandid')
-                ->where('s.orderid','=',$id)
+                ->where('s.id','=',$id)
                 ->get();
             return Response::json([
                 'code' => 200,

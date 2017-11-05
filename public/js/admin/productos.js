@@ -35,98 +35,46 @@ $(function(){
     });
     //fin de dependencia
     //*
-    var table= $('#tblProducts').DataTable({
-        'scrollX':true,
-        'scrollY':'600px',
-        "processing": true,
-        "serverSide": true,
-        "ajax": document.location.protocol+'//'+document.location.host+'/area/resource/productos',
-        'createdRow':function(row,data,index){
-            if(data.stock <= data.reorderpoint ){
-              $('td', row).addClass("danger");
-            }else {
-                if (parseInt(data.stock) > parseInt(data.reorderpoint)) {
-                    $('td', row).addClass("success");
-                }
+    llenarTabla();
+    $('#conimagen').on('change',function () {
+        if($(this).is(':checked')){
+            var filtro;
+            if($('#sinimagen').is(':checked')){
+                filtro = 'all'
+            }else{
+                filtro = 'con';
             }
-        },
-        columns: [
-            {data: function (row) {
-                str = "";
-                str = "<div align='center' >";
-                str += " <img class=\"imagen\" src='../img/productos/" + row['photo'] + "' alt='" + row['id'] + "' style='height: 50px; width: 150px;'>";
-                str += "</div>";
-                return str;
-            }},
-            {data: 'code'},
-            {data: 'name'},
-            {data: 'marca'},
-            {data: 'categoria'},
-            {data: 'subcategoria'},
-            {
-                data: function (row) {
-                    if (row['quotation'] == 1) {
-                        str = "";
-                        srt = "<div align='left'>";
-                        str += "<p class='price'>Precio por Cotización</p> </div>";
-                        return str;
-                    } else {
-                        str = "";
-                        srt = "<div align='left'>";
-                        str += "<p class='price'>$" + formato(row['price1']) + row['currency'] + "</p> </div>";
-                        return str;
-                    }
-                }
-            },
-            {data: function (row){
-                if (row['quotation'] == 1) {
-                    str = "";
-                    srt = "<div align='left'>";
-                    str += "<p class='price'>Precio por Cotización</p> </div>";
-                    return str;
-                } else {
-                    str = "";
-                    srt = "<div align='left'>";
-                    str += "<p class='price'>$" + formato(row['price2']) + row['currency'] + "</p> </div>";
-                    return str;
-                }
-            }},
-            {data: function (row) {
-                console.log(row);
-                str = "<div align='center'>";
-                str +=" <button id='btnEditar"+row['id']+
-                    "' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("
-                    +"\""+row['id']+"\", "
-                    +"\""+row['categoryid']+"\", "
-                     + "\""+encodeURI(row['code']) + "\","
-                     + "\""+row['currency'] + "\","
-                     +"\""+encodeURI(row['longdescription']) + "\","
-                     + row['brandid']+", \""
-                     +encodeURI(row['name'])+"\","
-                    +" \""+row['photo'] +"\","
-                    +" \""+row['photo2'] +"\","
-                    +"\""+row['photo3'] +"\","
-                     +row['price1'] +","
-                     +row['price2'] +","
-                     +row['price3'] +","
-                     +row['price4'] +","
-                     +row['price5'] +","
-                     +row['reorderpoint'] +","
-                     +"\""+encodeURI(row['shortdescription']) +"\","
-                     +row['stock'] +","
-                     +row['subcategoryid']+")'><i class='glyphicon glyphicon-edit'></i></button>";
-                str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteProduct(" +"\""+ row['id']+"\"" + ")'><i class='fa fa-trash-o'></i></button>";
-
-                 str += (row['show'] ==1) ?  "<input type='checkbox' id='check"+row['id']+"' name='check' checked onchange='verMiniatura("+"\""+row['id']+"\""+")'>Mostrar":
-                    "<input type='checkbox' id='check"+row['id']+
-                    "' name='check' onchange='verMiniatura("+"\""+row['id']+"\""+")'>Mostrar";
-                str += "</div>";
-                return str;
-            }}
-        ],
-        'language': {
-            url:'https://cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json',
-            sLoadingRecords : '<span style="width:100%;"><img src="http://www.snacklocal.com/images/ajaxload.gif"></span>'
+            $('#tblProducts').dataTable().fnDestroy();
+            rellenarTabla(filtro);
+            $('#tblProducts').dataTable().api().ajax.reload(null,false);
+        }else{
+            filtro = 'sin';
+            $('#tblProducts').dataTable().fnDestroy();
+            rellenarTabla(filtro);
+            $('#tblProducts').dataTable().api().ajax.reload(null,false);
+            $('#sinimagen').prop('checked',true)
+        }
+    });
+    $('#sinimagen').on('change',function () {
+        if($(this).is(':checked')){
+            var filtro;
+            console.log(filtro);
+            if($('#conimagen').is(':checked')){
+                filtro = 'all'
+                console.log(filtro);
+            }else{
+                filtro = 'sin';
+                console.log(filtro);
+            }
+            $('#tblProducts').dataTable().fnDestroy();
+            rellenarTabla(filtro);
+            $('#tblProducts').dataTable().api().ajax.reload(null,false);
+        }else{
+            $('#conimagen').prop('checked',true);
+                filtro = 'con';
+            $('#tblProducts').dataTable().fnDestroy();
+            rellenarTabla(filtro);
+            $('#tblProducts').dataTable().api().ajax.reload(null,false);
         }
     });
     // Apply the search
@@ -471,5 +419,205 @@ function verMiniatura(id) {
         }).fail(function(response){
             swal("Error", "tuvimos un problema", "warning");
         });
+    });
+}
+
+function llenarTabla() {
+    $('#tblProducts').DataTable({
+        'scrollX':true,
+        'scrollY':'600px',
+        "processing": true,
+        "serverSide": true,
+        "ajax":{
+            url:document.location.protocol+'//'+document.location.host+'/area/resource/productos',
+            type:"get"
+        } ,
+        'createdRow':function(row,data,index){
+            if(data.stock <= data.reorderpoint ){
+                $('td', row).addClass("danger");
+            }else {
+                if (parseInt(data.stock) > parseInt(data.reorderpoint)) {
+                    $('td', row).addClass("success");
+                }
+            }
+        },
+        columns: [
+            {data: function (row) {
+                str = "";
+                str = "<div align='center' >";
+                str += " <img class=\"imagen\" src='../img/productos/" + row['photo'] + "' alt='" + row['id'] + "' style='height: 50px; width: 150px;'>";
+                str += "</div>";
+                return str;
+            }},
+            {data: 'code'},
+            {data: 'name'},
+            {data: 'marca'},
+            {data: 'categoria'},
+            {data: 'subcategoria'},
+            {
+                data: function (row) {
+                    if (row['quotation'] == 1) {
+                        str = "";
+                        srt = "<div align='left'>";
+                        str += "<p class='price'>Precio por Cotización</p> </div>";
+                        return str;
+                    } else {
+                        str = "";
+                        srt = "<div align='left'>";
+                        str += "<p class='price'>$" + formato(row['price1']) + row['currency'] + "</p> </div>";
+                        return str;
+                    }
+                }
+            },
+            {data: function (row){
+                if (row['quotation'] == 1) {
+                    str = "";
+                    srt = "<div align='left'>";
+                    str += "<p class='price'>Precio por Cotización</p> </div>";
+                    return str;
+                } else {
+                    str = "";
+                    srt = "<div align='left'>";
+                    str += "<p class='price'>$" + formato(row['price2']) + row['currency'] + "</p> </div>";
+                    return str;
+                }
+            }},
+            {data: function (row) {
+                console.log(row);
+                str = "<div align='center'>";
+                str +=" <button id='btnEditar"+row['id']+
+                    "' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("
+                    +"\""+row['id']+"\", "
+                    +"\""+row['categoryid']+"\", "
+                    + "\""+encodeURI(row['code']) + "\","
+                    + "\""+row['currency'] + "\","
+                    +"\""+encodeURI(row['longdescription']) + "\","
+                    + row['brandid']+", \""
+                    +encodeURI(row['name'])+"\","
+                    +" \""+row['photo'] +"\","
+                    +" \""+row['photo2'] +"\","
+                    +"\""+row['photo3'] +"\","
+                    +row['price1'] +","
+                    +row['price2'] +","
+                    +row['price3'] +","
+                    +row['price4'] +","
+                    +row['price5'] +","
+                    +row['reorderpoint'] +","
+                    +"\""+encodeURI(row['shortdescription']) +"\","
+                    +row['stock'] +","
+                    +row['subcategoryid']+")'><i class='glyphicon glyphicon-edit'></i></button>";
+                str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteProduct(" +"\""+ row['id']+"\"" + ")'><i class='fa fa-trash-o'></i></button>";
+
+                str += (row['show'] ==1) ?  "<input type='checkbox' id='check"+row['id']+"' name='check' checked onchange='verMiniatura("+"\""+row['id']+"\""+")'>Mostrar":
+                    "<input type='checkbox' id='check"+row['id']+
+                    "' name='check' onchange='verMiniatura("+"\""+row['id']+"\""+")'>Mostrar";
+                str += "</div>";
+                return str;
+            }}
+        ],
+        'language': {
+            url:'https://cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json',
+            sLoadingRecords : '<span style="width:100%;"><img src="http://www.snacklocal.com/images/ajaxload.gif"></span>'
+        }
+    });
+}
+
+function rellenarTabla(filtro) {
+    $('#tblProducts').DataTable({
+        'scrollX':true,
+        'scrollY':'600px',
+        "processing": true,
+        "serverSide": true,
+        "ajax":{
+            url:document.location.protocol+'//'+document.location.host+'/area/productos/'+filtro,
+            type:"get"
+        } ,
+        'createdRow':function(row,data,index){
+            if(data.stock <= data.reorderpoint ){
+                $('td', row).addClass("danger");
+            }else {
+                if (parseInt(data.stock) > parseInt(data.reorderpoint)) {
+                    $('td', row).addClass("success");
+                }
+            }
+        },
+        columns: [
+            {data: function (row) {
+                str = "";
+                str = "<div align='center' >";
+                str += " <img class=\"imagen\" src='../img/productos/" + row['photo'] + "' alt='" + row['id'] + "' style='height: 50px; width: 150px;'>";
+                str += "</div>";
+                return str;
+            }},
+            {data: 'code'},
+            {data: 'name'},
+            {data: 'marca'},
+            {data: 'categoria'},
+            {data: 'subcategoria'},
+            {
+                data: function (row) {
+                    if (row['quotation'] == 1) {
+                        str = "";
+                        srt = "<div align='left'>";
+                        str += "<p class='price'>Precio por Cotización</p> </div>";
+                        return str;
+                    } else {
+                        str = "";
+                        srt = "<div align='left'>";
+                        str += "<p class='price'>$" + formato(row['price1']) + row['currency'] + "</p> </div>";
+                        return str;
+                    }
+                }
+            },
+            {data: function (row){
+                if (row['quotation'] == 1) {
+                    str = "";
+                    srt = "<div align='left'>";
+                    str += "<p class='price'>Precio por Cotización</p> </div>";
+                    return str;
+                } else {
+                    str = "";
+                    srt = "<div align='left'>";
+                    str += "<p class='price'>$" + formato(row['price2']) + row['currency'] + "</p> </div>";
+                    return str;
+                }
+            }},
+            {data: function (row) {
+                console.log(row);
+                str = "<div align='center'>";
+                str +=" <button id='btnEditar"+row['id']+
+                    "' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("
+                    +"\""+row['id']+"\", "
+                    +"\""+row['categoryid']+"\", "
+                    + "\""+encodeURI(row['code']) + "\","
+                    + "\""+row['currency'] + "\","
+                    +"\""+encodeURI(row['longdescription']) + "\","
+                    + row['brandid']+", \""
+                    +encodeURI(row['name'])+"\","
+                    +" \""+row['photo'] +"\","
+                    +" \""+row['photo2'] +"\","
+                    +"\""+row['photo3'] +"\","
+                    +row['price1'] +","
+                    +row['price2'] +","
+                    +row['price3'] +","
+                    +row['price4'] +","
+                    +row['price5'] +","
+                    +row['reorderpoint'] +","
+                    +"\""+encodeURI(row['shortdescription']) +"\","
+                    +row['stock'] +","
+                    +row['subcategoryid']+")'><i class='glyphicon glyphicon-edit'></i></button>";
+                str += "<button id='btnEliminar' class='btn btn-danger btn-xs col-md-6' onclick='deleteProduct(" +"\""+ row['id']+"\"" + ")'><i class='fa fa-trash-o'></i></button>";
+
+                str += (row['show'] ==1) ?  "<input type='checkbox' id='check"+row['id']+"' name='check' checked onchange='verMiniatura("+"\""+row['id']+"\""+")'>Mostrar":
+                    "<input type='checkbox' id='check"+row['id']+
+                    "' name='check' onchange='verMiniatura("+"\""+row['id']+"\""+")'>Mostrar";
+                str += "</div>";
+                return str;
+            }}
+        ],
+        'language': {
+            url:'https://cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json',
+            sLoadingRecords : '<span style="width:100%;"><img src="http://www.snacklocal.com/images/ajaxload.gif"></span>'
+        }
     });
 }

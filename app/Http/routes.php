@@ -333,6 +333,16 @@ Route::group(['prefix' => 'area','middleware' => 'web'],function(){
     ]);
 
     Route::resource('/resource/productos','ProductosController');
+    Route::get('/productos/con',[
+        'uses' => 'ProductosController@conimagen',
+        'as' => 'filtro.con.imagenes'
+    ]);
+    Route::get('/productos/sin',[
+        'uses' => 'ProductosController@sinimagen'
+    ]);
+    Route::get('/productos/all',[
+        'uses' => 'ProductosController@all'
+    ]);
     Route::post('/resource/productos/{id}',[
         'uses' => 'ProductosController@update',
         'as' => 'area.resource.post.update'
