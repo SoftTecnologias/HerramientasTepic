@@ -188,6 +188,7 @@
                                                 <td style="font-weight: bold">Total</td>
                                                 <td style="font-weight: bold"></td>
                                             </tr>
+
                                         </tfoot>
                                     </table>
 

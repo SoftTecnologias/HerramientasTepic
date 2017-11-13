@@ -1589,6 +1589,7 @@ class UsersController extends Controller
 
                 foreach ($compras as $compra) {
                     $compra->id = base64_encode($compra->id);
+                    $compra->orderdate = date($compra->orderdate);
                     switch ($compra->status){
                         case 'R': $compra->status = 'Recibido';
                             break;
@@ -1764,6 +1765,7 @@ class UsersController extends Controller
                 $cookie = Cookie::get("cliente");
                 #dd($cookie);
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
+                $address = DB::table('address')->where('userid',$user->id)->count();
                 if ($cookie['actual'] == 1) { //despues del primer paso
                     $checkpoint="Checkpoint 3";
                     $order = Order::find( $cookie['orderid'] );
@@ -1775,8 +1777,16 @@ class UsersController extends Controller
                         'taxes' => $order->taxes,
                         'detalles' => $detalles
                     ];
-
-                    return view('tienda.entrega', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user, 'details'=>$orderdetails]);
+                    if($address > 0)
+                        $entrega= true;
+                    else
+                        $entrega=false;
+                    return view('tienda.entrega', ['marcas' => $marcas,
+                        'categorias' => $categorias,
+                        'servicios' => $servicios,
+                        'logueado' => $user,
+                        'details'=>$orderdetails,
+                        'entrega'=>$entrega]);
                 } else {
                     $checkpoint="Checkpoint 4";
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'exception'=>"El paso no es el indicado"]);
@@ -2115,10 +2125,10 @@ class UsersController extends Controller
             $icompra = DB::table('orders as s')
                 ->select('p.name as producto','b.name as marca','sl.qty as cantidad',
                     'sl.price as preciounitario','p.currency as divisa')
-                ->join('order_detail as sl','sl.orderid','=','s.orderid')
+                ->join('order_detail as sl','sl.orderid','=','s.id')
                 ->join('product as p','p.id','=','sl.productid')
                 ->join('brand as b','b.id','=','p.brandid')
-                ->where('s.orderid','=',$id)
+                ->where('s.id','=',$id)
                 ->get();
             return Response::json([
                 'code' => 200,
