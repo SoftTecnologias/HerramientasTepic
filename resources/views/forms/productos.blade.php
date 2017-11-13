@@ -29,6 +29,12 @@
                             <div class="pull-right">
                                 <a class="btn btn-success" id="btnNew"><i class="fa fa-plus"></i>Agregar Producto</a>
                             </div>
+                            <br>
+                            <div class="pull-left">
+                                <label>Filtrar</label><br>
+                                <input type="checkbox" id="conimagen" checked>con imagen
+                                <input type="checkbox" id="sinimagen" checked>sin imagen
+                            </div>
 
                         </div>
                         <!-- /.box-header -->

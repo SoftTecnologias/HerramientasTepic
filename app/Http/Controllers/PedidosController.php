@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\canceldetail;
 use App\PrecioEnvio;
 use Illuminate\Http\Request;
 
@@ -131,6 +132,14 @@ class PedidosController extends Controller
             DB::table('orders')
                 ->where('id', $id)
                 ->update(['status' => $request->estado]);
+            if($request->estado == 'C'){
+                $canceldetail = new canceldetail();
+
+                $canceldetail->orderid = $id;
+                $canceldetail->detalle = $request->motivo;
+
+                $canceldetail->save();
+            }
 
             $respuesta = ["code"=>200, "msg"=>"El Pedido Cambio a Despachado","detail"=>"success"];
         }catch(Exception $e){
@@ -150,6 +159,21 @@ class PedidosController extends Controller
             ->join('users','users.id','=','userid')
             ->where('od.orderid','=',$id)
             ->get();
+        $detalle_cancel = DB::table('order_detail as od')
+            ->select('product.name as producto','users.userprice as up','price.price1 as up1','price.price5 as up5',
+                'price.price2 as up2','price.price3 as up3','price.price4 as up4','subtotal','cancel_detail.detalle')
+            ->join('orders','od.orderid','=','orders.id')
+            ->join('product', 'product.id','=','productid')
+            ->join('price','price.id','=','priceid')
+            ->join('users','users.id','=','userid')
+            ->join('cancel_detail','orders.id','=','cancel_detail.orderid')
+            ->where('od.orderid','=',$id)
+            ->get();
+
+        if($detalle_cancel != null){
+            $detalle = $detalle_cancel;
+        }
+
         return Response::json([
             'code' => 200,
             'msg' => json_encode($detalle),

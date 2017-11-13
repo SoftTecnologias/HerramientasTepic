@@ -200,8 +200,7 @@ function updateService(id){
         if(json.code == 200) {
             swal("Realizado", json.msg, json.detail);
             $('#modalServices').modal("hide");
-            location.reload(3);
-            //$('#tblservicios').dataTable().api().ajax.reload(null,false);
+            $('#tblServicios').dataTable().api().ajax.reload(null,false);
             reset();
         }else{
 

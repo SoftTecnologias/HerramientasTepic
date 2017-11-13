@@ -32,7 +32,7 @@ $(document).ready(function(){
             {data: function (row) {
                 // console.log(row);
                 str = "<div align='center'>";
-                str += "<button id='Detalle"+row["orderid"]+"' class='btn btn-warning btn-xs col-md-3' onclick='showDetail(\""+row['orderid']+"\")'>Detalle</button>";
+                str += "<button id='Detalle"+row["orderid"]+"' class='btn btn-warning btn-xs col-md-3' onclick='showDetail(\""+row['orderid']+"\",\""+row["ostatus"]+"\")'>Detalle</button>";
                 str += (row['ostatus'] == 'No Asignado') ? "<button id='Asignar"+row["orderid"]+"' class='btn btn-success btn-xs col-md-3' onclick='Asignar(\""+row['orderid']+"\")'>Asignar</button>":
                     (row['ostatus']== 'Tomado') ?  "<button id='reasignar"+row["orderid"]+"' class='btn btn-success btn-xs col-md-3' onclick='Asignar(\""+row['orderid']+"\")'>Reasignar</button>" +
                         "<button id='despachar"+row["orderid"]+"' class='btn btn-info btn-xs col-md-3' onclick='Despachar(\""+row['orderid']+"\")'>Despachar</button>":
@@ -150,12 +150,12 @@ $(document).ready(function(){
             }).done(function(json){
                 if(json.code == 200) {
                     swal("Realizado", json.msg, json.detail).then(function () {
-                        location.reload();
-                    });
+                        $('#tblPedidos').dataTable().api().ajax.reload(null,false);
+                        });
                 }else{
 
                     swal("Error",json.msg,json.detail).then(function () {
-                        location.reload();
+                        $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                     });
                 }
             }).fail(function(){
@@ -298,12 +298,12 @@ function Despachar(id) {
         }).done(function(json){
             if(json.code == 200) {
                 swal("Realizado", json.msg, json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }else{
 
                 swal("Error",json.msg,json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }
         }).fail(function(){
@@ -334,12 +334,12 @@ function Enviado(id) {
         }).done(function(json){
             if(json.code == 200) {
                 swal("Realizado", json.msg, json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }else{
 
                 swal("Error",json.msg,json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }
         }).fail(function(){
@@ -370,12 +370,12 @@ function recibido(id) {
         }).done(function(json){
             if(json.code == 200) {
                 swal("Realizado", json.msg, json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }else{
 
                 swal("Error",json.msg,json.detail).then(function () {
-                    location.reload();
+                    $('#tblPedidos').dataTable().api().ajax.reload(null,false);
                 });
             }
         }).fail(function(){
@@ -395,37 +395,59 @@ function Cancelar(id) {
         confirmButtonText: 'Deseo Continuar',
         cancelButtonText: "Lo pensaré"
     }).then(function(){
-        console.log(pedidoid);
-        $.ajax({
-            url:document.location.protocol+'//'+document.location.host+'/area/pedidos/accion/'+id,
-            type:"POST",
-            data: {'estado':'C'},
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        }).done(function(json){
-            if(json.code == 200) {
-                swal("Realizado", json.msg, json.detail).then(function () {
-                    location.reload();
-                });
-            }else{
+        swal({
+            title: 'Motivo de Cancelacion',
+            input: 'text',
+            showCancelButton: true,
+            confirmButtonText: 'Enviar',
+            showLoaderOnConfirm: true,
+            preConfirm: function (motivo) {
+                return new Promise(function (resolve, reject) {
+                    setTimeout(function() {
+                        if (motivo === '') {
+                            reject('Escriba un Motivo')
+                        } else {
+                            resolve()
+                        }
+                    }, 2000)
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (motivo) {
+            $.ajax({
+                url:document.location.protocol+'//'+document.location.host+'/area/pedidos/accion/'+id,
+                type:"POST",
+                data: {'estado':'C', 'motivo':motivo},
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            }).done(function(json){
+                if(json.code == 200) {
+                    swal("Realizado", json.msg, json.detail).then(function () {
+                        $('#tblPedidos').dataTable().api().ajax.reload(null,false);
+                    });
+                }else{
 
-                swal("Error",json.msg,json.detail).then(function () {
-                    location.reload();
-                });
-            }
-        }).fail(function(){
-            swal("Error","Tuvimos un problema de conexion","error");
-        });
+                    swal("Error",json.msg,json.detail).then(function () {
+                        $('#tblPedidos').dataTable().api().ajax.reload(null,false);
+                    });
+                }
+            }).fail(function(){
+                swal("Error","Tuvimos un problema de conexion","error");
+            });
+        })
+
     });
 }
 
-function showDetail(id){
+function showDetail(id,status){
     var $total;
+    console.log(status);
     $.ajax({
         url: document.location.protocol + '//' + document.location.host+"/area/pedidos/detail/"+id,
         type: 'GET'
     }).done(function (response) {
+        var $canceldetail = '';
         if (response.code == 200) {
             $('#cuerpodetalles td').remove();
             $('#cuerpodetalles tr').remove();
@@ -445,10 +467,28 @@ function showDetail(id){
                     }
                     $('<tr>').attr('role','row').appendTo('#cuerpodetalles');
                 $('<td>', {text: row.producto}).attr('class','info').appendTo('#cuerpodetalles');
-                $('<td>', {text: precio}).attr('class','info').appendTo('#cuerpodetalles');
+                $('<td>', {text: '$'+precio}).attr('class','info').appendTo('#cuerpodetalles');
                 $total = row.subtotal;
+                $canceldetail = row.detalle;
             });
-            $('#celtotal').append('$'+$total);
+            $('#celtotal td').remove();
+            $('#celtotal tr').remove();
+            $('#celtotal').append(
+                '<tr class="success">' +
+                '<td>Total</td>' +
+                '<td> $'+$total+'</td>' +
+                '</tr>'
+            );
+            if(status == 'Cancelado') {
+                $('#celtotal').append(
+                    '<tr class="warning">' +
+                    '<td colspan="2">Informacion de Cancelacion</td>' +
+                    '</tr>' +
+                    '<tr class="warning">' +
+                    '<td colspan="2">'+$canceldetail+'</td>' +
+                    '</tr>'
+                );
+            }
             $('#moddetalle').modal('show');
         }
     }).fail(function () {
