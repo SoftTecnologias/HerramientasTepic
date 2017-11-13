@@ -25,7 +25,10 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
         <div class="container">
 
             <div class="row">
-
+                <div class="alert alert-warning {{($entrega) ? 'hidden' :''}}">
+                    <strong>¡Hey!</strong> ¿Quieres envio a domicilio? ingresa a tu perfil y configura
+                    tu <a href="{{route('tienda.user.profile')}}">perfil</a> para configurarlo
+                </div>
                 <div class="col-md-9 clearfix" id="checkout">
 
                     <div class="box">
@@ -67,7 +70,7 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-6 {{($entrega) ? '' :'hidden'}}">
                                         <div class="box shipping-method">
 
                                             <h4>Entrega a domicilio</h4>
@@ -80,7 +83,7 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-6 {{($entrega) ? '' :'hidden'}}">
                                         <div class="box shipping-method">
 
                                             <h4>Envio a toda la Republica Mexicana</h4>

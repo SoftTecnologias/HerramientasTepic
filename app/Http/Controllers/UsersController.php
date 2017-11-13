@@ -1744,7 +1744,7 @@ class UsersController extends Controller
                 $cookie = Cookie::get("cliente");
                 #dd($cookie);
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-
+                $address = DB::table('address')->where('userid',$user->id)->count();
                 if ($cookie['actual'] == 1) { //despues del primer paso
                     $checkpoint="Checkpoint 3";
                     $order = Order::find( $cookie['orderid'] );
@@ -1756,8 +1756,16 @@ class UsersController extends Controller
                         'taxes' => $order->taxes,
                         'detalles' => $detalles
                     ];
-
-                    return view('tienda.entrega', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user, 'details'=>$orderdetails]);
+                    if($address > 0)
+                        $entrega= true;
+                    else
+                        $entrega=false;
+                    return view('tienda.entrega', ['marcas' => $marcas,
+                        'categorias' => $categorias,
+                        'servicios' => $servicios,
+                        'logueado' => $user,
+                        'details'=>$orderdetails,
+                        'entrega'=>$entrega]);
                 } else {
                     $checkpoint="Checkpoint 4";
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'exception'=>"El paso no es el indicado"]);
