@@ -1579,7 +1579,13 @@ class UsersController extends Controller
 
     public function getUserProfile(Request $request)
     {
+
         try {
+            $bMarcas = DB::table('brand')
+                ->select('logo')
+                ->where('logo', 'not like', 'minilogo.png')
+                ->where('authorized', '=', 1)
+                ->take(12)->get();
             if ($request->cookie('cliente') != null) {
                 $cookie = Cookie::get('cliente');
                 $users = Usuarios::where('apikey', $cookie['apikey'])->firstOrFail();
@@ -1669,7 +1675,7 @@ class UsersController extends Controller
                     ->where('municipio_id', '=', $user->country)->get();
 
                 $user->id = base64_encode($user->id);
-                return view('tienda.profile', ['user' => $user, 'servicios' => $servicios,
+                return view('tienda.profile', ['bMarcas'=>$bMarcas,'user' => $user, 'servicios' => $servicios,
                     'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
                     'localidades' => $localidades, 'municipios' => $municipios,'logueado' => $users,'compras'=>$compras]);
             } else {
@@ -1746,12 +1752,17 @@ class UsersController extends Controller
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
+            $bMarcas = DB::table('brand')
+                ->select('logo')
+                ->where('logo', 'not like', 'minilogo.png')
+                ->where('authorized', '=', 1)
+                ->take(12)->get();
             if ($request->cookie('cliente') == null) {
-                return view('carrito.checkout', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+                return view('carrito.checkout', ['bMarcas'=>$bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 #dd($request->cookie('cliente'));
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.checkout', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                return view('tienda.checkout', ['bMarcas'=>$bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
             }
         } catch (Exception $e) {
             dd($e);
@@ -1805,11 +1816,16 @@ class UsersController extends Controller
                         'taxes' => $order->taxes,
                         'detalles' => $detalles
                     ];
+                    $bMarcas = DB::table('brand')
+                        ->select('logo')
+                        ->where('logo', 'not like', 'minilogo.png')
+                        ->where('authorized', '=', 1)
+                        ->take(12)->get();
                     if($address > 0)
                         $entrega= true;
                     else
                         $entrega=false;
-                    return view('tienda.entrega', ['marcas' => $marcas,
+                    return view('tienda.entrega', ['bMarcas'=>$bMarcas,'marcas' => $marcas,
                         'categorias' => $categorias,
                         'servicios' => $servicios,
                         'logueado' => $user,
@@ -1961,7 +1977,12 @@ class UsersController extends Controller
                         'taxes' => $order->taxes,
                         'detalles' => $detalles
                     ];
-                    return view('tienda.envio', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,"address"=>$address, "estado"=> $estado,"municipio"=>$municipio, "localidad"=>$localidad, 'details'=>$orderdetails  ]);
+                    $bMarcas = DB::table('brand')
+                        ->select('logo')
+                        ->where('logo', 'not like', 'minilogo.png')
+                        ->where('authorized', '=', 1)
+                        ->take(12)->get();
+                    return view('tienda.envio', ['bMarcas' => $bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,"address"=>$address, "estado"=> $estado,"municipio"=>$municipio, "localidad"=>$localidad, 'details'=>$orderdetails  ]);
                 } else {
                     dd($cookie);
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
@@ -2012,8 +2033,12 @@ class UsersController extends Controller
                         'detalles' => $detalles
                     ];
                     #dd($detalles[0]->product()->first()->id);
-
-                    return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
+                    $bMarcas = DB::table('brand')
+                        ->select('logo')
+                        ->where('logo', 'not like', 'minilogo.png')
+                        ->where('authorized', '=', 1)
+                        ->take(12)->get();
+                    return view('tienda.resumen', ['bMarcas'=>$bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
                 } else {
                     dd($cookie);
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
