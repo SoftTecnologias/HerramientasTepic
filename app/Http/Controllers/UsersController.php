@@ -327,11 +327,16 @@ class UsersController extends Controller
             /*----------------------  Parte del Menu --------------------------*/
             //Marca actual (Migaja)
             $actual = Marca::find($urlid);
+            $bMarcas = DB::table('brand')
+                ->select('logo')
+                ->where('logo', 'not like', 'minilogo.png')
+                ->where('authorized', '=', 1)
+                ->take(12)->get();
             if ($request->cookie('cliente') == null) {
-                return view('tienda.marcas', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroCategorias' => $filtroCategorias, 'logueado' => false]);
+                return view('tienda.marcas', ['productos' => $productos,'bMarcas'=>$bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroCategorias' => $filtroCategorias, 'logueado' => false]);
             } else {
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.marcas', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroCategorias' => $filtroCategorias, 'logueado' => $user]);
+                return view('tienda.marcas', ['productos' => $productos,'bMarcas'=>$bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroCategorias' => $filtroCategorias, 'logueado' => $user]);
             }
         } catch (Exception $e) {
             //return redirect()->route('tienda.index')->with(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
@@ -342,6 +347,11 @@ class UsersController extends Controller
 
     public function getCategoriaSearch(Request $request, $id)
     {
+        $bMarcas = DB::table('brand')
+            ->select('logo')
+            ->where('logo', 'not like', 'minilogo.png')
+            ->where('authorized', '=', 1)
+            ->take(12)->get();
         try {
             $url = base64_decode($id);
             $precioUsuario = $this->precioUsuario($request);
@@ -529,10 +539,10 @@ class UsersController extends Controller
             //Marca actual (Migaja)
             $actual = Categoria::find($urlid);
             if ($request->cookie('cliente') == null) {
-                return view('tienda.categorias', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroMarcas' => $filtromarcas, 'filtroSubcategoria' => $filtrosubcategorias, 'logueado' => false]);
+                return view('tienda.categorias', ['bMarcas'=>$bMarcas,'productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroMarcas' => $filtromarcas, 'filtroSubcategoria' => $filtrosubcategorias, 'logueado' => false]);
             } else {
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.categorias', ['productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroMarcas' => $filtromarcas, 'filtroSubcategoria' => $filtrosubcategorias, 'logueado' => $user]);
+                return view('tienda.categorias', ['bMarcas'=>$bMarcas,'productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroMarcas' => $filtromarcas, 'filtroSubcategoria' => $filtrosubcategorias, 'logueado' => $user]);
             }
         } catch (Exception $e) {
             //return redirect()->route('tienda.index')->with(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
@@ -542,6 +552,7 @@ class UsersController extends Controller
 
     public function getAllServices(Request $request)
     {
+
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
@@ -561,6 +572,11 @@ class UsersController extends Controller
         foreach ($marcas as $m) {
             $m->id = base64_encode($m->id);
         }
+        $bMarcas = DB::table('brand')
+            ->select('logo')
+            ->where('logo', 'not like', 'minilogo.png')
+            ->where('authorized', '=', 1)
+            ->take(12)->get();
 
         try {
 
@@ -581,10 +597,7 @@ class UsersController extends Controller
                 ->join('price', 'price.id', '=', 'product.priceid')
                 ->where('photo', 'not like', 'minilogo.png')
                 ->take(12)->get();
-            $bMarcas = DB::table('brand')
-                ->select('logo')
-                ->where('logo', 'not like', 'minilogo.png')
-                ->take(12)->get();
+
             //Menu de marcas
             foreach ($productos as $p) {
                 $p->code = base64_encode($p->code);
@@ -597,12 +610,17 @@ class UsersController extends Controller
                 return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
             }
         } catch (Exception $e) {
-            return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
+            return view('tienda.problema', ['bMarcas' => $bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
         }
     }
 
     public function getServiceDetail(Request $request, $id)
     {
+        $bMarcas = DB::table('brand')
+            ->select('logo')
+            ->where('logo', 'not like', 'minilogo.png')
+            ->where('authorized', '=', 1)
+            ->take(12)->get();
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
@@ -671,12 +689,12 @@ class UsersController extends Controller
                 $p->code = base64_encode($p->code);
             }
             if ($request->cookie('cliente') == null) {
-                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas,
+                return view('tienda.detalleServicio', ['bMarcas'=>$bMarcas,'productos' => $productos, 'marcas' => $marcas,
                     'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual,
                     'logueado' => false,'servicio_detail' => $servicio_detail]);
             } else {
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.detalleServicio', ['productos' => $productos, 'marcas' => $marcas,
+                return view('tienda.detalleServicio', ['bMarcas'=>$bMarcas,'productos' => $productos, 'marcas' => $marcas,
                     'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual,
                     'logueado' => $user,'servicio_detail' => $servicio_detail]);
             }
@@ -689,6 +707,11 @@ class UsersController extends Controller
 
     public function getRegisterForm(Request $request)
     {
+        $bMarcas = DB::table('brand')
+            ->select('logo')
+            ->where('logo', 'not like', 'minilogo.png')
+            ->where('authorized', '=', 1)
+            ->take(12)->get();
         try {
             //Menu de marcas
             $marcas = DB::table('brand')->select('id', 'name')
@@ -711,12 +734,12 @@ class UsersController extends Controller
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             if ($request->cookie('cliente') == null) {
-                return view('tienda.registro', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+                return view('tienda.registro', ['bMarcas'=>$bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
-                return view('tienda.index', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
+                return view('tienda.index', ['bMarcas'=>$bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
             }
         } catch (Exception $e) {
-            return view('tienda.problema', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
+            return view('tienda.problema', ['bMarcas'=>$bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
         }
     }
 
@@ -724,6 +747,11 @@ class UsersController extends Controller
 
     public function searchProductos(Request $request)
     {
+        $bMarcas = DB::table('brand')
+            ->select('logo')
+            ->where('logo', 'not like', 'minilogo.png')
+            ->where('authorized', '=', 1)
+            ->take(12)->get();
         // Parte del menu
         //no existe una sesion y lo manda a la tienda (se colocará una liga al panel)
         //Menu de marcas
@@ -982,7 +1010,7 @@ class UsersController extends Controller
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
             if ($request->cookie('cliente') == null) {
-                return view('tienda.buscaProductos', ['marcas' => $marcas,
+                return view('tienda.buscaProductos', ['bMarcas'=>$bMarcas,'marcas' => $marcas,
                     'categorias' => $categorias,
                     'servicios' => $servicios,
                     'filtro' => $filtrobusqueda,
@@ -992,7 +1020,7 @@ class UsersController extends Controller
                     'logueado' => false]);
             } else {
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.buscaProductos', ['marcas' => $marcas,
+                return view('tienda.buscaProductos', ['bMarcas'=>$bMarcas,'marcas' => $marcas,
                     'categorias' => $categorias,
                     'servicios' => $servicios,
                     'filtro' => $filtrobusqueda,

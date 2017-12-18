@@ -245,16 +245,17 @@
                 <h3>Compras</h3>
                 <table class="table">
                     <thead>
-                        <trow>
+                    <trow>
                         <th class="text-center">Codigo</th>
                         <th class="text-center">Fecha</th>
                         <th class="text-center">SubTotal</th>
                         <th class="text-center">Total</th>
-                            <th class="text-center">Estado</th>
-                        </trow>
+                        <th class="text-center">Estado</th>
+                    </trow>
                     </thead>
                     <tbody>
                     @foreach($compras as $compra)
+<<<<<<< HEAD
                     <tr>
                         <td>{{$compra->id}}</td>
                         <td>{{$compra->created_at}}</td>
@@ -265,14 +266,26 @@
                             <a class="btn btn-warning" onclick="infocompra('{{$compra->id}}')" id="info{{$compra->id}}">Info</a>
                         </td>
                     </tr>
+=======
+                        <tr>
+                            <td>{{$compra->orderid}}</td>
+                            <td>{{$compra->orderdate}}</td>
+                            <td>{{$compra->subtotal}}</td>
+                            <td>{{$compra->total}}</td>
+                            <td>{{$compra->status}}</td>
+                            <td>
+                                <a class="btn btn-warning" onclick="infocompra('{{$compra->orderid}}')" id="info{{$compra->orderid}}">Info</a>
+                            </td>
+                        </tr>
+>>>>>>> f0ea4ae374a8c34fb49b957487c1217bc9421956
                     @endforeach
                     </tbody>
 
                 </table>
             </div>
-            
-            </div>
+
         </div>
+    </div>
     </div>
 </div>
 <!-- Modal para la info de la compra -->

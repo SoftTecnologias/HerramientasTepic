@@ -1,4 +1,3 @@
-
 <!-- *** FOOTER ***
 _________________________________________________________ -->
 
@@ -7,7 +6,7 @@ _________________________________________________________ -->
         <div class="col-md-3 col-sm-6">
             <h4>Manten contacto con nosotros</h4>
 
-            <p>Si quieres enterarte de promociones, tips o video turoriales pulsa <a href="#">aquí</a> </p>
+            <p>Si quieres enterarte de promociones, tips o video turoriales pulsa <a href="#">aquí</a></p>
 
             <hr>
 
@@ -44,16 +43,17 @@ _________________________________________________________ -->
                 @foreach($servicios as $servicio)
 
                     @if($i<4 && $servicio->selected)
-                    <div class="item same-height-row clearfix">
-                        <div class="image same-height-always">
-                            <a href="{{route('tienda.detalleServicio',$servicio->id)}}">
-                                <img class="img-responsive" src="{{asset('img/servicios/'.$servicio->img)}}" alt="">
-                            </a>
+                        <div class="item same-height-row clearfix">
+                            <div class="image same-height-always">
+                                <a href="{{route('tienda.detalleServicio',$servicio->id)}}">
+                                    <img class="img-responsive" src="{{asset('img/servicios/'.$servicio->img)}}" alt="">
+                                </a>
+                            </div>
+                            <div class="name same-height-always">
+                                <h5><a href="{{route('tienda.detalleServicio',$servicio->id)}}">{{$servicio->title}}</a>
+                                </h5>
+                            </div>
                         </div>
-                        <div class="name same-height-always">
-                            <h5><a href="{{route('tienda.detalleServicio',$servicio->id)}}">{{$servicio->title}}</a></h5>
-                        </div>
-                    </div>
                         <?php $i++; ?>
                     @endif
 
@@ -71,7 +71,7 @@ _________________________________________________________ -->
             <h4>Contactanos</h4>
 
             <p><strong>Herramientas y Servicios de Tepic</strong>
-                <br>Mazatlan No. 177-A  a 1-1/2 cuadra de Av. Insurgentes
+                <br>Mazatlan No. 177-A a 1-1/2 cuadra de Av. Insurgentes
                 <br> Col. Centro
                 <br> CP. 63035
                 <br>Tepic, Nayarit
@@ -93,51 +93,13 @@ _________________________________________________________ -->
             <h4>Marcas destacadas</h4>
 
             <div class="photostream">
-                <div>
-                    <a href="#">
-                        <img src="{{asset('img/marcas/B17.jpg')}}" class="img-responsive" alt="#">
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <img src="{{asset('img/marcas/B18.png')}}" class="img-responsive" alt="#">
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <img src="{{asset('img/marcas/B19.png')}}" class="img-responsive" alt="#">
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <img src="{{asset('img/marcas/B20.png')}}" class="img-responsive" alt="#">
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <img src="{{asset('img/marcas/B21.png')}}" class="img-responsive" alt="#">
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <img src="{{asset('img/marcas/B22.png')}}" class="img-responsive" alt="#">
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <img src="{{asset('img/marcas/B23.png')}}" class="img-responsive" alt="#">
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <img src="{{asset('img/marcas/B24.png')}}" class="img-responsive" alt="#">
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <img src="{{asset('img/marcas/B25.png')}}" class="img-responsive" alt="#">
-                    </a>
-                </div>
+                        @foreach($bMarcas as $marca)
+                            <div class="container-fluid">
+                                <a href="#">
+                                    <img src="{{asset("img/marcas/".$marca->logo)}}" class="img-responsive" style="height: 40px;">
+                                </a>
+                            </div>
+                        @endforeach
             </div>
 
         </div>
