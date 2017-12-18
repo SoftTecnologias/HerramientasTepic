@@ -1660,7 +1660,7 @@ class UsersController extends Controller
                 foreach ($servicios as $servicio)
                     $servicio->id = base64_encode($servicio->id);
                 if ($user == null) {
-                    return view('tienda.direccion', ['servicios' => $servicios,
+                    return view('tienda.direccion', ['bMarcas'=>$bMarcas,'servicios' => $servicios,
                         'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados, 'logueado' => $users]);
                 }
                 //Marca actual (Migaja
