@@ -370,7 +370,6 @@ class ShoppingCartController extends Controller
         }
     }
 
-
     public function  backStep(Request $request){
 
     }
