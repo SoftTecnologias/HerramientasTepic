@@ -1664,7 +1664,7 @@ class UsersController extends Controller
 
                 if ($user == null) {
 
-                    return view('tienda.direccion', ['servicios' => $servicios,
+                    return view('tienda.direccion', ['bMarcas'=>$bMarcas,'servicios' => $servicios,
                         'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados, 'logueado' => $users]);
                 }
                 //Marca actual (Migaja
@@ -1776,7 +1776,12 @@ class UsersController extends Controller
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
-        //Encriptamos los id
+        $bMarcas = DB::table('brand')
+               ->select('logo')
+               ->where('logo', 'not like', 'minilogo.png')
+               ->where('authorized', '=', 1)
+               ->take(12)->get();
+	//Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias
@@ -1830,7 +1835,8 @@ class UsersController extends Controller
                         'servicios' => $servicios,
                         'logueado' => $user,
                         'details'=>$orderdetails,
-                        'entrega'=>$entrega]);
+                        'entrega'=>$entrega,
+			'bMarcas'=>$bMarcas]);
                 } else {
                     $checkpoint="Checkpoint 4";
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'exception'=>"El paso no es el indicado"]);
@@ -1984,7 +1990,7 @@ class UsersController extends Controller
                         ->take(12)->get();
                     return view('tienda.envio', ['bMarcas' => $bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,"address"=>$address, "estado"=> $estado,"municipio"=>$municipio, "localidad"=>$localidad, 'details'=>$orderdetails  ]);
                 } else {
-                    dd($cookie);
+                   # dd($cookie);
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
                 }
             }
@@ -2092,7 +2098,12 @@ class UsersController extends Controller
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
-        //Encriptamos los id
+        $bMarcas = DB::table('brand')
+                ->select('logo')
+                ->where('logo', 'not like', 'minilogo.png')
+                ->where('authorized', '=', 1)
+                ->take(12)->get();
+	//Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias
@@ -2125,7 +2136,7 @@ class UsersController extends Controller
                   'taxes' => $order->taxes,
                   'detalles' => $detalles
                 ];
-                return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
+                return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails, 'bMarcas'=>$bMarcas]);
             }
         } catch (Exception $e) {
             dd($e);
@@ -2137,7 +2148,12 @@ class UsersController extends Controller
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
-        //Encriptamos los id
+        $bMarcas = DB::table('brand')
+               ->select('logo')
+               ->where('logo', 'not like', 'minilogo.png')
+               ->where('authorized', '=', 1)
+               ->take(12)->get();
+	//Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias
@@ -2164,7 +2180,7 @@ class UsersController extends Controller
                 $orden->finished=1;
                 $orden->save();
                 $summary= $cookie['orderid'];
-                return view('tienda.finish', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'summary'=>$summary]);
+                return view('tienda.finish', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'summary'=>$summary,'bMarcas'=>$bMarcas]);
         }
         } catch (Exception $e) {
             dd($e);

@@ -239,7 +239,12 @@ class ShoppingCartController extends Controller
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
-        //Encriptamos los id
+         $bMarcas = DB::table('brand')
+                ->select('logo')
+                ->where('logo', 'not like', 'minilogo.png')
+                ->where('authorized', '=', 1)
+                ->take(12)->get();
+	//Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias
@@ -258,7 +263,7 @@ class ShoppingCartController extends Controller
         try {
 
             if ($request->cookie('cliente') == null) {
-                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
+                return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false,"bMarcas"=>$bMarcas]);
             } else {
                 $cookie = Cookie::get("cliente");
                 $order = Order::find($cookie['orderid']);
@@ -270,9 +275,9 @@ class ShoppingCartController extends Controller
                 }
                 $order->save();
                 if ($order->step > 2) {
-                    dd($cookie);
+                    #dd($cookie);
                     $cookie['anterior'] = $cookie['actual'];
-                    dd($cookie);
+                    #dd($cookie);
                     $cookie['actual'] = 3;
                     return redirect()->route('carrito.summary')->withCookie('cliente', $cookie);
                 } else {

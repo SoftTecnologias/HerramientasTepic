@@ -18,6 +18,7 @@ class Order extends Model
         'finished',
         'total',
         'taxes',
-        'stripe_charge_id'
+        'stripe_charge_id',
     ];
+
 }
