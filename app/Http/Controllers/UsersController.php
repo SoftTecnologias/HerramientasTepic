@@ -1663,7 +1663,6 @@ class UsersController extends Controller
                     $servicio->id = base64_encode($servicio->id);
 
                 if ($user == null) {
-
                     return view('tienda.direccion', ['bMarcas'=>$bMarcas,'servicios' => $servicios,
                         'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados, 'logueado' => $users]);
                 }
