@@ -73,6 +73,7 @@ _________________________________________________________ -->
 
     <!-- *** NAVBAR END *** -->
 
+
     </header>
 
     <!-- *** LOGIN MODAL ***
@@ -114,6 +115,7 @@ _________________________________________________________ -->
     <!-- *** LOGIN MODAL END *** -->
 
 @yield('content')
+
     @if(isset($servicios))
         @include('tienda.footer',['servicios'=>$servicios])
     @endif

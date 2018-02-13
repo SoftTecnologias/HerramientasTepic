@@ -1617,9 +1617,10 @@ class UsersController extends Controller
                     ->where('apikey', $cookie['apikey'])->first();
 
                 $compras = DB::table("orders")
-                    ->select('id','total','subtotal','status')
+                    ->select('id','total','subtotal','status','created_at')
                     ->where('userid','=',$users->id)
                     -> get();
+
                 foreach ($compras as $compra) {
                     $compra->id = base64_encode($compra->id);
                     $compra->orderdate = date($compra->orderdate);
@@ -1641,6 +1642,7 @@ class UsersController extends Controller
                 }
 
                 $estados = Estado::all();
+
                 $marcas = DB::table('brand')->select('id', 'name')
                     ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
                     ->take(40)->orderBy('name', 'asc')->get();
@@ -1659,6 +1661,7 @@ class UsersController extends Controller
                 $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
                 foreach ($servicios as $servicio)
                     $servicio->id = base64_encode($servicio->id);
+
                 if ($user == null) {
                     return view('tienda.direccion', ['bMarcas'=>$bMarcas,'servicios' => $servicios,
                         'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados, 'logueado' => $users]);
@@ -1669,6 +1672,7 @@ class UsersController extends Controller
 
                 $localidades = DB::table('localidades')->select('nombre', 'municipio_id', 'id_localidad')
                     ->where('municipio_id', '=', $user->country)->get();
+
                 $user->id = base64_encode($user->id);
                 return view('tienda.profile', ['bMarcas'=>$bMarcas,'user' => $user, 'servicios' => $servicios,
                     'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
@@ -1771,7 +1775,12 @@ class UsersController extends Controller
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
-        //Encriptamos los id
+        $bMarcas = DB::table('brand')
+               ->select('logo')
+               ->where('logo', 'not like', 'minilogo.png')
+               ->where('authorized', '=', 1)
+               ->take(12)->get();
+	//Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias
@@ -1825,7 +1834,8 @@ class UsersController extends Controller
                         'servicios' => $servicios,
                         'logueado' => $user,
                         'details'=>$orderdetails,
-                        'entrega'=>$entrega]);
+                        'entrega'=>$entrega,
+			'bMarcas'=>$bMarcas]);
                 } else {
                     $checkpoint="Checkpoint 4";
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'exception'=>"El paso no es el indicado"]);
@@ -1905,8 +1915,7 @@ class UsersController extends Controller
 
     public function addresses(Request $request)
     {
-        try {
-            $marcas = DB::table('brand')->select('id', 'name')
+        $marcas = DB::table('brand')->select('id', 'name')
                 ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
                 ->take(40)->orderBy('name', 'asc')->get();
             //Encriptamos los id
@@ -1925,7 +1934,11 @@ class UsersController extends Controller
             //Encriptar id de servicios
             foreach ($servicios as $servicio)
                 $servicio->id = base64_encode($servicio->id);
-            if (Cookie::get('cliente') == null) {
+        try {
+            
+            #dd($request->cookie('cliente'));
+            if ($request->cookie('cliente') == null) {
+                dd("no quedo");
                 return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 $cookie = Cookie::get("cliente");
@@ -1950,6 +1963,7 @@ class UsersController extends Controller
                     ->join('municipios', 'id_municipio', '=', 'address.country')
                     ->join('localidades', 'id_localidad', '=', 'address.city')
                     ->where('apikey', $cookie['apikey'])->first();
+                    #dd($address);
                 $estado = Estado::all();
                 //dd("municipio => $address->country , localidad => $address->city");
                 $municipio = Municipio::where("estado_id", $address->state)->get();
@@ -1975,10 +1989,12 @@ class UsersController extends Controller
                         ->take(12)->get();
                     return view('tienda.envio', ['bMarcas' => $bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,"address"=>$address, "estado"=> $estado,"municipio"=>$municipio, "localidad"=>$localidad, 'details'=>$orderdetails  ]);
                 } else {
+                   # dd($cookie);
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
                 }
             }
         } catch (Exception $e) {
+            dd($e);
             abort(500);
         }
     }
@@ -2029,6 +2045,7 @@ class UsersController extends Controller
                         ->take(12)->get();
                     return view('tienda.resumen', ['bMarcas'=>$bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
                 } else {
+                    dd($cookie);
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
                 }
             }
@@ -2080,7 +2097,12 @@ class UsersController extends Controller
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
-        //Encriptamos los id
+        $bMarcas = DB::table('brand')
+                ->select('logo')
+                ->where('logo', 'not like', 'minilogo.png')
+                ->where('authorized', '=', 1)
+                ->take(12)->get();
+	//Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias
@@ -2113,7 +2135,7 @@ class UsersController extends Controller
                   'taxes' => $order->taxes,
                   'detalles' => $detalles
                 ];
-                return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails]);
+                return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails, 'bMarcas'=>$bMarcas]);
             }
         } catch (Exception $e) {
             dd($e);
@@ -2125,7 +2147,12 @@ class UsersController extends Controller
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
-        //Encriptamos los id
+        $bMarcas = DB::table('brand')
+               ->select('logo')
+               ->where('logo', 'not like', 'minilogo.png')
+               ->where('authorized', '=', 1)
+               ->take(12)->get();
+	//Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias
@@ -2152,7 +2179,7 @@ class UsersController extends Controller
                 $orden->finished=1;
                 $orden->save();
                 $summary= $cookie['orderid'];
-                return view('tienda.finish', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'summary'=>$summary]);
+                return view('tienda.finish', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'summary'=>$summary,'bMarcas'=>$bMarcas]);
         }
         } catch (Exception $e) {
             dd($e);
