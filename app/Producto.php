@@ -17,6 +17,9 @@ class Producto extends Model
     public function price(){
         return $this->hasOne('App\Price','id','priceid');
     }
+    public function brand(){
+        return $this->hasOne('App\Marca','id','brandid');
+    }
 
 
 

@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Response;
 use \Exception;
 use Illuminate\Support\Facades\Storage;
 use File;
+
 use PhpParser\Node\Expr\Cast\Object_;
 
 
@@ -1719,6 +1720,24 @@ class UsersController extends Controller
                 #dd($request->cookie('cliente'));
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
                 return view('tienda.checkout', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+            }
+        } catch (Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
+    public function printCheckout(Request $request)
+    {
+        try {
+            if ($request->cookie('cliente') == null){
+            } else {
+                #dd($request->cookie('cliente'));
+                $carrito = $request->cookie('cliente')['carrito'];
+                #dd($carrito);
+                $pdf = \PDF::loadView('pdf.pdf', ['carrito'=>$carrito]);
+                return $pdf->download('Carrito.pdf');
+                #return view('pdf.pdf',['carrito'=>$carrito]);
             }
         } catch (Exception $e) {
             dd($e);

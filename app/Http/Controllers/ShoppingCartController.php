@@ -31,7 +31,8 @@ class ShoppingCartController extends Controller
                     "code" => $producto->code,
                     "precio" => $producto->price->scopePrice($cookie['userprice']),
                     "photo" => $producto->photo,
-                    "currency" => $producto->currency
+                    "currency" => $producto->currency,
+                    "brand" => $producto->brand->name
                 ];
                 $cantidad = $request->cantidad;
                 $oldCarrito = $cookie['carrito'];
@@ -138,7 +139,8 @@ class ShoppingCartController extends Controller
                         "code" => $producto->code,
                         "precio" => $producto->price->scopePrice($cookie['userprice']),
                         "photo" => $producto->photo,
-                        "currency" => $producto->currency
+                        "currency" => $producto->currency,
+                        "brand" => $producto->brand->name
                     ];
                     $cantidad = $dato['cantidad'];
                     $oldCarrito = $cookie['carrito'];

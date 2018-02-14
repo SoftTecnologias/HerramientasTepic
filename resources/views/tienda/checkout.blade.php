@@ -86,6 +86,10 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                                     <a class="btn btn-default" id="updateCart"><i class="fa fa-refresh"></i>Actualizar Carrito</a>
                                     <a href="{{route('carrito.makeOrder')}}" class="btn btn-template-main" id="next">Continuar con el metodo de envio <i class="fa fa-chevron-right"></i>
                                     </a>
+                                    <br>
+                                    <div class="pull-right">
+                                        <a href="{{route('carrito.printCart')}}" class="btn btn-danger" id="printCart" target="_blank"><i class="fa fa-print"></i>Imprimir Carrito</a>
+                                    </div>
                                 </div>
                             </div>
                         </form>
