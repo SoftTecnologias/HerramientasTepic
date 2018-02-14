@@ -132,6 +132,10 @@ Route::group(['middleware' => 'web'],function(){
         'uses' => "UsersController@getCheckout",
         'as' => "carrito.getCheckout"
     ]);
+    Route::get('/user/cart/printcheckout',[
+        'uses' => "UsersController@printCheckout",
+        'as' => "carrito.printCart"
+    ]);
 //Parte del checkout
     Route::get('/user/cart/makeCheckout',[
         'uses' => "ShoppingCartController@makeCheckout",

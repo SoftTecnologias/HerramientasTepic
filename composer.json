@@ -12,7 +12,9 @@
         "nesbot/carbon": "^1.22",
         "orangehill/iseed": "2.2",
         "dompdf/dompdf": "^0.8.0",
-        "stripe/stripe-php": "^5.2"
+        "stripe/stripe-php": "^5.2",
+        "barryvdh/laravel-dompdf": "^0.8.1",
+        "barryvdh/laravel-snappy": "^0.4.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
