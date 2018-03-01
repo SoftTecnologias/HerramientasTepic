@@ -36,7 +36,7 @@
     <hr width="100%">
     <div id="content" >
         <div style="text-align: center;">
-            <h1>Presuspuesto</h1>
+            <h1>Presupuesto</h1>
         </div>
         <div class="container">
             <div class="row">

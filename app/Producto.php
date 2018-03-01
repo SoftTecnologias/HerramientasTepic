@@ -21,7 +21,9 @@ class Producto extends Model
         return $this->hasOne('App\Marca','id','brandid');
     }
 
-
+    public function orderDetail(){
+      return $this->belongsTo('App\OrderDetail');
+    }
 
 
 }

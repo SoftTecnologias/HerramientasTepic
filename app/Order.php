@@ -21,4 +21,7 @@ class Order extends Model
         'stripe_charge_id',
     ];
 
+    public function orderDetail(){
+	return $this->belongsTo('App\Order');
+    }   
 }

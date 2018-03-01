@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\canceldetail;
 use App\PrecioEnvio;
+use App\Order;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -150,30 +151,32 @@ class PedidosController extends Controller
 
     public function pedidoDetail($id){
         $id = base64_decode($id);
-        $detalle = DB::table('order_detail as od')
+         $detalle = DB::table('dbo.order_detail as od')
             ->select('product.name as producto','users.userprice as up','price.price1 as up1','price.price5 as up5',
                 'price.price2 as up2','price.price3 as up3','price.price4 as up4','subtotal')
-            ->join('orders','od.orderid','=','orders.id')
-            ->join('product', 'product.id','=','productid')
-            ->join('price','price.id','=','priceid')
-            ->join('users','users.id','=','userid')
+            ->join('dbo.orders','od.orderid','=','orders.id')
+            ->join('dbo.product', 'product.id','=','productid')
+            ->join('dbo.price','price.id','=','priceid')
+            ->join('dbo.users','users.id','=','userid')
             ->where('od.orderid','=',$id)
             ->get();
-        $detalle_cancel = DB::table('order_detail as od')
+        $detalle_cancel = DB::table('dbo.order_detail as od')
             ->select('product.name as producto','users.userprice as up','price.price1 as up1','price.price5 as up5',
                 'price.price2 as up2','price.price3 as up3','price.price4 as up4','subtotal','cancel_detail.detalle')
-            ->join('orders','od.orderid','=','orders.id')
-            ->join('product', 'product.id','=','productid')
-            ->join('price','price.id','=','priceid')
-            ->join('users','users.id','=','userid')
-            ->join('cancel_detail','orders.id','=','cancel_detail.orderid')
+            ->join('dbo.orders','od.orderid','=','orders.id')
+            ->join('dbo.product', 'product.id','=','productid')
+           ->join('dbo.price','price.id','=','priceid')
+            ->join('dbo.users','users.id','=','userid')
+            ->join('dbo.cancel_detail','orders.id','=','cancel_detail.orderid')
             ->where('od.orderid','=',$id)
-            ->get();
+           ->get();
 
         if($detalle_cancel != null){
             $detalle = $detalle_cancel;
         }
-
+	
+	#$detail = Order::find($id);
+	#dd($detail->orderDetail()->price);
         return Response::json([
             'code' => 200,
             'msg' => json_encode($detalle),

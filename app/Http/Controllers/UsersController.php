@@ -1778,9 +1778,9 @@ class UsersController extends Controller
                 #dd($request->cookie('cliente'));
                 $carrito = $request->cookie('cliente')['carrito'];
                 #dd($carrito);
-                $pdf = \PDF::loadView('pdf.pdf', ['carrito'=>$carrito]);
-                return $pdf->download('Carrito.pdf');
-                #return view('pdf.pdf',['carrito'=>$carrito]);
+                #$pdf = \PDF::loadView('pdf.pdf', ['carrito'=>$carrito]);
+                #return $pdf->download('Carrito.pdf');
+                return view('pdf.pdf',['carrito'=>$carrito]);
             }
         } catch (Exception $e) {
             dd($e);
