@@ -1716,7 +1716,7 @@ class UsersController extends Controller
     {
         $trabajadores = DB::select("Select name,id from users 
               where not exists (select userA from orders where orders.userA = users.id AND (orders.status = 'D' or orders.status = 'T' or orders.status = 'N')) and
-              users.roleid = 3 ", [1]);
+              users.roleid IN (2,3) ", [1]);
         foreach ($trabajadores as $trabajador)
             $trabajador->id = base64_encode($trabajador->id);
 
@@ -1778,9 +1778,9 @@ class UsersController extends Controller
                 #dd($request->cookie('cliente'));
                 $carrito = $request->cookie('cliente')['carrito'];
                 #dd($carrito);
-                $pdf = \PDF::loadView('pdf.pdf', ['carrito'=>$carrito]);
-                return $pdf->download('Carrito.pdf');
-                #return view('pdf.pdf',['carrito'=>$carrito]);
+                #$pdf = \PDF::loadView('pdf.pdf', ['carrito'=>$carrito]);
+                #return $pdf->download('Carrito.pdf');
+                return view('pdf.pdf',['carrito'=>$carrito]);
             }
         } catch (Exception $e) {
             dd($e);
