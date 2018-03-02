@@ -20,5 +20,14 @@ class Order extends Model
         'taxes',
         'stripe_charge_id',
     ];
+    protected $dates = ['created_at','updated_at'];
+    
 
+    public function orderDetail(){
+        return $this->hasMany('App\OrderDetail','orderid','id');
+    }
+    public function user(){
+        return $this->belongsTo('App\Usuarios','userid');
+    }
+    
 }

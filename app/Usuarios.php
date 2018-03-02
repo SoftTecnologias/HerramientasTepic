@@ -13,4 +13,11 @@ class Usuarios extends Model{
     protected $hidden = [];
 
     public $timestamps = false;
+
+    public function order(){
+        return $this->hasOne('App\Order','userid','id');
+    }
+    public function address(){
+        return $this->hasOne('App\Direccion','userid','id');
+    }
 }
