@@ -471,6 +471,7 @@ function showDetail(id,status){
                 $total = row.subtotal;
                 $canceldetail = row.detalle;
             });
+            $("#btnImprimir").attr("href", document.location.protocol + '//' + document.location.host+"/area/pedidos/printCheckout/"+id);
             $('#celtotal td').remove();
             $('#celtotal tr').remove();
             $('#celtotal').append(

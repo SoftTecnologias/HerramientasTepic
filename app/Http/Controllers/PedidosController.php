@@ -21,8 +21,7 @@ class PedidosController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(){
 
         $pedidos = DB::select("select users.name,users.phone as phone, orders.id as orderid,userid,orders.created_at as orderdate,orders.[status] as ostatus,userA,total,subtotal,taxes,
                         (select [name] as nombre from users where userA = id) as nombre from orders
@@ -52,8 +51,7 @@ class PedidosController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create(){
         //
     }
 
@@ -63,8 +61,7 @@ class PedidosController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
 
     }
 
@@ -74,8 +71,7 @@ class PedidosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id){
         //
     }
 
@@ -85,8 +81,7 @@ class PedidosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function edit($id){
         //
     }
 
@@ -97,8 +92,7 @@ class PedidosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         //
     }
 
@@ -108,8 +102,7 @@ class PedidosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy($id){
         //
     }
     public function asignar(Request $request, $id){

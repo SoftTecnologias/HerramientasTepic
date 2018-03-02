@@ -42,8 +42,7 @@ class UsersController extends Controller
 
 
     /*Parte de la tienda de Herramientas Tepic*/
-    public function getIndex(Request $request)
-    {
+    public function getIndex(Request $request){
         try {
             //Menu de marcas
             $marcas = DB::table('brand')->select('id', 'name')
@@ -111,8 +110,7 @@ class UsersController extends Controller
 
     //Vistas con filtros
 
-    public function precioUsuario(Request $request)
-    {
+    public function precioUsuario(Request $request){
         try {
             if ($request->cookie('cliente') != null) {
                 $cliente = $request->cookie('cliente');
@@ -125,8 +123,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getMarcaSearch(Request $request, $id)
-    {
+    public function getMarcaSearch(Request $request, $id){
         //Menu de marcas
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
@@ -346,8 +343,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getCategoriaSearch(Request $request, $id)
-    {
+    public function getCategoriaSearch(Request $request, $id){
         $bMarcas = DB::table('brand')
             ->select('logo')
             ->where('logo', 'not like', 'minilogo.png')
@@ -551,9 +547,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getAllServices(Request $request)
-    {
-
+    public function getAllServices(Request $request){
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
@@ -615,8 +609,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getServiceDetail(Request $request, $id)
-    {
+    public function getServiceDetail(Request $request, $id){
         $bMarcas = DB::table('brand')
             ->select('logo')
             ->where('logo', 'not like', 'minilogo.png')
@@ -706,8 +699,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getRegisterForm(Request $request)
-    {
+    public function getRegisterForm(Request $request){
         $bMarcas = DB::table('brand')
             ->select('logo')
             ->where('logo', 'not like', 'minilogo.png')
@@ -746,8 +738,7 @@ class UsersController extends Controller
 
     /*Parte administratia de Herramientas Tepic */
 
-    public function searchProductos(Request $request)
-    {
+    public function searchProductos(Request $request){
         $bMarcas = DB::table('brand')
             ->select('logo')
             ->where('logo', 'not like', 'minilogo.png')
@@ -1035,8 +1026,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getAreaIndex(Request $request)
-    {
+    public function getAreaIndex(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1070,21 +1060,18 @@ class UsersController extends Controller
         }
     }
 
-    private function dbpedido()
-    {
+    private function dbpedido(){
         $pedidos = DB::select('select users.name, orders.id as orderid,userid,orders.status,userA,subtotal,
                         (select [name] as nombre from users where userA = users.id) as nombre from orders
                     inner join users on users.id = userid', [1]);
         return $pedidos;
     }
 
-    private function dbtotalpedidos()
-    {
+    private function dbtotalpedidos(){
         return $totalpedidos = DB::table('orders')->select('*')->count();
     }
 
-    public function getProductosForm(Request $request)
-    {
+    public function getProductosForm(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1119,8 +1106,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function getMarcasForm(Request $request)
-    {
+    public function getMarcasForm(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1145,8 +1131,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getCategoriasForm(Request $request)
-    {
+    public function getCategoriasForm(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1171,8 +1156,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getSubcategoriasform(Request $request)
-    {
+    public function getSubcategoriasform(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1197,8 +1181,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getUsuariosForm(Request $request)
-    {
+    public function getUsuariosForm(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1224,8 +1207,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getPedidosForm(Request $request)
-    {
+    public function getPedidosForm(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1249,8 +1231,9 @@ class UsersController extends Controller
         }
     }
 
-    public function getServiciosForm(Request $request)
-    {
+    
+
+    public function getServiciosForm(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1275,8 +1258,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getBannerForm(Request $request)
-    {
+    public function getBannerForm(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1300,8 +1282,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getSubcategorias(Request $request, $id)
-    {
+    public function getSubcategorias(Request $request, $id){
         $subcategorias = DB::table('subcategory')->where('categoryid', $id)->get();
         $respuesta = ['code' => 200,
             'msg' => json_encode($subcategorias),
@@ -1313,8 +1294,7 @@ class UsersController extends Controller
 
     /*Parte de Login y logout (Sirve para ambas partes)*/
 
-    public function getProfile(Request $request)
-    {
+    public function getProfile(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1338,8 +1318,7 @@ class UsersController extends Controller
         }
     }
 
-    public function showMovementForm(Request $request)
-    {
+    public function showMovementForm(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
             $cookie = Cookie::get('admin');
@@ -1369,8 +1348,7 @@ class UsersController extends Controller
 
     }
 
-    public function showProviderForm(Request $request)
-    {
+    public function showProviderForm(Request $request){
 
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
@@ -1399,8 +1377,7 @@ class UsersController extends Controller
 
     }
 
-    public function doLogin(Request $request)
-    {
+    public function doLogin(Request $request){
         try {
             $cookie = null;
             $users = Usuarios::where('email', $request->email)
@@ -1449,8 +1426,7 @@ class UsersController extends Controller
 
     //Seguirle
 
-    public function doCLogin(Request $request)
-    {
+    public function doCLogin(Request $request){
         try {
             $cookie = null;
             $users = Usuarios::where('email', $request->email)
@@ -1507,8 +1483,7 @@ class UsersController extends Controller
 
     //Error de Mail
 
-    public function doLogout(Request $request)
-    {
+    public function doLogout(Request $request){
         if ($request->query('id') != null) {
             if ($request->cookie('cliente') != null) {
                 Cookie::forget('cliente');
@@ -1522,8 +1497,7 @@ class UsersController extends Controller
         }
     }
 
-    public function confirmEmail(Request $request, $id)
-    {
+    public function confirmEmail(Request $request, $id){
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
@@ -1562,8 +1536,7 @@ class UsersController extends Controller
 
     //obtencion de datos
 
-    public function errorMail(Request $request, $id)
-    {
+    public function errorMail(Request $request, $id){
         //Se envia un correo electronico con el id del usuario para su subida manual
         try {
             $id = base64_decode($id);
@@ -1578,8 +1551,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getUserProfile(Request $request)
-    {
+    public function getUserProfile(Request $request){
 
         try {
             $bMarcas = DB::table('brand')
@@ -1690,8 +1662,7 @@ class UsersController extends Controller
 
     //Actualizacion de datos personales del cliente
 
-    public function getMunicipios(Request $request, $estado)
-    {
+    public function getMunicipios(Request $request, $estado){
         $municipios = DB::table('municipios')->select('*')
             ->where('estado_id', '=', $estado)->get();
         return Response::json([
@@ -1701,8 +1672,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function getLocalidades(Request $request, $municipio)
-    {
+    public function getLocalidades(Request $request, $municipio){
         $localidades = DB::table('localidades')->select('*')
             ->where('municipio_id', '=', $municipio)->get();
         return Response::json([
@@ -1712,8 +1682,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function getTrabajadores()
-    {
+    public function getTrabajadores(){
         $trabajadores = DB::select("Select name,id from users 
               where not exists (select userA from orders where orders.userA = users.id AND (orders.status = 'D' or orders.status = 'T' or orders.status = 'N')) and
               users.roleid IN (2,3) ", [1]);
@@ -1728,8 +1697,7 @@ class UsersController extends Controller
     }
 
     /*Manejo de vistas de carrito de compra */
-    public function getCheckout(Request $request)
-    {
+    public function getCheckout(Request $request){
         try {
             //Menu de marcas
             $marcas = DB::table('brand')->select('id', 'name')
@@ -1770,8 +1738,7 @@ class UsersController extends Controller
         }
     }
 
-    public function printCheckout(Request $request)
-    {
+    public function printCheckout(Request $request){
         try {
             if ($request->cookie('cliente') == null){
             } else {
@@ -1788,8 +1755,50 @@ class UsersController extends Controller
         }
     }
 
-    public function getDelivery(Request $request)
-    {
+    public function printPedidosCheckout(Request $request,$order_id){
+        try {
+            $order_id = base64_decode($order_id);
+            $orden = Order::findOrFail($order_id);
+            $carrito=[
+                "orden"=> $orden->id,
+                'cliente'=>[
+                "id" => $orden->user->id,
+                "name" => $orden->user->name,
+                "lastname" => $orden->user->lastname,
+                "phone" => $orden->user->phone,
+                "username" => $orden->user->username,
+                "email" => $orden->user->email,
+                "address" => $orden->user->address
+            ],"productos"=>[],"cantidadProductos"=>0,"total"=>0];
+            
+            foreach($orden->orderDetail as $detail){
+                $carrito['productos'][$detail->product->id] = [
+                    'cantidad' => $detail->qty,
+                    'total' => $detail->price,
+                    'item' =>[
+                        "id" => base64_encode($detail->product->id),
+                        "name" => $detail->product->name,
+                        "code" => $detail->product->code,
+                        "precio" => $detail->product->price->scopePrice($orden->user->userprice),
+                        "photo" => $detail->product->photo,
+                        "currency" => $detail->product->currency,
+                        "brand" => $detail->product->brand->name
+                    ]
+                ];
+              $carrito['cantidadProductos']+=$detail->qty;
+              $carrito['total']+=$detail->price; 
+            }
+            #dd($carrito);
+            #$pdf = \PDF::loadView('pdf.pdf', ['carrito'=>$carrito]);
+            #return $pdf->download('Carrito.pdf');
+            return view('pdf.pdfpedido',['carrito'=>$carrito]);
+        } catch (Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
+    public function getDelivery(Request $request){
         // ------------------------------------------ MENU ----------------------------------------------------------------------------------------------------
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
@@ -1799,7 +1808,7 @@ class UsersController extends Controller
                ->where('logo', 'not like', 'minilogo.png')
                ->where('authorized', '=', 1)
                ->take(12)->get();
-	//Encriptamos los id
+	    //Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias
@@ -1870,8 +1879,7 @@ class UsersController extends Controller
 
     }
 
-    public function makeDelivery(Request $request)
-    {
+    public function makeDelivery(Request $request){
         //Menu de marcas
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
@@ -1923,8 +1931,7 @@ class UsersController extends Controller
         }
     }
 
-    public function destroyDelivery(Request $request)
-    {
+    public function destroyDelivery(Request $request){
         try {
 
         } catch (Exception $e) {
@@ -1932,8 +1939,7 @@ class UsersController extends Controller
         }
     }
 
-    public function addresses(Request $request)
-    {
+    public function addresses(Request $request){
         $marcas = DB::table('brand')->select('id', 'name')
                 ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
                 ->take(40)->orderBy('name', 'asc')->get();
@@ -2018,8 +2024,8 @@ class UsersController extends Controller
         }
     }
 
-    public function deliveryAddresses(Request $request)
-    {    $marcas = DB::table('brand')->select('id', 'name')
+    public function deliveryAddresses(Request $request){    
+        $marcas = DB::table('brand')->select('id', 'name')
         ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
         ->take(40)->orderBy('name', 'asc')->get();
         //Encriptamos los id
@@ -2111,8 +2117,7 @@ class UsersController extends Controller
         }
     }
 
-    public function summary(Request $request)
-    {
+    public function summary(Request $request){
         $marcas = DB::table('brand')->select('id', 'name')
             ->where(DB::raw('(select COUNT(*) from product  where brand.id = product.brandid AND product.photo not like \'minilogo.png\')'), '>', 0)
             ->take(40)->orderBy('name', 'asc')->get();
@@ -2121,7 +2126,7 @@ class UsersController extends Controller
                 ->where('logo', 'not like', 'minilogo.png')
                 ->where('authorized', '=', 1)
                 ->take(12)->get();
-	//Encriptamos los id
+	    //Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias
@@ -2171,7 +2176,7 @@ class UsersController extends Controller
                ->where('logo', 'not like', 'minilogo.png')
                ->where('authorized', '=', 1)
                ->take(12)->get();
-	//Encriptamos los id
+	    //Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias

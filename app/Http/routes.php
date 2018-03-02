@@ -225,6 +225,11 @@ Route::group(['prefix' => 'area','middleware' => 'web'],function(){
         'as' => 'area.perfil'
     ]);
 
+    Route::get('/pedidos/printCheckout/{id}',[
+        'uses' => "UsersController@printPedidosCheckout",
+        'as' => "pedidos.printCart"
+    ]);
+
     Route::post('/pedidos/precioenvio',[
         'uses' => 'PedidosController@guardarPrecioEnvio',
         'as' => 'area.precio.envio'

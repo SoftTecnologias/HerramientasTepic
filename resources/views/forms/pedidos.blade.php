@@ -199,6 +199,9 @@
                 </div>
                 <div class="modal-footer">
                     <button id="btnAceptar" class="btn btn-sm btn-primary">Aceptar</button>
+                    <div class="pull-left">
+                        <a href="" class="btn btn-success" id="btnImprimir" target="_blank"><i class="fa fa-print"></i>Imprimir Carrito</a>
+                    </div>
                 </div>
             </div>
         </div>
