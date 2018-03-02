@@ -42,17 +42,25 @@
                 <div class="well col-md-10  col-md-offset-1">
                     <div class="row">
                         <div class="col-md-6">
-                            <address>
-                            <h4><strong>{{$carrito['cliente']['name']}} {{$carrito['cliente']['lastname']}}</strong></h4>
-                                <br>
-                                {{$carrito['cliente']['address']->street}} #{{$carrito['cliente']['address']->streetnumber}}, Col. {{$carrito['cliente']['address']->neigborhood}}
-                                <br>
-                                Tepic, Nayarit Mexico {{$carrito['cliente']['address']->zipcode}}
-                                <br>
-                                {{$carrito['cliente']['phone']}}
-                                <br>
-                                {{$carrito['cliente']['email']}}
-                            </address>
+                            @if($carrito['cliente']['address'] != null)
+                                <address>
+                                    <h4>
+                                        <strong>{{$carrito['cliente']['name']}} {{$carrito['cliente']['lastname']}}</strong></h4>
+                                    <br>
+                                    {{$carrito['cliente']['address']->street}} #{{$carrito['cliente']['address']->streetnumber}}, Col. {{$carrito['cliente']['address']->neigborhood}}
+                                    <br>
+                                    Tepic, Nayarit Mexico {{$carrito['cliente']['address']->zipcode}}
+                                    <br>
+                                    {{$carrito['cliente']['phone']}}
+                                    <br>
+                                    {{$carrito['cliente']['email']}}
+                                </address>
+                            @else
+                                <address>
+                                    <strong>No hay una dirección capturada para este cliente</strong>
+                                    <em>Por favor de capturarla</em>
+                                </address>    
+                            @endif
                          </div>
                         <div class="col-xs-6 col-sm-6 col-md-6 text-right">
                             <p>
