@@ -49,11 +49,13 @@
                                     <br>
                                     @if($carrito['cliente']['address'] != null)
                                         {{$carrito['cliente']['address']->street}} #{{$carrito['cliente']['address']->streetnumber}}, Col. {{$carrito['cliente']['address']->neigborhood}}
+                                        <br>
+                                        Tepic, Nayarit Mexico {{$carrito['cliente']['address']->zipcode}}
                                     @else
                                         <strong>No hay dirección capturada</strong>
                                     @endif
-                                    <br>
-                                    Tepic, Nayarit Mexico {{$carrito['cliente']['address']->zipcode}}
+                                    <br>                    
+                                    Tepic, Nayarit Mexico               
                                     <br>
                                     {{$carrito['cliente']['phone']}}
                                     <br>
