@@ -1231,8 +1231,6 @@ class UsersController extends Controller
         }
     }
 
-    
-
     public function getServiciosForm(Request $request){
         if ($request->cookie('admin') != null) {
             //Existe la cookie, solo falta averiguar que rol es
@@ -1744,10 +1742,22 @@ class UsersController extends Controller
             } else {
                 #dd($request->cookie('cliente'));
                 $carrito = $request->cookie('cliente')['carrito'];
-                #dd($carrito);
+                $cliente = Usuarios::where('apikey',$request->cookie('cliente')['apikey'])->firstOrFail();
+                
+                
                 #$pdf = \PDF::loadView('pdf.pdf', ['carrito'=>$carrito]);
                 #return $pdf->download('Carrito.pdf');
-                return view('pdf.pdf',['carrito'=>$carrito]);
+                return view('pdf.pdf',['carrito'=>$carrito, 'cliente'=>[
+                        "date" => Carbon::now()->format('d/M/Y G:i a'),
+                        'cliente'=>[
+                            "name" => $cliente->name,
+                            "lastname" => $cliente->lastname,
+                            "phone" => $cliente->phone,
+                            "username" => $cliente->username,
+                            "email" => $cliente->email,
+                            "address" => $cliente->address
+                        ]
+                ]]);
             }
         } catch (Exception $e) {
             dd($e);
@@ -1761,6 +1771,7 @@ class UsersController extends Controller
             $orden = Order::findOrFail($order_id);
             $carrito=[
                 "orden"=> $orden->id,
+                "date" => $orden->created_at->format('d/F/Y G:i a'),
                 'cliente'=>[
                 "id" => $orden->user->id,
                 "name" => $orden->user->name,

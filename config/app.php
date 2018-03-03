@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'es',
 
     /*
     |--------------------------------------------------------------------------
@@ -151,6 +151,7 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         Orangehill\Iseed\IseedServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
+        Jenssegers\Date\DateServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -209,7 +210,7 @@ return [
         'Datatables' => Yajra\Datatables\Facades\Datatables::class,
         'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Image' => Barryvdh\Snappy\Facades\SnappyImage::class,
-
+        'Date' => Jenssegers\Date\Date::class,
     ],
 
 ];

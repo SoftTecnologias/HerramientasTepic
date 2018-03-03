@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Jenssegers\Date\Date;
 class Order extends Model
 {
     protected $table = "orders";
@@ -22,12 +22,19 @@ class Order extends Model
     ];
     protected $dates = ['created_at','updated_at'];
     
+    protected function getDateFormat(){
+        return 'Y-m-d H:i:s+';
+    }
 
     public function orderDetail(){
         return $this->hasMany('App\OrderDetail','orderid','id');
     }
     public function user(){
         return $this->belongsTo('App\Usuarios','userid');
+    }
+
+    public function getCreatedAtAttribute($date){
+        return new Date($date);
     }
     
 }
