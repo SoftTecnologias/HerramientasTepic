@@ -31,6 +31,7 @@
         </div>
         <div class=" col-md-9" style="text-align: center;">
             <h1><strong>Herramientas y Servicios de Tepic</strong></h1>
+            <em>Mazatlan No. 177-A Col. Centro Tepic, Nayarit México, CP. 63000 herramientas_tepic@hotmail.com o 01-311-258-0540</em>
             <h3><u>Es un mundo de herramientas</u></h3>
         </div>
     </header>
@@ -64,7 +65,7 @@
                          </div>
                         <div class="col-xs-6 col-sm-6 col-md-6 text-right">
                             <p>
-                                <em>Fecha: {{Carbon::now()}}</em>
+                                <em>Fecha: {{$carrito['date']}}</em>
                             </p>
                             <p>
                                 <em>Orden #: {{$carrito['orden']}}</em>
@@ -140,22 +141,11 @@
                     <!-- /.box -->
                 </div>
                 <!-- /.col-md-9 -->
-            </div>
-            <div class="row">
-                <ul>
-                    <li><h4>Esta cotización es solo de caracter informativo</h4></li>
-                    <li><h4>Los precios pueden variar al momento de la compra y no representa un compromiso de venta</h4></li>
-                    <li><h4>La existencia está sujeta a disposicion en almacen</h4></li>
-                </ul>
-            </div>
+            </div>   
         </div>
         <!-- /.container -->
     </div>
 </div>
 <br><br>
-<footer style="text-align: center;">
-    <p>Mazatlan No. 177-A Col. Centro Tepic, Nayarit México, CP. 63000 herramientas_tepic@hotmail.com o 01-311-258-0540
-    </p>
-</footer>
 </body>
 </html>
