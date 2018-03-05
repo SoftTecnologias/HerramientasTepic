@@ -23,8 +23,9 @@ class Order extends Model
     protected $dates = ['created_at','updated_at'];
     
     protected function getDateFormat(){
-        return 'Y-m-d H:i:s+';
+        return 'Y-m-d H:i:s';
     }
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     public function orderDetail(){
         return $this->hasMany('App\OrderDetail','orderid','id');

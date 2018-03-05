@@ -168,7 +168,7 @@ Route::group(['middleware' => 'web'],function(){
 
     Route::get('/user/cart/delivery',[
         'uses' => "UsersController@getDelivery",
-        'as' => 'carrito.delivery'
+        'as' => 'carrito.delivery'  
     ]);
 
     Route::post('/user/cart/delivery',[

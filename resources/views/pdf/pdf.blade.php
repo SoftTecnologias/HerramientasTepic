@@ -89,8 +89,8 @@
                                     </thead>
                                     <tbody>
                                     <?php $index=1;?>
-                                    @if($carrito->productos != null)
-                                        @foreach($carrito->productos as $producto)
+                                    @if($carrito['productos'] != null)
+                                        @foreach($carrito['productos'] as $producto)
                                             <tr id="row{{base64_decode($producto['item']['id'])}}"
                                                 data-qty="{{$producto['cantidad']}}"
                                                 data-id="{{$producto['item']['id']}}">
@@ -123,7 +123,7 @@
                                         <th></th>
                                         <th></th>
                                         <th >Total</th>
-                                        <th colspan="3" id="total">$ {{number_format($carrito->total, 2,".",",")}}MXN
+                                        <th colspan="3" id="total">$ {{number_format($carrito['total'], 2,".",",")}}MXN
                                         </th>
                                     </tr>
                                     </tfoot>
