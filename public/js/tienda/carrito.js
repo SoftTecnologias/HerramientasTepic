@@ -92,7 +92,6 @@ function agregarProducto(id) {
                         $("#btnCheckout").prop("disabled",false);
                         $("#btnCheckout").text("Finalizar pedido ("+"$ "+response.msg['total'].toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+" MXN)");
                         $.each(response.msg['productos'], function (i, row) {
-                            console.log(row);
                             precio = parseFloat(row.item.precio);
                             total = parseFloat(row.total);
                             selector = "row"+Base64.decode(row.item.id);

@@ -27,7 +27,7 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
 
             <div class="row">
                 <div class="col-md-12">
-                    <p class="text-muted lead" id="cantidadProductos">Tienes {{$cookie['carrito']->cantidadProductos}} articulo(s) en tu
+                    <p class="text-muted lead" id="cantidadProductos">Tienes {{$carrito['cantidadProductos']}} articulo(s) en tu
                         carrito.</p>
                 </div>
                 <div class="col-md-9 clearfix" id="basket">
@@ -44,8 +44,8 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @if($cookie['carrito']->productos != null)
-                                        @foreach($cookie['carrito']->productos as $producto)
+                                    @if($carrito['productos'] != null)
+                                        @foreach($carrito['productos'] as $producto)
                                             <tr id="row{{base64_decode($producto['item']['id'])}}" data-qty="{{$producto['cantidad']}}" data-id="{{$producto['item']['id']}}">
                                                 <td>
                                                     <a href="#">
@@ -70,7 +70,7 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                                     <tfoot>
                                     <tr>
                                         <th colspan="5">Total</th>
-                                        <th colspan="2" id="total">$ {{number_format($cookie['carrito']->total, 2,".",",")}} MXN</th>
+                                        <th colspan="2" id="total">$ {{number_format($carrito['total'], 2,".",",")}} MXN</th>
                                     </tr>
                                     </tfoot>
                                 </table>
@@ -109,7 +109,7 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                                 <tbody>
                                 <tr>
                                     <td>Subtotal</td>
-                                    <th id="subtotal">$ {{number_format($cookie['carrito']->total, 2,".",",")}} MXN</th>
+                                    <th id="subtotal">$ {{number_format($carrito['total'], 2,".",",")}} MXN</th>
                                 </tr>
                                 <tr>
                                     <td>Envio y entrega</td>
@@ -121,7 +121,7 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                                 </tr>
                                 <tr class="total">
                                     <td>Total</td>
-                                    <th id="total">${{number_format($cookie['carrito']->total  , 2,".",",")}} MXN</th>
+                                    <th id="total">${{number_format($carrito['total']  , 2,".",",")}} MXN</th>
                                 </tr>
                                 </tbody>
                             </table>

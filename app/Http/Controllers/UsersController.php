@@ -13,6 +13,7 @@ use App\Municipio;
 use App\Order;
 use App\OrderDetail;
 use App\Pedido;
+use App\Producto;
 use App\Roles;
 use App\Servicio;
 use App\Subcategoria;
@@ -101,9 +102,10 @@ class UsersController extends Controller
                 return view('tienda.index', ['banner' => $banner, 'productos' => $productos, 'bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.index', ['banner' => $banner, 'productos' => $productos, 'bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                return view('tienda.index', ['banner' => $banner, 'productos' => $productos, 'bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)]);
             }
         } catch (Exception $e) {
+            dd($e);
             abort(500);
         }
     }
@@ -334,7 +336,7 @@ class UsersController extends Controller
                 return view('tienda.marcas', ['productos' => $productos,'bMarcas'=>$bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroCategorias' => $filtroCategorias, 'logueado' => false]);
             } else {
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.marcas', ['productos' => $productos,'bMarcas'=>$bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroCategorias' => $filtroCategorias, 'logueado' => $user]);
+                return view('tienda.marcas', ['productos' => $productos,'bMarcas'=>$bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroCategorias' => $filtroCategorias, 'logueado' => $user,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)]);
             }
         } catch (Exception $e) {
             //return redirect()->route('tienda.index')->with(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
@@ -539,7 +541,7 @@ class UsersController extends Controller
                 return view('tienda.categorias', ['bMarcas'=>$bMarcas,'productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroMarcas' => $filtromarcas, 'filtroSubcategoria' => $filtrosubcategorias, 'logueado' => false]);
             } else {
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.categorias', ['bMarcas'=>$bMarcas,'productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroMarcas' => $filtromarcas, 'filtroSubcategoria' => $filtrosubcategorias, 'logueado' => $user]);
+                return view('tienda.categorias', ['bMarcas'=>$bMarcas,'productos' => $productos, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual, 'filtroMarcas' => $filtromarcas, 'filtroSubcategoria' => $filtrosubcategorias, 'logueado' => $user,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)]);
             }
         } catch (Exception $e) {
             //return redirect()->route('tienda.index')->with(['code'=>500,'msg'=>$e->getMessage(),'detail'=> $e->getCode() ]);
@@ -602,7 +604,7 @@ class UsersController extends Controller
                 return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => false]);
             } else {
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                return view('tienda.servicios', ['bMarcas' => $bMarcas, 'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)]);
             }
         } catch (Exception $e) {
             return view('tienda.problema', ['bMarcas' => $bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'exception' => $e]);
@@ -690,7 +692,7 @@ class UsersController extends Controller
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
                 return view('tienda.detalleServicio', ['bMarcas'=>$bMarcas,'productos' => $productos, 'marcas' => $marcas,
                     'categorias' => $categorias, 'servicios' => $servicios, 'actual' => $actual,
-                    'logueado' => $user,'servicio_detail' => $servicio_detail]);
+                    'logueado' => $user,'servicio_detail' => $servicio_detail,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)]);
             }
 
         } catch (Exception $e) {
@@ -1019,7 +1021,8 @@ class UsersController extends Controller
                     'f' => $urlid,
                     'filtroCategorias' => $filtroCategorias,
                     'filtroMarcas' => $filtromarcas,
-                    'logueado' => $user]);
+                    'logueado' => $user,
+                    'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)]);
             }
         } catch (Exception $e) {
             abort(500);
@@ -1728,7 +1731,7 @@ class UsersController extends Controller
             } else {
                 #dd($request->cookie('cliente'));
                 $user = Usuarios::where('apikey', $request->cookie('cliente')['apikey'])->firstOrFail();
-                return view('tienda.checkout', ['bMarcas'=>$bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
+                return view('tienda.checkout', ['bMarcas'=>$bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)]);
             }
         } catch (Exception $e) {
             dd($e);
@@ -1747,7 +1750,7 @@ class UsersController extends Controller
                 
                 #$pdf = \PDF::loadView('pdf.pdf', ['carrito'=>$carrito]);
                 #return $pdf->download('Carrito.pdf');
-                return view('pdf.pdf',['carrito'=>$carrito, 'cliente'=>[
+                return view('pdf.pdf',['cliente'=>[
                         "date" => Carbon::now()->format('d/M/Y G:i a'),
                         'cliente'=>[
                             "name" => $cliente->name,
@@ -1757,7 +1760,7 @@ class UsersController extends Controller
                             "email" => $cliente->email,
                             "address" => $cliente->address
                         ]
-                ]]);
+                ],'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $request->cookie('cliente')['userprice'])]);
             }
         } catch (Exception $e) {
             dd($e);
@@ -1874,7 +1877,8 @@ class UsersController extends Controller
                         'logueado' => $user,
                         'details'=>$orderdetails,
                         'entrega'=>$entrega,
-			'bMarcas'=>$bMarcas]);
+                        'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)
+			            ]);
                 } else {
                     $checkpoint="Checkpoint 4";
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'exception'=>"El paso no es el indicado"]);
@@ -2170,7 +2174,7 @@ class UsersController extends Controller
                   'taxes' => $order->taxes,
                   'detalles' => $detalles
                 ];
-                return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails, 'bMarcas'=>$bMarcas]);
+                return view('tienda.resumen', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'details'=>$orderdetails, 'bMarcas'=>$bMarcas,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)]);
             }
         } catch (Exception $e) {
             dd($e);
@@ -2214,7 +2218,7 @@ class UsersController extends Controller
                 $orden->finished=1;
                 $orden->save();
                 $summary= $cookie['orderid'];
-                return view('tienda.finish', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'summary'=>$summary,'bMarcas'=>$bMarcas]);
+                return view('tienda.finish', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,'summary'=>$summary,'bMarcas'=>$bMarcas,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)]);
         }
         } catch (Exception $e) {
             dd($e);
@@ -2283,6 +2287,32 @@ class UsersController extends Controller
         }catch(Exception $e){
 
         }
+    }
+
+    private function returnCart(Cart $carrito, $userprice){
+        $response = [
+            "cantidadProductos" => $carrito->cantidadProductos,
+            "total" => $carrito->total,
+            "productos" => []
+        ];
+        if ($carrito->productos != null){
+            foreach ($carrito->productos as  $detalle) {
+                $producto = Producto::find(base64_decode($detalle['item']['id']));
+                $response['productos'][$detalle['item']['id']]['item']=[
+                    "id" => base64_encode($producto->id),
+                    "name" => $producto->name,
+                    "code" => $producto->code,
+                    "precio" => $producto->price->scopePrice($userprice),
+                    "photo" => $producto->photo,
+                    "currency" => $producto->currency,
+                    "brand" => $producto->brand->name
+                ];
+                $response['productos'][$detalle['item']['id']]['cantidad'] = $detalle['cantidad'];
+                $response['productos'][$detalle['item']['id']]['total'] = $detalle['total'];
+            }
+           
+        }
+        return $response;
     }
 
 }

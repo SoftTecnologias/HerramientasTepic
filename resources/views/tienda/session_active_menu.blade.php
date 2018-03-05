@@ -1,6 +1,7 @@
 <?php
 $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
 #dd($cookie);
+#dd($carrito['productos']);
 ?>
 <div id="top">
     <div class="container">
@@ -18,8 +19,8 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                     <span class="hidden-xs text-uppercase">{{$user->name." ".$user->lastname}} </span></a>
                 <a id="carrito" data-toggle="modal" data-target="#carrito-modal"><i class="fa fa-shopping-cart"></i>
                     <span
-                            class="hidden-xs text-uppercase">$ {{number_format($cookie['carrito']->total, 2,".",",")}}
-                        ({{$cookie['carrito']->cantidadProductos}} articulos)</span></a>
+                            class="hidden-xs text-uppercase">$ {{number_format($carrito['total'], 2,".",",")}}
+                        ({{$carrito['cantidadProductos']}} articulos)</span></a>
                 <a href="{{route('area.logout',['id'=>1])}}"><i class="fa fa-sign-out"></i> <span
                             class="hidden-xs text-uppercase"></span>Cerrar Sesión</a>
             </div>
@@ -46,8 +47,8 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                                   </tr>
                                 </thead>
                                 <tbody id="body-cart">
-                                @if($cookie['carrito']->productos != null)
-                                  @foreach($cookie['carrito']->productos as $producto)
+                                @if($carrito['productos'] != null)
+                                  @foreach($carrito['productos'] as $producto)
                                     <tr id="row{{base64_decode($producto['item']['id'])}}">
                                         <td style="font-size:.80em; ">{{$producto['item']['name']}}</td>
                                         <td style="text-align: center;">{{$producto['cantidad']}}</td>
@@ -64,7 +65,7 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                     <div class="modal-footer">
 
                           <a href="{{route('carrito.getCheckout')}}" id="btnCheckout" class="btn btn-block btn-primary" style="font-size: 1.20em;">
-                              Finalizar pedido ($ {{number_format($cookie['carrito']->total, 2,".",",")." MXN"}}) </a>
+                              Finalizar pedido ($ {{number_format($carrito['total'], 2,".",",")." MXN"}}) </a>
 
                     </div>
                 </div>

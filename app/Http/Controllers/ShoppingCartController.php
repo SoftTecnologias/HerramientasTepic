@@ -20,28 +20,23 @@ use League\Flysystem\Exception;
 class ShoppingCartController extends Controller
 {
     //
-    public function addProduct(Request $request)
-    {
+    public function addProduct(Request $request){
         try {
             if ($cookie = Cookie::get("cliente")) {
                 $producto = Producto::findOrFail(base64_decode($request->id));
                 $item = [
                     "id" => base64_encode($producto->id),
-                    "name" => $producto->name,
-                    "code" => $producto->code,
-                    "precio" => $producto->price->scopePrice($cookie['userprice']),
-                    "photo" => $producto->photo,
-                    "currency" => $producto->currency,
-                    "brand" => $producto->brand->name
+                    "precio" => $producto->price->scopePrice($cookie['userprice'])
                 ];
                 $cantidad = $request->cantidad;
                 $oldCarrito = $cookie['carrito'];
                 $carrito = $oldCarrito;
                 $carrito->add($item, $producto->id, $cantidad);
                 $cookie['carrito'] = $carrito;
+                $cliente = Usuarios::where('apikey',$request->cookie('cliente')['apikey'])->firstOrFail();    
                 return Response::json([
                     'code' => '200',
-                    'msg' => $cookie['carrito'],
+                    'msg' => $this->returnCart($cookie['carrito'],$cliente->userprice),
                     'detail' => 'success'
                 ])->withCookie('cliente', $cookie);
             } else {
@@ -60,14 +55,12 @@ class ShoppingCartController extends Controller
         }
     }
 
-    public function removeCart(Request $request)
-    {
+    public function removeCart(Request $request){
         try {
             if ($cookie = Cookie::get("cliente")) {
                 $producto = Producto::findOrFail(base64_decode($request->id));
                 $item = [
                     "id" => base64_encode($producto->id),
-                    "name" => $producto->name,
                     "precio" => $producto->price->scopePrice($cookie['userprice']),
                 ];
                 $cantidad = $request->cantidad;
@@ -77,7 +70,7 @@ class ShoppingCartController extends Controller
                 $cookie['carrito'] = $carrito;
                 return Response::json([
                     'code' => '200',
-                    'msg' => $cookie['carrito'],
+                    'msg' => $this->returnCart($cookie['carrito'],$cookie['userprice']),
                     'detail' => 'success'
                 ])->withCookie('cliente', $cookie);
             } else {
@@ -96,8 +89,7 @@ class ShoppingCartController extends Controller
         }
     }
 
-    public function removePartial(Request $request)
-    {
+    public function removePartial(Request $request){
         try {
             if ($cookie = Cookie::get("cliente")) {
                 $cantidad = $request->cantidad;
@@ -107,7 +99,7 @@ class ShoppingCartController extends Controller
                 $cookie['carrito'] = $carrito;
                 return Response::json([
                     'code' => '200',
-                    'msg' => $cookie['carrito'],
+                    'msg' => $this->returnCart($cookie['carrito'],$cookie['userprice']),
                     'detail' => 'success'
                 ])->withCookie('cliente', $cookie);
             } else {
@@ -126,8 +118,7 @@ class ShoppingCartController extends Controller
         }
     }
 
-    public function updateCart(Request $request)
-    {
+    public function updateCart(Request $request){
         try {
             if ($cookie = Cookie::get("cliente")) {
                 $datos = json_decode($request->productos, true);
@@ -135,12 +126,7 @@ class ShoppingCartController extends Controller
                     $producto = Producto::findOrFail(base64_decode($dato['id']));
                     $item = [
                         "id" => base64_encode($producto->id),
-                        "name" => $producto->name,
-                        "code" => $producto->code,
-                        "precio" => $producto->price->scopePrice($cookie['userprice']),
-                        "photo" => $producto->photo,
-                        "currency" => $producto->currency,
-                        "brand" => $producto->brand->name
+                        "precio" => $producto->price->scopePrice($cookie['userprice'])
                     ];
                     $cantidad = $dato['cantidad'];
                     $oldCarrito = $cookie['carrito'];
@@ -150,7 +136,7 @@ class ShoppingCartController extends Controller
                 }
                 return Response::json([
                     'code' => '200',
-                    'msg' => $cookie['carrito'],
+                    'msg' => $this->returnCart($cookie['carrito'],$cookie['userprice']),
                     'detail' => 'success'
                 ])->withCookie('cliente', $cookie);
             } else {
@@ -246,7 +232,7 @@ class ShoppingCartController extends Controller
                 ->where('logo', 'not like', 'minilogo.png')
                 ->where('authorized', '=', 1)
                 ->take(12)->get();
-	//Encriptamos los id
+	    //Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
         //Menu de categorias
@@ -383,8 +369,7 @@ class ShoppingCartController extends Controller
 
     }
 
-    public function destroyOrder(Request $request)
-    {
+    public function destroyOrder(Request $request){
         try {
             if (Cookie::get('cliente') == null) {
                 return redirect()->route("tienda.index");
@@ -420,6 +405,30 @@ class ShoppingCartController extends Controller
         } catch (Exception $e) {
             abort(500);
         }
+    }
+
+    private function returnCart(Cart $carrito, $userprice){
+        $response = [
+            "cantidadProductos" => $carrito->cantidadProductos,
+            "total" => $carrito->total,
+            "productos" => []
+        ];
+
+        foreach ($carrito->productos as  $detalle) {
+            $producto = Producto::find(base64_decode($detalle['item']['id']));
+            $response['productos'][$detalle['item']['id']]['item']=[
+                "id" => base64_encode($producto->id),
+                "name" => $producto->name,
+                "code" => $producto->code,
+                "precio" => $producto->price->scopePrice($userprice),
+                "photo" => $producto->photo,
+                "currency" => $producto->currency,
+                "brand" => $producto->brand->name
+            ];
+            $response['productos'][$detalle['item']['id']]['cantidad'] = $detalle['cantidad'];
+                $response['productos'][$detalle['item']['id']]['total'] = $detalle['total'];
+        }
+        return $response;
     }
 
 }
