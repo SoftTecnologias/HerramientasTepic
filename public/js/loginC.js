@@ -30,10 +30,10 @@ $(function () {
           swal("Error","No pudimos conectarnos al servidor","error");
       });
   });
-    $(document).keypress(function(e) {
+    /*$(document).keypress(function(e) {
         if(e.which == 13) {
             // enter pressed
             console.log('enter capturado');
         }
-    });
+    });*/
 });
