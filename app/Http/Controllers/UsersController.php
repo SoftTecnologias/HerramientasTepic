@@ -1505,7 +1505,13 @@ class UsersController extends Controller
         //Encriptamos los id
         foreach ($marcas as $marca)
             $marca->id = base64_encode($marca->id);
-        //Menu de categorias
+        $bMarcas = DB::table('brand')
+            ->select('logo')
+            ->where('logo', 'not like', 'minilogo.png')
+            ->where('authorized', '=', 1)
+            ->take(12)->get();
+
+            //Menu de categorias
         $categorias = DB::table('category')->select('id', 'name')->take(40)
             ->where('name', 'not like', 'Nota de credito')
             ->where(DB::raw('(select COUNT(*) from product  where category.id = product.categoryid AND product.photo not like \'minilogo.png\')'), '>', 0)
@@ -1525,7 +1531,7 @@ class UsersController extends Controller
             //Eliminamos la solicitud y se activa por trigger o manualmente!!
             $solicitud->delete();
             //regresamos la vista de confirmación por eso es GET
-            return view('tienda.confirmation', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
+            return view('tienda.confirmation', ['bMarcas'=>$bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios]);
         } catch (Exception $exception) {
             //Hubo un error y se manda la pantalla de alerta
             abort(500);
@@ -1597,7 +1603,7 @@ class UsersController extends Controller
 
                 foreach ($compras as $compra) {
                     $compra->id = base64_encode($compra->id);
-                    $compra->orderdate = date($compra->orderdate);
+                    $compra->created_at = date($compra->created_at);
                     switch ($compra->status){
                         case 'R': $compra->status = 'Recibido';
                             break;
@@ -1650,13 +1656,14 @@ class UsersController extends Controller
                 $user->id = base64_encode($user->id);
                 return view('tienda.profile', ['bMarcas'=>$bMarcas,'user' => $user, 'servicios' => $servicios,
                     'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
-                    'localidades' => $localidades, 'municipios' => $municipios,'logueado' => $users,'compras'=>$compras]);
+                    'localidades' => $localidades, 'municipios' => $municipios,'logueado' => $users,'compras'=>$compras,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $users->userprice)]);
             } else {
                 return redirect()->route('tienda.index');
             }
 
 
         } catch (Exception $e) {
+            dd($e);
             abort(500);
         }
     }

@@ -255,7 +255,6 @@
                     </thead>
                     <tbody>
                     @foreach($compras as $compra)
-<<<<<<< HEAD
                     <tr>
                         <td>{{$compra->id}}</td>
                         <td>{{$compra->created_at}}</td>
@@ -266,18 +265,6 @@
                             <a class="btn btn-warning" onclick="infocompra('{{$compra->id}}')" id="info{{$compra->id}}">Info</a>
                         </td>
                     </tr>
-=======
-                        <tr>
-                            <td>{{$compra->orderid}}</td>
-                            <td>{{$compra->orderdate}}</td>
-                            <td>{{$compra->subtotal}}</td>
-                            <td>{{$compra->total}}</td>
-                            <td>{{$compra->status}}</td>
-                            <td>
-                                <a class="btn btn-warning" onclick="infocompra('{{$compra->orderid}}')" id="info{{$compra->orderid}}">Info</a>
-                            </td>
-                        </tr>
->>>>>>> f0ea4ae374a8c34fb49b957487c1217bc9421956
                     @endforeach
                     </tbody>
 
