@@ -1,5 +1,5 @@
 <?php
-$cookie = Illuminate\Support\Facades\Cookie::get("cliente");
+#$cookie = Illuminate\Support\Facades\Cookie::get("cliente");
 #dd($cookie);
 #dd($carrito['productos']);
 ?>
