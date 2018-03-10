@@ -45,7 +45,7 @@ class DireccionesController extends Controller
                 "streetnumber"        => $request->num   ,
                 "street2"   => $request->calle2   ,
                 "street3"      => $request->calle3   ,
-                "neigborhood"     => "",
+                "neigborhood"     => $request->neighborhood,
                 "zipcode"     => $request->cp,
                 "city"     => $request->localidad,
                 "country"     => $request->municipio,

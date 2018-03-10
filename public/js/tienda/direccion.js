@@ -53,7 +53,7 @@ $(document).ready(function(e) {
             num:$("#numext").val(),
             cp:$("#cp").val(),
             ref:$("#ref").val(),
-            colonia: $("#neighborhood")
+            colonia: $("#neighborhood").val()
         };
         $.ajax({
             url:document.location.protocol+'//'+document.location.host  +'/user/direccion',
@@ -64,14 +64,12 @@ $(document).ready(function(e) {
             }
         }).done(function(json){
             if(json.code == 200) {
-                swal("Realizado", json.msg, json.detail).then(function () {
-                    location.reload();
-                });
+                swal("Realizado", json.msg, json.detail);
+                window.location.reload();
             }else{
-
-                swal("Error",json.msg,json.detail).then(function () {
-                    location.reload();
-                });
+                swal("Error",json.msg,json.detail);
+                wndow.location.reload();
+                
             }
         }).fail(function(){
             swal("Error","Tuvimos un problema de conexion","error");
