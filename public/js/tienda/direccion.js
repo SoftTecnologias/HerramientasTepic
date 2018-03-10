@@ -52,7 +52,8 @@ $(document).ready(function(e) {
             calle3:$("#calle3").val(),
             num:$("#numext").val(),
             cp:$("#cp").val(),
-            ref:$("#ref").val()
+            ref:$("#ref").val(),
+            colonia: $("#neighborhood")
         };
         $.ajax({
             url:document.location.protocol+'//'+document.location.host  +'/user/direccion',
@@ -152,7 +153,7 @@ $(document).ready(function () {
 function validar() {
     if($("#estado").val() == 00 || $("#municipio").val() == 00 || $("#localidad").val() == 00 ||
         $("#calle1").val() == '' || $("#calle2").val() == '' || $("#calle3").val() == '' ||
-        $("#numext").val() == '' ||$("#cp").val() == '' || $("#ref").val() == ''){
+        $("#numext").val() == '' ||$("#cp").val() == '' || $("#neighborhood").val() == ''){
         swal('error','Rellene todos los campos','');
         return false;
     }
