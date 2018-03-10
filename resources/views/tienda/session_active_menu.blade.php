@@ -14,15 +14,20 @@ $cookie = Illuminate\Support\Facades\Cookie::get("cliente");
                 </p>
             </div>
             <!-- Con el ingreso cambiaremos este menu-->
-            <div class="user-block">
-                <a href="{{route('tienda.user.profile')}}">
-                    <span class="hidden-xs text-uppercase">{{$user->name." ".$user->lastname}} </span></a>
-                <a id="carrito" data-toggle="modal" data-target="#carrito-modal"><i class="fa fa-shopping-cart"></i>
-                    <span
-                            class="hidden-xs text-uppercase">$ {{number_format($carrito['total'], 2,".",",")}}
-                        ({{$carrito['cantidadProductos']}} articulos)</span></a>
-                <a href="{{route('area.logout',['id'=>1])}}"><i class="fa fa-sign-out"></i> <span
-                            class="hidden-xs text-uppercase"></span>Cerrar Sesión</a>
+            <div class="user-block"> 
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a id="carrito" data-toggle="modal" data-target="#carrito-modal"><i class="fa fa-shopping-cart"></i>
+                    <span class="hidden-xs text-uppercase">$ {{number_format($carrito['total'], 2,".",",")}}
+                        ({{$carrito['cantidadProductos']}} articulos)</span></a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="{{route('tienda.user.profile')}}">{{$user->name." ".$user->lastname}} <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{route('tienda.user.profile')}}"><i class="icon-cog"></i> Mi perfil</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{{route('area.logout',['id'=>1])}}"><i class="icon-off"></i> Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
             <!-- Hasta aqui-->
         </div>
