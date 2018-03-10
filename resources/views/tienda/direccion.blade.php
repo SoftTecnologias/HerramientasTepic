@@ -29,7 +29,7 @@
                         <div class="col-md-12">
                             <h3>Informacion de Usuario</h3>
                             <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="control-label">Estado</label>
                                     <select id="estado" name="estado"  class="btn btn-default col-md-12">
@@ -40,7 +40,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="control-label">Municipio</label>
                                     <select id="municipio" name="municipio"  class="btn btn-default col-md-12">
@@ -48,7 +48,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="subject">
                                         Localidad</label>
@@ -62,29 +62,36 @@
                             <h3>Direccion</h3>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Calle</label>
+                                    <label class="control-label">Calle Principal</label>
                                     <input id="calle1" name="calle1" placeholder="principal" class="form-control input-md" type="text">
 
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Calle 2</label>
+                                    <label class="control-label">Numero Exterior / Interior</label>
+                                    <input id="numext" name="numext" placeholder="Numero Exterior" class="form-control input-md" type="text">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Colonia</label>
+                                    <input id="neighborhood" name="neighborhood" placeholder="Colonia" class="form-control input-md" type="text">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Entre calle 1 </label>
                                     <input id="calle2" name="calle2" placeholder="entre" class="form-control input-md" type="text">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Calle 3</label>
+                                    <label class="control-label">Entre calle 2</label>
                                     <input id="calle3" name="calle3" placeholder="entre" class="form-control input-md" type="text">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label">Numero Exterior</label>
-                                    <input id="numext" name="numext" placeholder="Numero Exterior" class="form-control input-md" type="text">
-                                </div>
-                            </div>
+                            
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Codigo Postal</label>
