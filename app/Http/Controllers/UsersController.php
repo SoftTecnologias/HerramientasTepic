@@ -1559,7 +1559,6 @@ class UsersController extends Controller
     }
 
     public function getUserProfile(Request $request){
-
         try {
             $bMarcas = DB::table('brand')
                 ->select('logo')
@@ -1620,7 +1619,6 @@ class UsersController extends Controller
                     }
 
                 }
-
                 $estados = Estado::all();
 
                 $marcas = DB::table('brand')->select('id', 'name')
@@ -1641,10 +1639,9 @@ class UsersController extends Controller
                 $servicios = DB::table('services')->select('id', 'title', 'shortdescription', 'longdescription', 'img', 'selected')->take(10)->orderBy('title', 'asc')->get();
                 foreach ($servicios as $servicio)
                     $servicio->id = base64_encode($servicio->id);
-
                 if ($user == null) {
                     return view('tienda.direccion', ['bMarcas'=>$bMarcas,'servicios' => $servicios,
-                        'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados, 'logueado' => $users]);
+                        'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados, 'logueado' => $users,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $users->userprice)]);
                 }
                 //Marca actual (Migaja
                 $municipios = DB::table('municipios')->select('*')
@@ -1654,6 +1651,7 @@ class UsersController extends Controller
                     ->where('municipio_id', '=', $user->country)->get();
 
                 $user->id = base64_encode($user->id);
+                
                 return view('tienda.profile', ['bMarcas'=>$bMarcas,'user' => $user, 'servicios' => $servicios,
                     'marcas' => $marcas, 'categorias' => $categorias, 'estados' => $estados,
                     'localidades' => $localidades, 'municipios' => $municipios,'logueado' => $users,'compras'=>$compras,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $users->userprice)]);
