@@ -45,7 +45,7 @@
 <br/>
 
 <div class="container">
-    <div class="col-sm-8">
+    <div class="col-sm-10 col-sm-offset-1">
         <div data-spy="scroll" class="tabbable-panel">
             <div class="tabbable-line">
                 <ul class="nav nav-tabs ">
@@ -239,7 +239,7 @@
     </div>
 
 
-    <div class="col-sm-4">
+    <div class="col-sm-10 col-sm-offset-1">
         <div class="panel panel-default">
             <div class="menu_title">
                 <h3>Compras</h3>
@@ -263,6 +263,7 @@
                         <td>{{$compra->status}}</td>
                         <td>
                             <a class="btn btn-warning" onclick="infocompra('{{$compra->id}}')" id="info{{$compra->id}}">Info</a>
+                            <a href="{{route('pedidos.printCart',[$compra->id])}}" class="btn btn-success" id="btnImprimir" target="_blank"><i class="fa fa-print"></i>Imprimir Carrito</a>
                         </td>
                     </tr>
                     @endforeach
@@ -279,10 +280,7 @@
 <div class = "modal" id="modalinfo">
     <div class="container">
         <div class="row">
-
             <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xs-offset-0 col-sm-offset-0 col-md-offset-1 col-lg-offset-1 toppad" id="datos">
-
-
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <span>
