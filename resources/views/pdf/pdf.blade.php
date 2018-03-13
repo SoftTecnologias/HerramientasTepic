@@ -20,15 +20,15 @@
 </head>
 <body>
 <div id="all">
-    <header class="col-md-11">
-        <div class="col-md-3">
+    <header class="col-md-11 col-sm-11 col-lg-11">
+        <div class="col-md-3 col-sm-3 col-lg-3">
                 <img src="{{asset('/img/image.png')}}" alt="Herramientas de Tepic logo"
                      class="hidden-xs hidden-sm img-responsive"/>
                 <img src="{{asset('/img/minilogo50.png')}}" alt="Herramientas de Tepic logo"
                      class="visible-xs visible-sm"><span
                         class="sr-only">Herramientas y Servicios de Tepic</span>
         </div>
-        <div class=" col-md-9" style="text-align: center;">
+        <div class=" col-md-5 col-lg-5 col-sm-5" style="text-align: center;">
             <h1><strong>Herramientas y Servicios de Tepic</strong></h1>
             <em>Mazatlan No. 177-A Col. Centro Tepic, Nayarit México, CP. 63000 herramientas_tepic@hotmail.com o 01-311-258-0540</em>
             <h3><u>Es un mundo de herramientas</u></h3>
@@ -37,7 +37,7 @@
     <hr width="100%">
     <div id="content" >
         <div class="row">
-             <div class="well col-md-10  col-md-offset-1">
+             <div class="well col-md-10  col-md-offset-1 col-sm-10 col-lg-10 col-sm-offset-1 col-lg-offset-1">
                 <div class="row">
                     <div class="col-md-6">
                         <address>
