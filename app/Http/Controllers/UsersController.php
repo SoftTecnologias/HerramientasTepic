@@ -2032,7 +2032,7 @@ class UsersController extends Controller
                         ->where('logo', 'not like', 'minilogo.png')
                         ->where('authorized', '=', 1)
                         ->take(12)->get();
-                    return view('tienda.envio', ['bMarcas' => $bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,"address"=>$address, "estado"=> $estado,"municipio"=>$municipio, "localidad"=>$localidad, 'details'=>$orderdetails  ]);
+                    return view('tienda.envio', ['bMarcas' => $bMarcas,'marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user,"address"=>$address, "estado"=> $estado,"municipio"=>$municipio, "localidad"=>$localidad, 'details'=>$orderdetails,'carrito'=>$this->returnCart($request->cookie('cliente')['carrito'], $user->userprice)]);
                 } else {
                    # dd($cookie);
                     return view('errors.403', ['marcas' => $marcas, 'categorias' => $categorias, 'servicios' => $servicios, 'logueado' => $user]);
