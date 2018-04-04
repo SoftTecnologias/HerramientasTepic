@@ -29,9 +29,9 @@
                         class="sr-only">Herramientas y Servicios de Tepic</span>
         </div>
         <div class=" col-md-5 col-lg-5 col-sm-5" style="text-align: center;">
-            <h1><strong>Herramientas y Servicios de Tepic</strong></h1>
+            <h4><strong>Herramientas y Servicios de Tepic</strong></h4>
             <em>Mazatlan No. 177-A Col. Centro Tepic, Nayarit México, CP. 63000 herramientas_tepic@hotmail.com o 01-311-258-0540</em>
-            <h3><u>Es un mundo de herramientas</u></h3>
+            <h4><u>Es un mundo de herramientas</u></h4>
         </div>
     </header>
     <hr width="100%">
@@ -39,36 +39,28 @@
         <div class="row">
              <div class="well col-md-10  col-md-offset-1 col-sm-10 col-lg-10 col-sm-offset-1 col-lg-offset-1">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-11 col-sm-11 col-lg-11">
                         <address>
-                            <h4>
-                                <strong>{{$cliente['cliente']['name']}} {{$cliente['cliente']['lastname']}}</strong></h4>
-                                <br>
-                                @if($cliente['cliente']['address'] != null)
-                                    {{$cliente['cliente']['address']->street}} #{{$cliente['cliente']['address']->streetnumber}}, Col. {{$cliente['cliente']['address']->neigborhood}}
-                                    <br>
-                                    Tepic, Nayarit Mexico {{$cliente['cliente']['address']->zipcode}}
-                                    @else
-                                        <br>                    
-                                        Tepic, Nayarit Mexico       
-                                        <strong>No hay dirección capturada</strong>
-                                    @endif        
-                                    <br>
-                                    {{$cliente['cliente']['phone']}}
-                                    <br>
-                                    {{$cliente['cliente']['email']}}
+                                <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <p>Cliente: <strong>{{$cliente['cliente']['name']}} {{$cliente['cliente']['lastname']}}</strong> Tel: {{$cliente['cliente']['phone']}} Email: {{$cliente['cliente']['email']}}
+                                </div>
+                                
+                                <div class="col-md-3 col-sm-3 col-lg-3">
+                                    <p> Dirección:
+                                        @if($cliente['cliente']['address'] != null)
+                                        {{$cliente['cliente']['address']->street}} #{{$cliente['cliente']['address']->streetnumber}}, Col. {{$cliente['cliente']['address']->neigborhood}}
+                                        Tepic, Nayarit Mexico {{$cliente['cliente']['address']->zipcode}}
+                                        @else
+                                            <br>                    
+                                            Tepic, Nayarit Mexico       
+                                            <strong>No hay dirección capturada</strong>
+                                        @endif
+                                    </p>        
+                                </div>
                         </address>
-                    </div>
-                    <div class="col-xs-6 col-sm-6 col-md-6 text-right">
-                        <p>
-                            <em>Fecha: {{$cliente['date']}}</em>
-                        </p>
                     </div>
                 </div>
             </div>
-        </div>
-        <div style="text-align: center;">
-            <h1>Presupuesto</h1>
         </div>
         <div class="container">
             <div class="row">
@@ -83,7 +75,7 @@
                                         <th>Codigo</th>
                                         <th colspan="2">Producto</th>
                                         <th>Marca</th>
-                                        <th>Precio Unitario</th>
+                                        <th>Precio</th>
                                         <th colspan="2">Total</th>
                                     </tr>
                                     </thead>
@@ -138,9 +130,9 @@
             </div>
             <div class="row">
                 <ul>
-                    <li><h4>Esta cotización es solo de caracter informativo</h4></li>
-                    <li><h4>Los precios pueden variar al momento de la compra y no representa un compromiso de venta</h4></li>
-                    <li><h4>La existencia está sujeta a disposicion en almacen</h4></li>
+                    <li>Este es un <strong><em>PRESUPUESTO</em></strong> es solo de caracter informativo</li>
+                    <li>Los precios pueden variar al momento de la compra y no representa un compromiso de venta</li>
+                    <li>La existencia está sujeta a disposicion en almacen</li>
                 </ul>
             </div>
         </div>

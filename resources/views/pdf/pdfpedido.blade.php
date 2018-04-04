@@ -22,18 +22,18 @@
 <body>
 <div id="all">
     <header class="col-md-11">
-        <div class="col-md-3">
-                <img src="{{asset('/img/image.png')}}" alt="Herramientas de Tepic logo"
-                     class="hidden-xs hidden-sm img-responsive"/>
-                <img src="{{asset('/img/minilogo50.png')}}" alt="Herramientas de Tepic logo"
-                     class="visible-xs visible-sm"><span
-                        class="sr-only">Herramientas y Servicios de Tepic</span>
-        </div>
-        <div class=" col-md-9" style="text-align: center;">
-            <h1><strong>Herramientas y Servicios de Tepic</strong></h1>
-            <em>Mazatlan No. 177-A Col. Centro Tepic, Nayarit México, CP. 63000 herramientas_tepic@hotmail.com o 01-311-258-0540</em>
-            <h3><u>Es un mundo de herramientas</u></h3>
-        </div>
+            <div class="col-md-3 col-sm-3 col-lg-3">
+                    <img src="{{asset('/img/image.png')}}" alt="Herramientas de Tepic logo"
+                         class="hidden-xs hidden-sm img-responsive"/>
+                    <img src="{{asset('/img/minilogo50.png')}}" alt="Herramientas de Tepic logo"
+                         class="visible-xs visible-sm"><span
+                            class="sr-only">Herramientas y Servicios de Tepic</span>
+            </div>
+            <div class=" col-md-5 col-lg-5 col-sm-5" style="text-align: center;">
+                <h4><strong>Herramientas y Servicios de Tepic</strong></h4>
+                <em>Mazatlan No. 177-A Col. Centro Tepic, Nayarit México, CP. 63000 herramientas_tepic@hotmail.com o 01-311-258-0540</em>
+                <h4><u>Es un mundo de herramientas</u></h4>
+            </div>
     </header>
     <hr width="100%">
     <div id="content" >
@@ -45,22 +45,21 @@
                         <div class="col-md-6">
                             
                                 <address>
-                                    <h4>
-                                        <strong>{{$carrito['cliente']['name']}} {{$carrito['cliente']['lastname']}}</strong></h4>
-                                    <br>
-                                    @if($carrito['cliente']['address'] != null)
-                                        {{$carrito['cliente']['address']->street}} #{{$carrito['cliente']['address']->streetnumber}}, Col. {{$carrito['cliente']['address']->neigborhood}}
-                                        <br>
-                                        Tepic, Nayarit Mexico {{$carrito['cliente']['address']->zipcode}}
-                                    @else
-                                        <strong>No hay dirección capturada</strong>
-                                    @endif
-                                    <br>                    
-                                    Tepic, Nayarit Mexico               
-                                    <br>
-                                    {{$carrito['cliente']['phone']}}
-                                    <br>
-                                    {{$carrito['cliente']['email']}}
+                                        <div class="col-md-3 col-sm-3 col-lg-3">
+                                                <p>Cliente: <strong>{{$carrito['cliente']['name']}} {{$carrito['cliente']['lastname']}}</strong> Tel: {{$carrito['cliente']['phone']}} Email: {{$carrito['cliente']['email']}}
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-lg-3">
+                                                <p> Dirección:
+                                                    @if($carrito['cliente']['address'] != null)
+                                                    {{$carrito['cliente']['address']->street}} #{{$cliente['cliente']['address']->streetnumber}}, Col. {{$cliente['cliente']['address']->neigborhood}}
+                                                    Tepic, Nayarit Mexico {{$Carrito['cliente']['address']->zipcode}}
+                                                    @else
+                                                        <br>                    
+                                                        Tepic, Nayarit Mexico       
+                                                        <strong>No hay dirección capturada</strong>
+                                                    @endif
+                                                </p>        
+                                            </div>
                                 </address>
                          </div>
                         <div class="col-xs-6 col-sm-6 col-md-6 text-right">
@@ -89,7 +88,7 @@
                                         <th>Codigo</th>
                                         <th colspan="2">Producto</th>
                                         <th>Marca</th>
-                                        <th>Precio Unitario</th>
+                                        <th>Precio </th>
                                         <th colspan="2">Total</th>
                                     </tr>
                                     </thead>
