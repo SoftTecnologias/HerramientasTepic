@@ -223,6 +223,7 @@ function productAction(){
 //
 function newProduct(){
     var data = new FormData(document.getElementById("productForm"));
+    waitingDialog.show('Agregando Producto', {dialogSize: 'sm', progressType: 'success'});
     $.ajax({
         url:document.location.protocol+'//'+document.location.host  +"/area/resource/productos",
         type:"POST",
@@ -231,8 +232,10 @@ function newProduct(){
         processData: false,
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+        },
+        timeout: 6000
     }).done(function(json){
+        waitingDialog.hide();
         if(json.code == 200) {
             swal("Realizado", json.msg, json.detail);
             $('#modalProduct').modal("hide");
@@ -242,6 +245,7 @@ function newProduct(){
             swal("Error",json.msg,json.detail);
         }
     }).fail(function(){
+        waitingDialog.hide();
         swal("Error","Tuvimos un problema de conexion","error");
     });
 }
@@ -249,6 +253,7 @@ function newProduct(){
 function updateProduct(id){
     $("#productid").val(id);
     var datos = new FormData(document.getElementById("productForm"));
+    waitingDialog.show('Actualizando', {dialogSize: 'sm', progressType: 'warning'});
     $.ajax({
         url:document.location.protocol+'//'+document.location.host  +"/area/resource/productos/"+id,
         type:"POST",
@@ -257,8 +262,10 @@ function updateProduct(id){
         processData: false,
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+        },
+        timeout:6000
     }).done(function(json){
+        waitingDialog.hide();
         if(json.code == 200) {
             swal("Realizado", json.msg, json.detail);
             $('#modalProduct').modal("hide");
@@ -269,6 +276,7 @@ function updateProduct(id){
             swal("Error",json.msg,json.detail);
         }
     }).fail(function(){
+        waitingDialog.hide();
         swal("Error","Tuvimos un problema de conexion","error");
     });
 }
@@ -285,17 +293,21 @@ function deleteProduct(id){
         cancelButtonText: "Lo pensaré"
     }).then(function () {
         ruta =document.location.protocol+'//'+document.location.host  +'/area/resource/productos/'+id;
+        waitingDialog.show('Eliminando', {dialogSize: 'sm', progressType: 'danger'});
         $.ajax({
             url:ruta,
             type:'delete',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
+            },
+            timeout:6000
         }).done(function(json){
+            waitingDialog.hide();
             if(json.code==200) {
                 swal("Realizado", json.msg, json.detail);
                 $('#tblProducts').dataTable().api().ajax.reload(null,false);
             }else{
+                waitingDialog.hide();
                 swal("Error", json.msg, json.detail);
             }
         }).fail(function(response){

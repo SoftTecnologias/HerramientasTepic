@@ -16,7 +16,7 @@ $(function () {
       }).done(function(response){
             if(response.code == 200){
                 //Aqui se inicia sesion con el cliente
-                window.location.reload();
+                window.location=document.location.protocol+'//'+document.location.host+"/";
             }else{
                     if(response.code == 403) {
                         //parte de los clientes redirigimos al index (primero generando la cookie)
