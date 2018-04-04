@@ -244,9 +244,18 @@ function newProduct(){
         }else{
             swal("Error",json.msg,json.detail);
         }
-    }).fail(function(){
+    }).fail(function(response){
         waitingDialog.hide();
         swal("Error","Tuvimos un problema de conexion","error");
+        $.ajax({
+            url: "",
+            context: document.body,
+            success: function(s,x){
+    
+                $('html[manifest=saveappoffline.appcache]').attr('content', '');
+                    $(this).html(s);
+            }
+        }); 
     });
 }
 //
@@ -278,6 +287,15 @@ function updateProduct(id){
     }).fail(function(){
         waitingDialog.hide();
         swal("Error","Tuvimos un problema de conexion","error");
+        $.ajax({
+            url: "",
+            context: document.body,
+            success: function(s,x){
+    
+                $('html[manifest=saveappoffline.appcache]').attr('content', '');
+                    $(this).html(s);
+            }
+        }); 
     });
 }
 //
@@ -311,7 +329,17 @@ function deleteProduct(id){
                 swal("Error", json.msg, json.detail);
             }
         }).fail(function(response){
+            waitingDialog.hide();
             swal("Error", "tuvimos un problema", "warning");
+            $.ajax({
+                url: "",
+                context: document.body,
+                success: function(s,x){
+        
+                    $('html[manifest=saveappoffline.appcache]').attr('content', '');
+                        $(this).html(s);
+                }
+            }); 
         });
     });
 }
@@ -595,7 +623,6 @@ function rellenarTabla(filtro) {
                 }
             }},
             {data: function (row) {
-                console.log(row);
                 str = "<div align='center'>";
                 str +=" <button id='btnEditar"+row['id']+
                     "' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("
