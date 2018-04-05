@@ -428,6 +428,7 @@
 
 @section('scripts')
     <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="{{asset('js/plugins/bootstrap-waitingfor.min.js')}}"></script>
     <script src="{{asset('js/admin/productos.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/plugins/jquery.validate.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/plugins/fileinput.min.js')}}"></script>
