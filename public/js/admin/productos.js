@@ -124,7 +124,7 @@ $(function(){
                 number: true
             },
             'img[]': {
-                extension: "png|jpg|gif",
+                extension: "png|jpg|gif|jpeg",
                 filesize: 1048576
             }
         }
@@ -188,25 +188,39 @@ $(function(){
 
     /* Inputs con url*/
     $("#imgu1").on("change",function(){
-            if($(this).val()!==""){
+        var allowedExtensions = /(.jpg|.jpeg|.png|.gif)$/i;    
+        
+        if($(this).val()!==""){
+            if (allowedExtensions.exec($(this).val())){
                 $('#im1').attr("src",$(this).val());
                 $('#im1').removeClass("hidden");
             }else{
-                $('#im1').addClass("hidden");
-            }
+                swal("Error","La url no contiene una extensión valida","error");
+            }                
+        }else{
+            $('#im1').addClass("hidden");
+        }
     });
     $("#imgu2").on("change",function(){
         if($(this).val()!==""){
-            $('#im2').attr("src",$(this).val());
-            $('#im2').removeClass("hidden");
+            if (allowedExtensions.exec($(this).val())){
+                $('#im2').attr("src",$(this).val());
+                $('#im2').removeClass("hidden");
+            }else{
+                swal("Error","La url no contiene una extensión valida","error");
+            }   
         }else{
             $('#im2').addClass("hidden");
         }
     });
     $("#imgu3").on("change",function(){
         if($(this).val()!==""){
-            $('#im3').attr("src",$(this).val());
-            $('#im3').removeClass("hidden");
+            if (allowedExtensions.exec($(this).val())){
+                $('#im3').attr("src",$(this).val());
+                $('#im3').removeClass("hidden");
+            }else{
+                swal("Error","La url no contiene una extensión valida","error");
+            }   
         }else{
             $('#im3').addClass("hidden");
         }
