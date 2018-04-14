@@ -51,8 +51,8 @@
                                         <div class="col-md-3 col-sm-3 col-lg-3">
                                                 <p> Dirección:
                                                     @if($carrito['cliente']['address'] != null)
-                                                    {{$carrito['cliente']['address']->street}} #{{$cliente['cliente']['address']->streetnumber}}, Col. {{$cliente['cliente']['address']->neigborhood}}
-                                                    Tepic, Nayarit Mexico {{$Carrito['cliente']['address']->zipcode}}
+                                                    {{$carrito['cliente']['address']->street}} #{{$carrito['cliente']['address']->streetnumber}}, Col. {{$carrito['cliente']['address']->neigborhood}}
+                                                    Tepic, Nayarit Mexico {{$carrito['cliente']['address']->zipcode}}
                                                     @else
                                                         <br>                    
                                                         Tepic, Nayarit Mexico       
