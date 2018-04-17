@@ -35,6 +35,7 @@ class ProductosController extends Controller
             foreach ($products as $p){
                 $p->id = base64_encode($p->id);
             }
+
         return Datatables::of(collect($products)) ->make(true);
     }
 
@@ -155,6 +156,9 @@ class ProductosController extends Controller
                 $product->fill([
                     "photo" => $nombre
                 ]);
+                if($this->curl_get_file_size($imgu1)> 1000000 ){
+                    throw new Exception('El tamaño es mayor al permitido (1 MB)');
+                }
                 $product->save();
                 Storage::disk('local')->put("/productos/".$nombre,  fopen($imgu1,'r'));
             }
@@ -176,6 +180,9 @@ class ProductosController extends Controller
                 $product->fill([
                     "photo2" => $nombre
                 ]);
+                if($this->curl_get_file_size($imgu2)> 1000000 ){
+                    throw new Exception('El tamaño es mayor al permitido (1 MB)');
+                }
                 $product->save();
                 Storage::disk('local')->put("/productos/".$nombre,  fopen($imgu2,'r'));
             }
@@ -197,9 +204,14 @@ class ProductosController extends Controller
                 $product->fill([
                     "photo3" => $nombre
                 ]);
+                if($this->curl_get_file_size($imgu3)> 1000000 ){
+                    throw new Exception('El tamaño es mayor al permitido (1 MB)');
+                }
                 $product->save();
                 Storage::disk('local')->put("/productos/".$nombre,  fopen($imgu3,'r'));
             }
+            \Log::info("::::::Nuevo producto::::::");
+            \Log::info($product);
             $respuesta = ["code"=>200, "msg"=>'El usuario fue creado exitosamente', 'detail' => 'success'];
         }catch (Exception $e){
             $respuesta = ["code"=>500, "msg"=>$e->getMessage(), 'detail' => 'warning'];
@@ -267,7 +279,6 @@ class ProductosController extends Controller
                 "subcategoryid" => $request->input('subcategoryid')   ,
             ]);
 
-
             if($imgu1==null){
                 if($img1!=null){
                     $up["photo"]=$id."_1.". $request->file("img1")->getClientOriginalExtension();
@@ -282,8 +293,11 @@ class ProductosController extends Controller
                 $ext = explode(".",$f[sizeof($f)-1]);
                 $nombre=$id."_1.".$ext[sizeof($ext)-1];
                 $up['photo'] = $nombre;
-                if($producto->photo != "minilogo.png"){
-                    Storage::delete("/productos/". $producto->photo);
+                if($this->curl_get_file_size($imgu1)> 1000000 ){
+                    throw new Exception('El tamaño es mayor al permitido (1 MB)');
+                }
+                if($producto->photo != "minilogo.png") {
+                    Storage::delete("/productos/" . $producto->photo);
                 }
                 Storage::disk('local')->put("/productos/".$nombre,  fopen($imgu1,'r'));
             }
@@ -301,6 +315,9 @@ class ProductosController extends Controller
                 $ext = explode(".",$f[sizeof($f)-1]);
                 $nombre=$id."_2.".$ext[sizeof($ext)-1];
                 $up['photo2'] = $nombre;
+                if($this->curl_get_file_size($imgu2)> 1000000 ){
+                    throw new Exception('El tamaño es mayor al permitido (1 MB)');
+                }
                 if($producto->img2 != "minilogo.png"){
                     Storage::delete("/productos/". $producto->photo2);
                 }
@@ -320,16 +337,16 @@ class ProductosController extends Controller
                 $ext = explode(".",$f[sizeof($f)-1]);
                 $nombre=$id."_3.".$ext[sizeof($ext)-1];
                 $up['photo3'] = $nombre;
+                if($this->curl_get_file_size($imgu3)> 1000000 ){
+                    throw new Exception('El tamaño es mayor al permitido (1 MB)');
+                }
                 if($producto->photo3 != "minilogo.png"){
                     Storage::delete("/productos/". $producto->photo3);
                 }
                 Storage::disk('local')->put("/productos/".$nombre,  fopen($imgu3,'r'));
             }
-
-
             $producto->fill($up);
             $producto->save();
-
             /*No hay manera de revisar (hasta el momento) para revisar que cambiaron todos asi que los actualizaré a ambos*/
             $price = Precio::findOrFail($producto->priceid);
             $upp=[
@@ -342,7 +359,9 @@ class ProductosController extends Controller
 
             $price->fill($upp);
             $price->save();
-            $respuesta = ["code"=>200, "msg"=>"Usuario actualizado","detail"=>"success"];
+            \Log::info("::::::Actualización de producto::::::");
+            \Log::info($producto);
+            $respuesta = ["code"=>200, "msg"=>"Producto actualizado","detail"=>"success"];
         }catch(Exception $e){
             $respuesta = ["code"=>500, "msg"=>$e->getMessage(),"detail"=>"error"];
         }
@@ -398,5 +417,20 @@ class ProductosController extends Controller
             $respuesta = ["code"=>500, "msg"=>$e->getMessage(),"detail"=>"error"];
         }
         return Response::json($respuesta);
+    }
+
+    function curl_get_file_size( $url )
+    {
+        $ch = curl_init($url);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, TRUE);
+        curl_setopt($ch, CURLOPT_NOBODY, TRUE);
+
+        $data = curl_exec($ch);
+        $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
+
+        curl_close($ch);
+        return $size;
     }
 }

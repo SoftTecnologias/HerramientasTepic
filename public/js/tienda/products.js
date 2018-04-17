@@ -1,4 +1,4 @@
-$(function () {
+ $(function () {
  $('#buscar').on('click',function () {
     var filtro = $('#search').val();
          // la URL para la petición
