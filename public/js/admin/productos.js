@@ -247,7 +247,7 @@ function newProduct(){
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        timeout: 6000
+        timeout: 15000
     }).done(function(json){
         waitingDialog.hide();
         if(json.code == 200) {
@@ -286,7 +286,7 @@ function updateProduct(id){
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        timeout:6000
+        timeout:15000
     }).done(function(json){
         waitingDialog.hide();
         if(json.code == 200) {
@@ -332,7 +332,7 @@ function deleteProduct(id){
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            timeout:6000
+            timeout:15000
         }).done(function(json){
             waitingDialog.hide();
             if(json.code==200) {
