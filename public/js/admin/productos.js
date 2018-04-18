@@ -202,6 +202,7 @@ $(function(){
         }
     });
     $("#imgu2").on("change",function(){
+        var allowedExtensions = /(.jpg|.jpeg|.png|.gif)$/i;
         if($(this).val()!==""){
             if (allowedExtensions.exec($(this).val())){
                 $('#im2').attr("src",$(this).val());
@@ -214,6 +215,7 @@ $(function(){
         }
     });
     $("#imgu3").on("change",function(){
+        var allowedExtensions = /(.jpg|.jpeg|.png|.gif)$/i;
         if($(this).val()!==""){
             if (allowedExtensions.exec($(this).val())){
                 $('#im3').attr("src",$(this).val());
@@ -286,7 +288,7 @@ function updateProduct(id){
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        timeout:15000
+        timeout:30000
     }).done(function(json){
         waitingDialog.hide();
         if(json.code == 200) {
@@ -332,7 +334,7 @@ function deleteProduct(id){
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            timeout:15000
+            timeout:30000
         }).done(function(json){
             waitingDialog.hide();
             if(json.code==200) {
