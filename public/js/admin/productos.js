@@ -58,13 +58,10 @@ $(function(){
     $('#sinimagen').on('change',function () {
         if($(this).is(':checked')){
             var filtro;
-            console.log(filtro);
             if($('#conimagen').is(':checked')){
                 filtro = 'all'
-                console.log(filtro);
             }else{
                 filtro = 'sin';
-                console.log(filtro);
             }
             $('#tblProducts').dataTable().fnDestroy();
             rellenarTabla(filtro);
@@ -369,7 +366,6 @@ function showProduct(productid, categoryid, code, currency, longdescription, bra
     $('#name').val(decodeURI(name));
     $('#currency').val(currency);
     $('#shortdescription').val(decodeURI(shortdescription));
-    console.log(decodeURI(shortdescription));
     $('#longdescription').val(decodeURI(longdescription));
     $('#brandid').val(brandid);
     $('#categoryid').val(categoryid);
@@ -540,7 +536,6 @@ function llenarTabla() {
                 }
             }},
             {data: function (row) {
-                console.log(row);
                 str = "<div align='center'>";
                 str +=" <button id='btnEditar"+row['id']+
                     "' class='btn btn-primary btn-xs col-md-6' onclick='showProduct("

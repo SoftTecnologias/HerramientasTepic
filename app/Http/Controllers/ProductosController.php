@@ -104,9 +104,7 @@ class ProductosController extends Controller
     public function store(Request $request)
     {
         try{
-            \Log::info("::::::Nuevo producto::::::");
-            \Log::info("Request: \n");
-            \Log::info($request);
+
             //Insercion del precion del producto
             $precioid= DB::table('price')->insertGetId([
                 "price1"       => $request->input('price1')   ,
@@ -212,7 +210,8 @@ class ProductosController extends Controller
                 $product->save();
                 Storage::disk('local')->put("/productos/".$nombre,  fopen($imgu3,'r'));
             }
-
+            \Log::info("::::::Nuevo producto::::::");
+            \Log::info($product);
             $respuesta = ["code"=>200, "msg"=>'El usuario fue creado exitosamente', 'detail' => 'success'];
         }catch (Exception $e){
             $respuesta = ["code"=>500, "msg"=>$e->getMessage(), 'detail' => 'warning'];
