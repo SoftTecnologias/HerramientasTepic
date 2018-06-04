@@ -415,6 +415,7 @@ function reset(){
     $('#im2').attr("src","");
     $('#im3').addClass("hidden");
     $('#im3').attr("src","");
+    $("#productid").val("");
 }
 //
 function formato(numero) {
